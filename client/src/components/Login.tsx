@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { login } from "../services/api";
-import { User } from "../types/User";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [credentials, setCredentials] = useState({
@@ -9,6 +8,7 @@ const Login = () => {
     password: "",
   });
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCredentials({
@@ -20,14 +20,25 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const user: User = await login(credentials);
-      // Store user data in localStorage
+      const response = await login(credentials);
+      const { user, token } = response;
+
+      // Store both user and token
       localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("token", token);
+
       // Redirect based on role
+      if (!user.role) {
+        setError("User role not defined");
+        return;
+      }
+
       if (user.role === "moderator") {
-        window.location.href = "/moderator";
+        navigate("/moderator");
+      } else if (user.role === "employee") {
+        navigate("/employee");
       } else {
-        window.location.href = "/employee";
+        setError("Invalid user role");
       }
     } catch (err: any) {
       setError(err.response?.data?.message || "An error occurred");

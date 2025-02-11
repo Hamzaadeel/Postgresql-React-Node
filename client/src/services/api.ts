@@ -9,6 +9,12 @@ export interface UserData {
   password: string;
 }
 
+// Define the response type for the login function
+interface LoginResponse {
+  user: User;
+  token: string;
+}
+
 const api = axios.create({
   baseURL: "http://localhost:5000/api",
 });
@@ -25,9 +31,17 @@ export const signUp = async (userData: UserData) => {
 export const login = async (credentials: {
   email: string;
   password: string;
-}): Promise<User> => {
+}): Promise<LoginResponse> => {
   try {
-    const response = await api.post<User>("/users/login", credentials);
+    const response = await api.post<LoginResponse>("/users/login", credentials);
+    // Store the token in localStorage
+    if (response.data.token) {
+      localStorage.setItem("token", response.data.token);
+      // Set the token in axios default headers for subsequent requests
+      api.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${response.data.token}`;
+    }
     return response.data;
   } catch (error) {
     throw error;

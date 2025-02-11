@@ -13,13 +13,13 @@ export class User {
   @Column({ unique: true })
   email: string;
 
+  @Column()
+  password: string;
+
   @Column({
     type: "enum",
     enum: ["moderator", "employee"],
-    default: "employee", // Default role
+    default: "employee",
   })
-  role: UserRole;
-
-  @Column()
-  password: string;
+  role: string;
 }

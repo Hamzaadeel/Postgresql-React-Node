@@ -1,0 +1,10 @@
+const ChallengesManagement = () => {
+  return (
+    <div className="p-8">
+      <h2 className="text-2xl font-bold mb-6">Challenges Management</h2>
+      {/* Add profile content here */}
+    </div>
+  );
+};
+
+export default ChallengesManagement;

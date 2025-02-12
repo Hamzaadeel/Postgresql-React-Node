@@ -51,7 +51,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-500">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-500 via-blue-200 to-slate-700">
       {loading ? (
         <Loader />
       ) : (

@@ -4,24 +4,28 @@ import passport from "passport";
 
 const router = Router();
 
-router.get("/", async (req: Request, res: Response) => {
-  await UserController.getUsers(req, res);
+// Public routes
+router.post("/login", async (req: Request, res: Response) => {
+  await UserController.loginUser(req, res);
 });
 
 router.post("/", async (req: Request, res: Response) => {
   await UserController.createUser(req, res);
 });
 
-router.post("/login", async (req: Request, res: Response) => {
-  await UserController.loginUser(req, res);
+// Protected routes
+router.use(passport.authenticate("jwt", { session: false }));
+
+router.get("/", async (req: Request, res: Response) => {
+  await UserController.getUsers(req, res);
 });
 
-router.get(
-  "/protected",
-  passport.authenticate("jwt", { session: false }),
-  (req: Request, res: Response) => {
-    res.json({ message: "You are authenticated!" });
-  }
-);
+router.put("/:id", async (req: Request, res: Response) => {
+  await UserController.updateUser(req, res);
+});
+
+router.delete("/:id", async (req: Request, res: Response) => {
+  await UserController.deleteUser(req, res);
+});
 
 export default router;

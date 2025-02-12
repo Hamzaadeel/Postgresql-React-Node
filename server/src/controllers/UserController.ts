@@ -46,6 +46,59 @@ export class UserController {
     }
   }
 
+  static async updateUser(req: Request, res: Response) {
+    try {
+      const id = parseInt(req.params.id);
+      const { name, email, role } = req.body;
+
+      const userRepository = AppDataSource.getRepository(User);
+      const user = await userRepository.findOne({ where: { id } });
+
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Check if email is being changed and if it's already taken
+      if (email && email !== user.email) {
+        const existingUser = await userRepository.findOne({ where: { email } });
+        if (existingUser) {
+          return res.status(400).json({ message: "Email already in use" });
+        }
+      }
+
+      // Update user properties
+      if (name) user.name = name;
+      if (email) user.email = email;
+      if (role) user.role = role;
+
+      await userRepository.save(user);
+
+      const { password: _, ...userWithoutPassword } = user;
+      res.json(userWithoutPassword);
+    } catch (error) {
+      console.error("Error updating user:", error);
+      res.status(500).json({ message: "Error updating user" });
+    }
+  }
+
+  static async deleteUser(req: Request, res: Response) {
+    try {
+      const id = parseInt(req.params.id);
+      const userRepository = AppDataSource.getRepository(User);
+
+      const user = await userRepository.findOne({ where: { id } });
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      await userRepository.remove(user);
+      res.json({ message: "User deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      res.status(500).json({ message: "Error deleting user" });
+    }
+  }
+
   static async loginUser(req: Request, res: Response) {
     try {
       const { email, password } = req.body;

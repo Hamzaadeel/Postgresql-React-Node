@@ -1,12 +1,19 @@
+import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "../components/common/Sidebar";
+import Header from "../components/common/Header";
 
 const EmployeePage = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
   return (
     <div className="flex h-screen">
-      <Sidebar userRole="Employee" />
-      <div className="flex-1 overflow-auto">
-        <Outlet />
+      <Sidebar userRole="Employee" onToggle={setIsSidebarOpen} />
+      <div className="flex-1 flex flex-col">
+        <Header userRole="Employee" isSidebarOpen={isSidebarOpen} />
+        <div className="flex-1 overflow-auto">
+          <Outlet />
+        </div>
       </div>
     </div>
   );

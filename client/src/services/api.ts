@@ -19,6 +19,18 @@ const api = axios.create({
   baseURL: "http://localhost:5000/api",
 });
 
+// Add token to requests if it exists
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    if (!config.headers) {
+      config.headers = {};
+    }
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 export const signUp = async (userData: UserData) => {
   try {
     const response = await api.post("/users", userData);
@@ -34,10 +46,8 @@ export const login = async (credentials: {
 }): Promise<LoginResponse> => {
   try {
     const response = await api.post<LoginResponse>("/users/login", credentials);
-    // Store the token in localStorage
     if (response.data.token) {
       localStorage.setItem("token", response.data.token);
-      // Set the token in axios default headers for subsequent requests
       api.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${response.data.token}`;
@@ -50,8 +60,40 @@ export const login = async (credentials: {
 
 export const getUsers = async (): Promise<User[]> => {
   try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No authentication token found");
+    }
     const response = await api.get<User[]>("/users");
     return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateUser = async (
+  userId: number,
+  userData: Partial<User>
+): Promise<User> => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No authentication token found");
+    }
+    const response = await api.put<User>(`/users/${userId}`, userData);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deleteUser = async (userId: number): Promise<void> => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No authentication token found");
+    }
+    await api.delete(`/users/${userId}`);
   } catch (error) {
     throw error;
   }

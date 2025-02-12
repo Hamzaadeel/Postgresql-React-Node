@@ -17,12 +17,14 @@ export class UserController {
 
   static async createUser(req: Request, res: Response) {
     try {
-      const { name, email, password, role } = req.body;
+      const { name, email, password, role, tenantId } = req.body;
 
-      if (!name || !email || !password) {
+      if (!name || !email || !password || !tenantId) {
         return res
           .status(400)
-          .json({ message: "Name, email, and password are required" });
+          .json({
+            message: "Name, email, password, and tenant ID are required",
+          });
       }
 
       const userRepository = AppDataSource.getRepository(User);
@@ -37,6 +39,7 @@ export class UserController {
         email,
         password: hashedPassword,
         role,
+        tenantId,
       });
       await userRepository.save(newUser);
       res.status(201).json({ message: "User created successfully" });
@@ -49,7 +52,7 @@ export class UserController {
   static async updateUser(req: Request, res: Response) {
     try {
       const id = parseInt(req.params.id);
-      const { name, email, role } = req.body;
+      const { name, email, role, tenantId } = req.body;
 
       const userRepository = AppDataSource.getRepository(User);
       const user = await userRepository.findOne({ where: { id } });
@@ -70,6 +73,7 @@ export class UserController {
       if (name) user.name = name;
       if (email) user.email = email;
       if (role) user.role = role;
+      if (tenantId) user.tenantId = tenantId;
 
       await userRepository.save(user);
 
@@ -129,7 +133,7 @@ export class UserController {
         { id: user.id, email: user.email, role: user.role },
         process.env.JWT_SECRET ||
           "a7eb8932ca3d1092e1470d665cc35072c45e1edf80dc4a1e1a9871d3f5fcf4c1",
-        { expiresIn: "1h" }
+        { expiresIn: "2h" }
       );
 
       const { password: _, ...userWithoutPassword } = user;

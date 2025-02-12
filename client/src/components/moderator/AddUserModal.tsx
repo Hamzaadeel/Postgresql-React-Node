@@ -1,22 +1,28 @@
 import { useState } from "react";
 import { UserData } from "../../services/api";
+import { Tenant } from "../../services/api";
 
 interface AddUserModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (userData: UserData) => Promise<void>;
+  onAdd: (userData: UserData & { tenantId: number | null }) => Promise<void>;
+  tenants: Tenant[];
 }
 
 const AddUserModal: React.FC<AddUserModalProps> = ({
   isOpen,
   onClose,
   onAdd,
+  tenants,
 }) => {
-  const [formData, setFormData] = useState<UserData>({
+  const [formData, setFormData] = useState<
+    UserData & { tenantId: number | null }
+  >({
     name: "",
     email: "",
     password: "",
     role: "employee",
+    tenantId: null,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -30,6 +36,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
         email: "",
         password: "",
         role: "employee",
+        tenantId: null,
       });
     } catch (error) {
       console.error("Error adding user:", error);
@@ -79,7 +86,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
               required
             />
           </div>
-          <div className="mb-6">
+          <div className="mb-4">
             <label className="block text-gray-700 mb-2">Role</label>
             <select
               value={formData.role}
@@ -90,6 +97,26 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
             >
               <option value="employee">Employee</option>
               <option value="moderator">Moderator</option>
+            </select>
+          </div>
+          <div className="mb-6">
+            <label className="block text-gray-700 mb-2">Tenant</label>
+            <select
+              value={formData.tenantId || ""}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  tenantId: e.target.value ? Number(e.target.value) : null,
+                })
+              }
+              className="w-full p-2 border rounded"
+            >
+              <option value="">None</option>
+              {tenants.map((tenant) => (
+                <option key={tenant.id} value={tenant.id}>
+                  {tenant.name}
+                </option>
+              ))}
             </select>
           </div>
           <div className="flex justify-end space-x-3">

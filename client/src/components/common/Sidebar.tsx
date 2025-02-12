@@ -47,7 +47,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
 
   return (
     <div
-      className={`flex flex-col h-screen bg-gray-800 text-white ${
+      className={`flex flex-col h-screen bg-slate-800 text-white ${
         isOpen ? "w-56" : "w-10"
       } transition-width duration-300`}
     >

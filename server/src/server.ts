@@ -3,6 +3,7 @@ import cors from "cors";
 import passport from "passport";
 import { AppDataSource } from "./data-source";
 import userRoutes from "./routes/userRoutes";
+import tenantRoutes from "./routes/tenantRoutes";
 import { passportConfig } from "./config/passport";
 
 const app = express();
@@ -23,6 +24,7 @@ app.use(express.json());
 
 // Routes
 app.use("/api/users", userRoutes);
+app.use("/api/tenants", tenantRoutes);
 
 // Define a route for the root path
 app.get("/", (req, res) => {

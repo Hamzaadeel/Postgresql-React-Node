@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { User } from "../../types/User";
+import { Tenant } from "../../services/api";
 
 interface EditUserModalProps {
   isOpen: boolean;
   onClose: () => void;
   onEdit: (userId: number, userData: Partial<User>) => Promise<void>;
   user: User | null;
+  tenants: Tenant[];
 }
 
 const EditUserModal: React.FC<EditUserModalProps> = ({
@@ -13,11 +15,13 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
   onClose,
   onEdit,
   user,
+  tenants,
 }) => {
   const [formData, setFormData] = useState<Partial<User>>({
     name: "",
     email: "",
     role: "employee",
+    tenantId: null,
   });
 
   useEffect(() => {
@@ -26,6 +30,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
         name: user.name,
         email: user.email,
         role: user.role,
+        tenantId: user.tenantId,
       });
     }
   }, [user]);
@@ -73,7 +78,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
               required
             />
           </div>
-          <div className="mb-6">
+          <div className="mb-4">
             <label className="block text-gray-700 mb-2">Role</label>
             <select
               value={formData.role}
@@ -84,6 +89,26 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
             >
               <option value="employee">Employee</option>
               <option value="moderator">Moderator</option>
+            </select>
+          </div>
+          <div className="mb-6">
+            <label className="block text-gray-700 mb-2">Tenant</label>
+            <select
+              value={formData.tenantId || ""}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  tenantId: e.target.value ? Number(e.target.value) : null,
+                })
+              }
+              className="w-full p-2 border rounded"
+            >
+              <option value="">None</option>
+              {tenants.map((tenant) => (
+                <option key={tenant.id} value={tenant.id}>
+                  {tenant.name}
+                </option>
+              ))}
             </select>
           </div>
           <div className="flex justify-end space-x-3">

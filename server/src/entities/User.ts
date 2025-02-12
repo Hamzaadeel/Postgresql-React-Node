@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import { Tenant } from "./Tenant";
 
 export type UserRole = "moderator" | "employee"; // Define allowed roles
 
@@ -22,4 +23,10 @@ export class User {
     default: "employee",
   })
   role: string;
+
+  @ManyToOne(() => Tenant, (tenant) => tenant.users)
+  tenant: Tenant;
+
+  @Column({ nullable: true })
+  tenantId: number;
 }

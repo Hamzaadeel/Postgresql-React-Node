@@ -9,6 +9,16 @@ export interface UserData {
   password: string;
 }
 
+// Define the tenant type
+export interface Tenant {
+  id: number;
+  name: string;
+  createdBy: number;
+  createdAt: string;
+  updatedAt: string;
+  employeeCount?: number;
+}
+
 // Define the response type for the login function
 interface LoginResponse {
   user: User;
@@ -58,13 +68,21 @@ export const login = async (credentials: {
   }
 };
 
-export const getUsers = async (): Promise<User[]> => {
+export const getUsers = async (
+  page: number,
+  limit: number
+): Promise<User[]> => {
   try {
     const token = localStorage.getItem("token");
     if (!token) {
       throw new Error("No authentication token found");
     }
-    const response = await api.get<User[]>("/users");
+    const response = await api.get<User[]>("/users", {
+      params: {
+        page,
+        limit,
+      },
+    });
     return response.data;
   } catch (error) {
     throw error;
@@ -94,6 +112,71 @@ export const deleteUser = async (userId: number): Promise<void> => {
       throw new Error("No authentication token found");
     }
     await api.delete(`/users/${userId}`);
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Tenant-related API calls
+export const getTenants = async (
+  page: number,
+  limit: number
+): Promise<Tenant[]> => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No authentication token found");
+    }
+    const response = await api.get<Tenant[]>("/tenants", {
+      params: {
+        page,
+        limit,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const createTenant = async (tenantData: {
+  name: string;
+}): Promise<Tenant> => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No authentication token found");
+    }
+    const response = await api.post<Tenant>("/tenants", tenantData);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateTenant = async (
+  tenantId: number,
+  tenantData: { name: string }
+): Promise<Tenant> => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No authentication token found");
+    }
+    const response = await api.put<Tenant>(`/tenants/${tenantId}`, tenantData);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deleteTenant = async (tenantId: number): Promise<void> => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No authentication token found");
+    }
+    await api.delete(`/tenants/${tenantId}`);
   } catch (error) {
     throw error;
   }

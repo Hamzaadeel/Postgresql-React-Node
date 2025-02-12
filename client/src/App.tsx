@@ -14,11 +14,11 @@ import EmployeeProfile from "./components/employee/EmployeeProfile";
 import EmployeeChallenges from "./components/employee/EmployeeChallenges";
 import EmployeeCircles from "./components/employee/EmployeeCircles";
 import UserManagement from "./components/moderator/UserManagement";
-import TenantManagement from "./components/moderator/TenantManagement";
 import CirclesManagement from "./components/moderator/CirclesManagement";
 import ChallengesManagement from "./components/moderator/ChallengesManagement";
 import ModeratorProfile from "./components/moderator/ModeratorProfile";
 import "./App.css";
+import TenantManagement from "./components/moderator/TenantManagement";
 
 function App() {
   return (

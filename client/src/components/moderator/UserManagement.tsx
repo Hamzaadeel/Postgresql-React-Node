@@ -1,16 +1,28 @@
 import { useEffect, useState } from "react";
 import { getUsers } from "../../services/api";
 import { User } from "../../types/User";
-import { Pencil, Trash, UserPlus, Users } from "lucide-react";
+import {
+  Pencil,
+  Trash,
+  UserPlus,
+  Users,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import AddUserModal from "./AddUserModal";
 import EditUserModal from "./EditUserModal";
 import ConfirmationModal from "../common/ConfirmationModal";
 import Loader from "../common/Loader";
-import { signUp, updateUser, deleteUser } from "../../services/api";
+import { signUp, updateUser, deleteUser, getTenants } from "../../services/api";
 import { useNavigate } from "react-router-dom";
+import { Tenant } from "../../services/api";
 
 const UserManagement = () => {
   const [users, setUsers] = useState<User[]>([]);
+  const [tenants, setTenants] = useState<Tenant[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [resultsPerPage, setResultsPerPage] = useState(10);
+  const [totalUsers, setTotalUsers] = useState(0);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -22,13 +34,15 @@ const UserManagement = () => {
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+    fetchTenants();
+  }, [currentPage, resultsPerPage]);
 
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const data = await getUsers();
+      const data = await getUsers(currentPage, resultsPerPage);
       setUsers(data);
+      setTotalUsers(data.length);
     } catch (error: any) {
       if (error.response?.status === 401) {
         handleAuthError();
@@ -38,6 +52,21 @@ const UserManagement = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchTenants = async () => {
+    try {
+      const data = await getTenants(1, 100); // Get all tenants
+      setTenants(data);
+    } catch (error) {
+      console.error("Error fetching tenants:", error);
+    }
+  };
+
+  const handleAuthError = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login");
   };
 
   const showSuccessMessage = (message: string) => {
@@ -62,12 +91,6 @@ const UserManagement = () => {
 
   const closeErrorMessage = () => {
     setErrorMessage("");
-  };
-
-  const handleAuthError = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    navigate("/login");
   };
 
   const handleAddUser = async (userData: any) => {
@@ -117,6 +140,20 @@ const UserManagement = () => {
     }
   };
 
+  const handleResultsPerPageChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setResultsPerPage(Number(event.target.value));
+    setCurrentPage(1);
+  };
+
+  const totalPages = Math.ceil(totalUsers / resultsPerPage);
+
+  // Calculate the index of the first user to display
+  const indexOfLastUser = currentPage * resultsPerPage;
+  const indexOfFirstUser = indexOfLastUser - resultsPerPage;
+  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser); // Slice the users array
+
   return (
     <div className="p-8">
       <div className="flex justify-between items-center mb-6">
@@ -156,51 +193,118 @@ const UserManagement = () => {
       <table className="min-w-full bg-white">
         <thead>
           <tr>
-            <th className="px-6 py-3 border-b text-left">ID</th>
-            <th className="px-6 py-3 border-b text-left">Name</th>
-            <th className="px-6 py-3 border-b text-left">Email</th>
-            <th className="px-6 py-3 border-b text-left">Role</th>
-            <th className="px-6 py-3 border-b text-left">Actions</th>
+            <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+              No.
+            </th>
+            <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+              Name
+            </th>
+            <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+              Email
+            </th>
+            <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+              Role
+            </th>
+            <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+              Tenant
+            </th>
+            <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+              Actions
+            </th>
           </tr>
         </thead>
         <tbody>
-          {users.map((user) => (
-            <tr key={user.id}>
-              <td className="px-6 py-4 border-b">{user.id}</td>
-              <td className="px-6 py-4 border-b">{user.name}</td>
-              <td className="px-6 py-4 border-b">{user.email}</td>
-              <td className="px-6 py-4 border-b">
-                {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
-              </td>
-              <td className="px-6 py-4 border-b">
-                <button
-                  onClick={() => {
-                    setSelectedUser(user);
-                    setIsEditModalOpen(true);
-                  }}
-                  className="p-2 text-blue-500 hover:text-blue-700"
-                >
-                  <Pencil className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => {
-                    setSelectedUser(user);
-                    setIsDeleteModalOpen(true);
-                  }}
-                  className="p-2 text-red-500 hover:text-red-700"
-                >
-                  <Trash className="w-4 h-4" />
-                </button>
-              </td>
-            </tr>
-          ))}
+          {currentUsers.map((user, index) => {
+            const userTenant = tenants.find((t) => t.id === user.tenantId);
+            return (
+              <tr key={user.id}>
+                <td className="px-6 py-4 border-b">
+                  {index + 1 + indexOfFirstUser}
+                </td>
+                <td className="px-6 py-4 border-b">{user.name}</td>
+                <td className="px-6 py-4 border-b">{user.email}</td>
+                <td className="px-6 py-4 border-b">
+                  {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                </td>
+                <td className="px-6 py-4 border-b">
+                  {userTenant ? userTenant.name : "None"}
+                </td>
+                <td className="px-6 py-4 border-b">
+                  <button
+                    onClick={() => {
+                      setSelectedUser(user);
+                      setIsEditModalOpen(true);
+                    }}
+                    className="p-2 text-blue-500 hover:text-blue-700"
+                  >
+                    <Pencil className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSelectedUser(user);
+                      setIsDeleteModalOpen(true);
+                    }}
+                    className="p-2 text-red-500 hover:text-red-700"
+                  >
+                    <Trash className="w-4 h-4" />
+                  </button>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
+
+      <div className="flex justify-center items-center mb-4 mt-4">
+        <span className="text-sm">Show results:</span>
+        <select
+          value={resultsPerPage}
+          onChange={handleResultsPerPageChange}
+          className="border rounded p-2 mx-2"
+        >
+          <option value={5}>5</option>
+          <option value={10}>10</option>
+          <option value={25}>25</option>
+          <option value={50}>50</option>
+          <option value={100}>100</option>
+        </select>
+        <span>{`Showing ${Math.min(
+          resultsPerPage * currentPage,
+          totalUsers
+        )} of ${totalUsers} users`}</span>
+        <div className="flex items-center ml-4">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className={`px-2 py-2 rounded-l ${
+              currentPage === 1
+                ? "bg-gray-300 text-gray-500"
+                : "bg-slate-800 text-white"
+            }`}
+          >
+            <ChevronLeft size={20} />
+          </button>
+          <button
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
+            disabled={currentPage === totalPages}
+            className={`px-2 py-2 rounded-r ${
+              currentPage === totalPages
+                ? "bg-gray-300 text-gray-500"
+                : "bg-slate-800 text-white"
+            }`}
+          >
+            <ChevronRight size={20} />
+          </button>
+        </div>
+      </div>
 
       <AddUserModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         onAdd={handleAddUser}
+        tenants={tenants}
       />
 
       <EditUserModal
@@ -211,6 +315,7 @@ const UserManagement = () => {
         }}
         onEdit={handleEditUser}
         user={selectedUser}
+        tenants={tenants}
       />
 
       <ConfirmationModal

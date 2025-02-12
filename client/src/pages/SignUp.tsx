@@ -44,7 +44,7 @@ const SignUp = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-500">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-500 via-blue-200 to-slate-700">
       <div className="bg-white p-8 rounded-lg shadow-lg w-96">
         <h2 className="text-2xl font-bold mb-6">Sign Up</h2>
         {error && (

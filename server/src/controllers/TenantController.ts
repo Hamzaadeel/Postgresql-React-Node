@@ -16,7 +16,11 @@ export class TenantController {
   static async getTenants(req: Request, res: Response) {
     try {
       const tenantRepository = AppDataSource.getRepository(Tenant);
-      const tenants = await tenantRepository.find();
+      const tenants = await tenantRepository.find({
+        order: {
+          name: "ASC",
+        },
+      });
 
       // Fetch employee counts for each tenant
       const tenantWithEmployeeCounts = await Promise.all(

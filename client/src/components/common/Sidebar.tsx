@@ -3,12 +3,12 @@ import { useNavigate, useLocation } from "react-router-dom";
 import {
   Home,
   Users,
-  CheckCircle,
   User,
   Building2,
   ChevronRight,
   LogOut,
   Menu,
+  Swords,
 } from "lucide-react";
 import logo from "../../assets/logos/dpl-logo.png"; // Adjust the path as necessary
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -106,7 +106,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
                 }`}
                 onClick={() => handleTabClick("/employee/challenges")}
               >
-                <CheckCircle className="w-5 h-5" />
+                <Swords className="w-5 h-5" />
                 <span className={`ml-2 ${isOpen ? "block" : "hidden"}`}>
                   Challenges
                 </span>
@@ -175,7 +175,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
                 }`}
                 onClick={() => handleTabClick("/moderator/challenges")}
               >
-                <CheckCircle className="w-5 h-5" />
+                <Swords className="w-5 h-5" />
                 <span className={`ml-2 ${isOpen ? "block" : "hidden"}`}>
                   Challenges
                 </span>

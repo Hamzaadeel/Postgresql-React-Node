@@ -36,6 +36,9 @@ export class CircleController {
             name: true,
           },
         },
+        order: {
+          name: "ASC",
+        },
       });
       res.json(circles);
     } catch (error) {

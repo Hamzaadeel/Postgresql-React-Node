@@ -174,6 +174,7 @@ const TenantManagement = () => {
           Tenant Management
         </h2>
         <button
+          title="Add Tenant"
           onClick={() => setIsAddModalOpen(true)}
           className="flex items-center space-x-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
         >
@@ -261,6 +262,7 @@ const TenantManagement = () => {
                           setIsEditModalOpen(true);
                         }}
                         className="text-blue-600 hover:text-blue-900"
+                        title="Edit Tenant"
                       >
                         <Pencil className="w-4 h-4" />
                       </button>
@@ -270,6 +272,7 @@ const TenantManagement = () => {
                           setIsDeleteModalOpen(true);
                         }}
                         className="text-red-600 hover:text-red-900"
+                        title="Delete Tenant"
                       >
                         <Trash className="w-4 h-4" />
                       </button>

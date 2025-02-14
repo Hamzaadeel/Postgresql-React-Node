@@ -6,6 +6,7 @@ import {
   Trash,
   UserPlus,
   Users,
+  User as UserIcon,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -167,6 +168,7 @@ const UserManagement = () => {
           Users Management
         </h2>
         <button
+          title="Add User"
           onClick={() => setIsAddModalOpen(true)}
           className="flex items-center space-x-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
         >
@@ -226,7 +228,10 @@ const UserManagement = () => {
                 <td className="px-6 py-4 border-b">
                   {index + 1 + indexOfFirstUser}
                 </td>
-                <td className="px-6 py-4 border-b">{user.name}</td>
+                <td className="px-6 py-4 border-b">
+                  <UserIcon className="w-5 h-5 inline-block mr-2" />
+                  {user.name}
+                </td>
                 <td className="px-6 py-4 border-b">{user.email}</td>
                 <td className="px-6 py-4 border-b">
                   {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
@@ -241,10 +246,12 @@ const UserManagement = () => {
                       setIsEditModalOpen(true);
                     }}
                     className="p-2 text-blue-500 hover:text-blue-700"
+                    title="Edit User"
                   >
                     <Pencil className="w-4 h-4" />
                   </button>
                   <button
+                    title="Delete User"
                     onClick={() => {
                       setSelectedUser(user);
                       setIsDeleteModalOpen(true);

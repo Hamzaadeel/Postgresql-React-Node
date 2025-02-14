@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Pencil, Trash, Plus } from "lucide-react";
+import { Pencil, Trash, Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUsers } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -19,6 +19,8 @@ import Loader from "../../common/Loader";
 const CirclesManagement = () => {
   const [circles, setCircles] = useState<Circle[]>([]);
   const [tenants, setTenants] = useState<Tenant[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [resultsPerPage, setResultsPerPage] = useState(10);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -31,7 +33,7 @@ const CirclesManagement = () => {
   useEffect(() => {
     fetchCircles();
     fetchTenants();
-  }, []);
+  }, [currentPage, resultsPerPage]);
 
   const fetchCircles = async () => {
     setLoading(true);
@@ -146,6 +148,19 @@ const CirclesManagement = () => {
     }
   };
 
+  // Calculate pagination values
+  const totalPages = Math.ceil(circles.length / resultsPerPage);
+  const indexOfLastCircle = currentPage * resultsPerPage;
+  const indexOfFirstCircle = indexOfLastCircle - resultsPerPage;
+  const currentCircles = circles.slice(indexOfFirstCircle, indexOfLastCircle);
+
+  const handleResultsPerPageChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setResultsPerPage(Number(event.target.value));
+    setCurrentPage(1);
+  };
+
   return (
     <div className="p-8">
       <div className="flex justify-between items-center mb-6">
@@ -154,6 +169,7 @@ const CirclesManagement = () => {
           Circles Management
         </h2>
         <button
+          title="Add Circle"
           onClick={() => setIsAddModalOpen(true)}
           className="flex items-center space-x-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
         >
@@ -209,10 +225,10 @@ const CirclesManagement = () => {
             </tr>
           </thead>
           <tbody>
-            {circles.map((circle, index) => (
+            {currentCircles.map((circle, index) => (
               <tr key={circle.id}>
                 <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                  {index + 1}
+                  {indexOfFirstCircle + index + 1}
                 </td>
                 <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
                   <div className="flex items-center">
@@ -240,6 +256,7 @@ const CirclesManagement = () => {
                         setIsEditModalOpen(true);
                       }}
                       className="text-blue-600 hover:text-blue-900"
+                      title="Edit Circle"
                     >
                       <Pencil className="w-4 h-4" />
                     </button>
@@ -249,6 +266,7 @@ const CirclesManagement = () => {
                         setIsDeleteModalOpen(true);
                       }}
                       className="text-red-600 hover:text-red-900"
+                      title="Delete Circle"
                     >
                       <Trash className="w-4 h-4" />
                     </button>
@@ -259,6 +277,52 @@ const CirclesManagement = () => {
           </tbody>
         </table>
       )}
+
+      {/* Add pagination controls */}
+      <div className="flex justify-center items-center mb-4 mt-4">
+        <span className="text-md">Show results:</span>
+        <select
+          value={resultsPerPage}
+          onChange={handleResultsPerPageChange}
+          className="border rounded p-2 mx-2"
+        >
+          <option value={5}>5</option>
+          <option value={10}>10</option>
+          <option value={25}>25</option>
+          <option value={50}>50</option>
+          <option value={100}>100</option>
+        </select>
+        <span>{`Showing ${Math.min(
+          resultsPerPage * currentPage,
+          circles.length
+        )} of ${circles.length} circles`}</span>
+        <div className="flex items-center ml-4">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className={`px-2 py-2 rounded-l ${
+              currentPage === 1
+                ? "bg-gray-300 text-gray-500"
+                : "bg-slate-800 text-white"
+            }`}
+          >
+            <ChevronLeft size={20} />
+          </button>
+          <button
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
+            disabled={currentPage === totalPages}
+            className={`px-2 py-2 rounded-r ${
+              currentPage === totalPages
+                ? "bg-gray-300 text-gray-500"
+                : "bg-slate-800 text-white"
+            }`}
+          >
+            <ChevronRight size={20} />
+          </button>
+        </div>
+      </div>
 
       <AddCircleModal
         isOpen={isAddModalOpen}

@@ -5,7 +5,7 @@ import { AppDataSource } from "./data-source";
 import userRoutes from "./routes/userRoutes";
 import tenantRoutes from "./routes/tenantRoutes";
 import circleRoutes from "./routes/circleRoutes";
-import { passportConfig } from "./config/passport";
+import { passportConfig } from "./middleware/passport";
 
 const app = express();
 const PORT = process.env.PORT || 5000;

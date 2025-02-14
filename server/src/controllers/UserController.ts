@@ -8,7 +8,11 @@ export class UserController {
   static async getUsers(req: Request, res: Response) {
     try {
       const userRepository = AppDataSource.getRepository(User);
-      const users = await userRepository.find();
+      const users = await userRepository.find({
+        order: {
+          name: "ASC",
+        },
+      });
       res.json(users);
     } catch (error) {
       res.status(500).json({ message: "Error fetching users" });
@@ -20,11 +24,9 @@ export class UserController {
       const { name, email, password, role, tenantId } = req.body;
 
       if (!name || !email || !password || !tenantId) {
-        return res
-          .status(400)
-          .json({
-            message: "Name, email, password, and tenant ID are required",
-          });
+        return res.status(400).json({
+          message: "Name, email, password, and tenant ID are required",
+        });
       }
 
       const userRepository = AppDataSource.getRepository(User);

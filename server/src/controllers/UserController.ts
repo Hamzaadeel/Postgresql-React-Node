@@ -135,7 +135,7 @@ export class UserController {
         { id: user.id, email: user.email, role: user.role },
         process.env.JWT_SECRET ||
           "a7eb8932ca3d1092e1470d665cc35072c45e1edf80dc4a1e1a9871d3f5fcf4c1",
-        { expiresIn: "2h" }
+        { expiresIn: "24h" }
       );
 
       const { password: _, ...userWithoutPassword } = user;

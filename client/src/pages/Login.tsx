@@ -44,7 +44,9 @@ const Login = () => {
         setError("Invalid user role");
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || "An error occurred");
+      setError(
+        err.response?.data?.message || "Email or password is incorrect!"
+      );
     } finally {
       setLoading(false);
     }

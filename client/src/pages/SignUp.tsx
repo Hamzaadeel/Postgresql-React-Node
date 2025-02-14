@@ -38,7 +38,7 @@ const SignUp = () => {
         password: "", // Reset password field
       });
     } catch (err: any) {
-      setError(err.response?.data?.message || "An error occurred");
+      setError(err.response?.data?.message || "Email already exists!");
       setSuccess("");
     }
   };

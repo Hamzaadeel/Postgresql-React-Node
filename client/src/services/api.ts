@@ -19,6 +19,21 @@ export interface Tenant {
   employeeCount?: number;
 }
 
+// Define the circle type
+export interface Circle {
+  id: number;
+  name: string;
+  tenantId: number;
+  createdBy: number;
+  createdAt: string;
+  updatedAt: string;
+  tenant: Tenant;
+  creator: {
+    id: number;
+    name: string;
+  };
+}
+
 // Define the response type for the login function
 interface LoginResponse {
   user: User;
@@ -177,6 +192,64 @@ export const deleteTenant = async (tenantId: number): Promise<void> => {
       throw new Error("No authentication token found");
     }
     await api.delete(`/tenants/${tenantId}`);
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Circle-related API calls
+export const getCircles = async (): Promise<Circle[]> => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No authentication token found");
+    }
+    const response = await api.get<Circle[]>("/circles");
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const createCircle = async (circleData: {
+  name: string;
+  tenantId: number;
+}): Promise<Circle> => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No authentication token found");
+    }
+    const response = await api.post<Circle>("/circles", circleData);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateCircle = async (
+  circleId: number,
+  circleData: { name: string }
+): Promise<Circle> => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No authentication token found");
+    }
+    const response = await api.put<Circle>(`/circles/${circleId}`, circleData);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deleteCircle = async (circleId: number): Promise<void> => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No authentication token found");
+    }
+    await api.delete(`/circles/${circleId}`);
   } catch (error) {
     throw error;
   }

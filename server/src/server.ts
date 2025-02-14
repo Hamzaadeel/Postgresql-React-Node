@@ -4,6 +4,7 @@ import passport from "passport";
 import { AppDataSource } from "./data-source";
 import userRoutes from "./routes/userRoutes";
 import tenantRoutes from "./routes/tenantRoutes";
+import circleRoutes from "./routes/circleRoutes";
 import { passportConfig } from "./config/passport";
 
 const app = express();
@@ -25,6 +26,7 @@ app.use(express.json());
 // Routes
 app.use("/api/users", userRoutes);
 app.use("/api/tenants", tenantRoutes);
+app.use("/api/circles", circleRoutes);
 
 // Define a route for the root path
 app.get("/", (req, res) => {

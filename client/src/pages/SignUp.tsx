@@ -29,7 +29,7 @@ const SignUp = () => {
       setError("");
       setTimeout(() => {
         setSuccess("");
-      }, 5000); // Clear success message after 5 seconds
+      }, 5000);
       // Reset form
       setFormData({
         name: "",

@@ -14,13 +14,13 @@ import {
   updateTenant,
   deleteTenant,
   getUsers,
-} from "../../services/api";
-import { Tenant } from "../../services/api";
+} from "../../../services/api";
+import { Tenant } from "../../../services/api";
 import AddTenantModal from "./AddTenantModal";
 import EditTenantModal from "./EditTenantModal";
-import ConfirmationModal from "../common/ConfirmationModal";
-import Loader from "../common/Loader";
-import { User } from "../../types/User";
+import ConfirmationModal from "../../common/ConfirmationModal";
+import Loader from "../../common/Loader";
+import { User } from "../../../types/User";
 
 const TenantManagement = () => {
   const [tenants, setTenants] = useState<Tenant[]>([]);

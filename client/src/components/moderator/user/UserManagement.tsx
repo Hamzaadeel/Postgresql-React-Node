@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { getUsers } from "../../services/api";
-import { User } from "../../types/User";
+import { getUsers } from "../../../services/api";
+import { User } from "../../../types/User";
 import {
   Pencil,
   Trash,
@@ -11,11 +11,16 @@ import {
 } from "lucide-react";
 import AddUserModal from "./AddUserModal";
 import EditUserModal from "./EditUserModal";
-import ConfirmationModal from "../common/ConfirmationModal";
-import Loader from "../common/Loader";
-import { signUp, updateUser, deleteUser, getTenants } from "../../services/api";
+import ConfirmationModal from "../../common/ConfirmationModal";
+import Loader from "../../common/Loader";
+import {
+  signUp,
+  updateUser,
+  deleteUser,
+  getTenants,
+} from "../../../services/api";
 import { useNavigate } from "react-router-dom";
-import { Tenant } from "../../services/api";
+import { Tenant } from "../../../services/api";
 
 const UserManagement = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -256,7 +261,7 @@ const UserManagement = () => {
       </table>
 
       <div className="flex justify-center items-center mb-4 mt-4">
-        <span className="text-sm">Show results:</span>
+        <span className="text-md">Show results:</span>
         <select
           value={resultsPerPage}
           onChange={handleResultsPerPageChange}

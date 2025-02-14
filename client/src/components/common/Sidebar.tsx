@@ -3,7 +3,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import {
   Home,
   Users,
-  Circle,
   CheckCircle,
   User,
   Building2,
@@ -12,6 +11,8 @@ import {
   Menu,
 } from "lucide-react";
 import logo from "../../assets/logos/dpl-logo.png"; // Adjust the path as necessary
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUsers } from "@fortawesome/free-solid-svg-icons";
 
 interface SidebarProps {
   userRole: "Employee" | "Moderator";
@@ -94,7 +95,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
                 }`}
                 onClick={() => handleTabClick("/employee/circles")}
               >
-                <Circle className="w-5 h-5" />
+                <FontAwesomeIcon icon={faUsers} className="w-5 h-5" />
                 <span className={`ml-2 ${isOpen ? "block" : "hidden"}`}>
                   Circles
                 </span>
@@ -163,7 +164,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
                 }`}
                 onClick={() => handleTabClick("/moderator/circles")}
               >
-                <Circle className="w-5 h-5" />
+                <FontAwesomeIcon icon={faUsers} className="w-5 h-5" />
                 <span className={`ml-2 ${isOpen ? "block" : "hidden"}`}>
                   Circles
                 </span>

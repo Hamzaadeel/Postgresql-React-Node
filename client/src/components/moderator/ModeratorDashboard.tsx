@@ -23,7 +23,7 @@ const StatCard: React.FC<StatCardProps> = ({
   trend,
   color,
 }) => (
-  <div className="bg-white ml-2 rounded-xl shadow-md p-6 flex flex-col">
+  <div className="bg-white ml-2 rounded-xl shadow-md p-6 flex flex-col hover:scale-105 transition-all duration-300 cursor-pointer">
     <div className="flex items-center justify-between mb-4">
       <div className={`p-3 rounded-lg ${color}`}>{icon}</div>
       <div

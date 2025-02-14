@@ -283,7 +283,7 @@ const UserManagement = () => {
         <span>{`Showing ${Math.min(
           resultsPerPage * currentPage,
           totalUsers
-        )} of ${totalUsers} users`}</span>
+        )} of ${totalUsers} Users`}</span>
         <div className="flex items-center ml-4">
           <button
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}

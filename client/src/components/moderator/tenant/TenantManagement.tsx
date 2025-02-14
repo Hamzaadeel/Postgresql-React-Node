@@ -302,7 +302,7 @@ const TenantManagement = () => {
         <span className="mr-2">{`Showing ${Math.min(
           resultsPerPage * currentPage,
           totalTenants
-        )} of ${totalTenants} tenants`}</span>
+        )} of ${totalTenants} Tenants`}</span>
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}

@@ -15,7 +15,7 @@ import EmployeeChallenges from "./components/employee/EmployeeChallenges";
 import EmployeeCircles from "./components/employee/EmployeeCircles";
 import UserManagement from "./components/moderator/user/UserManagement";
 import CirclesManagement from "./components/moderator/circle/CirclesManagement";
-import ChallengesManagement from "./components/moderator/ChallengesManagement";
+import ChallengesManagement from "./components/moderator/challenges/ChallengesManagement";
 import ModeratorProfile from "./components/moderator/ModeratorProfile";
 import "./App.css";
 import TenantManagement from "./components/moderator/tenant/TenantManagement";

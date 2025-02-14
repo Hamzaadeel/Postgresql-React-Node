@@ -295,7 +295,7 @@ const CirclesManagement = () => {
         <span>{`Showing ${Math.min(
           resultsPerPage * currentPage,
           circles.length
-        )} of ${circles.length} circles`}</span>
+        )} of ${circles.length} Circles`}</span>
         <div className="flex items-center ml-4">
           <button
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}

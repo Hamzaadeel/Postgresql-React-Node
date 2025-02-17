@@ -6,13 +6,13 @@ import {
   User,
   LogOut,
   Home,
-  Circle,
-  CheckCircle,
   Users,
   Building2,
   ChevronDown,
+  Swords,
 } from "lucide-react";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUsers } from "@fortawesome/free-solid-svg-icons";
 interface HeaderProps {
   userRole: "Employee" | "Moderator";
   isSidebarOpen: boolean;
@@ -183,14 +183,14 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
                       onClick={() => handleNavigation("/employee/circles")}
                       className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-gray-100"
                     >
-                      <Circle className="h-4 w-4" />
+                      <FontAwesomeIcon icon={faUsers} className="h-4 w-4" />
                       <span>Circles</span>
                     </button>
                     <button
                       onClick={() => handleNavigation("/employee/challenges")}
                       className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-gray-100"
                     >
-                      <CheckCircle className="h-4 w-4" />
+                      <Swords className="h-4 w-4" />
                       <span>Challenges</span>
                     </button>
                     <button

@@ -271,7 +271,7 @@ const EmployeeChallenges = () => {
   );
 
   return (
-    <div className="p-8">
+    <div className="p-8 h-screen">
       {successMessage && (
         <div className="mb-4 p-4 bg-green-100 text-green-700 rounded">
           {successMessage}
@@ -445,6 +445,7 @@ const EmployeeChallenges = () => {
         onConfirm={handleSubmitChallenge}
         title="Submit Challenge"
         message={`Are you sure you want to submit the challenge "${selectedChallenge?.title}"? This will mark it as completed.`}
+        confirmButtonColor="bg-green-600"
       />
     </div>
   );

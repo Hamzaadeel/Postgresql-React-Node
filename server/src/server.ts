@@ -6,6 +6,8 @@ import userRoutes from "./routes/userRoutes";
 import tenantRoutes from "./routes/tenantRoutes";
 import circleRoutes from "./routes/circleRoutes";
 import challengeRoutes from "./routes/challengeRoutes";
+import circleParticipantsRoutes from "./routes/circleParticipantsRoutes";
+import challengeParticipantsRoutes from "./routes/challengeParticipantsRoutes";
 import { passportConfig } from "./middleware/passport";
 
 const app = express();
@@ -29,6 +31,8 @@ app.use("/api/users", userRoutes);
 app.use("/api/tenants", tenantRoutes);
 app.use("/api/circles", circleRoutes);
 app.use("/api/challenges", challengeRoutes);
+app.use("/api/circle-participants", circleParticipantsRoutes);
+app.use("/api/challenge-participants", challengeParticipantsRoutes);
 
 // Define a route for the root path
 app.get("/", (req, res) => {
@@ -40,3 +44,5 @@ AppDataSource.initialize()
     app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
   })
   .catch((error) => console.log(error));
+
+export default app;

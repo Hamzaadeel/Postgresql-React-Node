@@ -17,6 +17,11 @@ router.get("/circle/:circleId", async (req: Request, res: Response) => {
   await ChallengeController.getChallengesByCircle(req, res);
 });
 
+// Get challenges by circles
+router.get("/circles", async (req: Request, res: Response) => {
+  await ChallengeController.getChallengesByCircles(req, res);
+});
+
 // Create a new challenge
 router.post("/", async (req: Request, res: Response) => {
   await ChallengeController.createChallenge(req, res);

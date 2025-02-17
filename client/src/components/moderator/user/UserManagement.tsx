@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getUsers } from "../../../services/api";
+import { getUsers, Tenant } from "../../../services/api";
 import { User } from "../../../types/User";
 import {
   Pencil,
@@ -21,7 +21,6 @@ import {
   getTenants,
 } from "../../../services/api";
 import { useNavigate } from "react-router-dom";
-import { Tenant } from "../../../services/api";
 
 const UserManagement = () => {
   const [users, setUsers] = useState<User[]>([]);

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../data-source";
 import { Challenge } from "../entities/Challenge";
+import { In } from "typeorm";
 
 // Extend Request type to include user property
 interface AuthenticatedRequest extends Request {
@@ -79,6 +80,52 @@ export class ChallengeController {
           createdAt: "DESC",
         },
       });
+      res.json(challenges);
+    } catch (error) {
+      console.error("Error fetching challenges:", error);
+      res.status(500).json({ message: "Error fetching challenges" });
+    }
+  }
+
+  static async getChallengesByCircles(req: Request, res: Response) {
+    try {
+      const circleIds = req.query.ids?.toString().split(",").map(Number);
+
+      if (!circleIds) {
+        return res.status(400).json({ message: "Circle IDs are required" });
+      }
+
+      const challengeRepository = AppDataSource.getRepository(Challenge);
+      const challenges = await challengeRepository.find({
+        where: {
+          circleId: In(circleIds),
+        },
+        relations: {
+          circle: true,
+          creator: true,
+        },
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          circleId: true,
+          points: true,
+          createdBy: true,
+          createdAt: true,
+          circle: {
+            id: true,
+            name: true,
+          },
+          creator: {
+            id: true,
+            name: true,
+          },
+        },
+        order: {
+          createdAt: "DESC",
+        },
+      });
+
       res.json(challenges);
     } catch (error) {
       console.error("Error fetching challenges:", error);

@@ -5,10 +5,12 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  OneToMany,
   JoinColumn,
 } from "typeorm";
 import { Tenant } from "./Tenant";
 import { User } from "./User";
+import { CircleParticipants } from "./CircleParticipants";
 
 @Entity("circles")
 export class Circle {
@@ -37,4 +39,10 @@ export class Circle {
   @ManyToOne(() => User)
   @JoinColumn({ name: "createdBy" })
   creator: User;
+
+  @OneToMany(
+    () => CircleParticipants,
+    (circleParticipants) => circleParticipants.circle
+  )
+  circleParticipants: CircleParticipants[];
 }

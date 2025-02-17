@@ -6,6 +6,7 @@ import {
   Trophy,
   TrendingUp,
   Award,
+  Gauge,
 } from "lucide-react";
 
 interface StatCardProps {
@@ -118,7 +119,11 @@ const ModeratorDashboard: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-8 mt-10">
+    <div className="space-y-8 mt-6 ml-2">
+      <h2 className="text-2xl font-bold p-2 ml-3 flex items-center">
+        <Gauge className="w-6 h-6 mr-2" />
+        Moderator Dashboard
+      </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, index) => (
           <StatCard key={index} {...stat} />

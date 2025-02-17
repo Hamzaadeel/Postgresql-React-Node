@@ -1,5 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+} from "typeorm";
 import { Tenant } from "./Tenant";
+import { CircleParticipants } from "./CircleParticipants";
 
 export type UserRole = "moderator" | "employee"; // Define allowed roles
 
@@ -29,4 +36,10 @@ export class User {
 
   @Column({ nullable: true })
   tenantId: number;
+
+  @OneToMany(
+    () => CircleParticipants,
+    (circleParticipants) => circleParticipants.user
+  )
+  circleParticipants: CircleParticipants[];
 }

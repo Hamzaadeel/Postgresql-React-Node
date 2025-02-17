@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Tenant } from "../../services/api";
+import { Tenant } from "../../../services/api";
 
 interface EditTenantModalProps {
   isOpen: boolean;

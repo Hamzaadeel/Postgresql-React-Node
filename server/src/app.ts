@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import { AppDataSource } from "./data-source";
 import userRoutes from "./routes/userRoutes";
+import challengeParticipantsRoutes from "./routes/challengeParticipantsRoutes";
 
 const app = express();
 
@@ -19,5 +20,6 @@ app.use(express.json());
 
 // Routes
 app.use("/api/users", userRoutes);
+app.use("/api/challenge-participants", challengeParticipantsRoutes);
 
 export default app;

@@ -8,6 +8,7 @@ import circleRoutes from "./routes/circleRoutes";
 import challengeRoutes from "./routes/challengeRoutes";
 import circleParticipantsRoutes from "./routes/circleParticipantsRoutes";
 import challengeParticipantsRoutes from "./routes/challengeParticipantsRoutes";
+import pointsRoutes from "./routes/pointsRoutes";
 import { passportConfig } from "./middleware/passport";
 
 const app = express();
@@ -33,7 +34,7 @@ app.use("/api/circles", circleRoutes);
 app.use("/api/challenges", challengeRoutes);
 app.use("/api/circle-participants", circleParticipantsRoutes);
 app.use("/api/challenge-participants", challengeParticipantsRoutes);
-
+app.use("/api/points", pointsRoutes);
 // Define a route for the root path
 app.get("/", (req, res) => {
   res.send("Welcome to the API!"); // You can customize this message

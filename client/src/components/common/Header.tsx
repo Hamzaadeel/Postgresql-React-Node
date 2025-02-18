@@ -10,9 +10,12 @@ import {
   Building2,
   ChevronDown,
   Swords,
+  CircleDollarSign,
 } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUsers } from "@fortawesome/free-solid-svg-icons";
+import ConfirmationModal from "./ConfirmationModal"; // Import the ConfirmationModal
+
 interface HeaderProps {
   userRole: "Employee" | "Moderator";
   isSidebarOpen: boolean;
@@ -22,10 +25,47 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [showNotifications, setShowNotifications] = useState(false);
+  const [totalPoints, setTotalPoints] = useState<number>(0);
   const navigate = useNavigate();
 
   const profileRef = useRef<HTMLDivElement>(null);
   const notificationsRef = useRef<HTMLDivElement>(null);
+
+  // State for confirmation modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchTotalPoints = async () => {
+      try {
+        const user = JSON.parse(localStorage.getItem("user") || "{}");
+        const token = localStorage.getItem("token");
+
+        if (!user.id || !token) return;
+
+        const response = await fetch(
+          `http://localhost:5000/api/points/${user.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!response.ok) throw new Error("Failed to fetch points");
+
+        const data = await response.json();
+        setTotalPoints(data.totalPoints || 0);
+      } catch (error) {
+        console.error("Error fetching total points:", error);
+      }
+    };
+
+    fetchTotalPoints();
+    // Set up an interval to refresh points every minute
+    const intervalId = setInterval(fetchTotalPoints, 60000);
+
+    return () => clearInterval(intervalId);
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -90,13 +130,17 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
   };
 
   const handleLogout = () => {
+    setIsModalOpen(true); // Open confirmation modal
+  };
+
+  const confirmLogout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     navigate("/login");
   };
 
   return (
-    <header className="bg-white shadow-md transition-all duration-300">
+    <header className="bg-white shadow-lg transition-all duration-300">
       <div className="px-4 py-3 flex items-center justify-between">
         {/* Search Bar */}
         <form onSubmit={handleSearch} className="flex-1 max-w-xl">
@@ -115,10 +159,20 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
         {/* Right Section */}
         <div className="flex items-center space-x-4">
           <div className="relative">
-            <p className="text-sm font-semibold text-gray-800 mr-4">
-              Welcome Back,{" "}
-              {JSON.parse(localStorage.getItem("user") || "{}").name}! 😎
-            </p>
+            <div className="flex items-center space-x-2">
+              <p className="text-sm font-semibold text-gray-800">
+                Welcome Back,{" "}
+                {JSON.parse(localStorage.getItem("user") || "{}").name}!😎
+              </p>
+              {userRole === "Employee" && (
+                <div className="flex items-center bg-amber-100 px-3 py-1 rounded-full">
+                  <CircleDollarSign className="w-4 h-4 text-amber-600 mr-1" />
+                  <span className="text-sm font-semibold text-amber-600">
+                    {totalPoints} Points
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
           {/* Notifications */}
           <div className="relative" ref={notificationsRef}>
@@ -246,6 +300,16 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
           </div>
         </div>
       </div>
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={confirmLogout}
+        title="Confirm Logout"
+        message="Are you sure you want to logout?"
+        confirmButtonColor="bg-blue-600"
+      />
     </header>
   );
 };

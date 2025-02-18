@@ -14,17 +14,24 @@ import { faUsers } from "@fortawesome/free-solid-svg-icons";
 import Loader from "../../common/Loader";
 import ConfirmationModal from "../../common/ConfirmationModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import ChallengeDetailsEmp from "./ChallengeDetailsEmp";
 
 interface Challenge {
   id: number;
   title: string;
   description: string;
+  circleId: number;
   points: number;
+  createdBy: number;
+  createdAt: string;
   circle: {
     id: number;
     name: string;
   };
-  createdAt: string;
+  creator: {
+    id: number;
+    name: string;
+  };
 }
 
 interface ChallengeWithParticipation extends Challenge {
@@ -40,7 +47,6 @@ interface CircleParticipation {
   };
 }
 
-// Array of challenge card styles with different colors and icons
 const challengeStyles = [
   {
     icon: Trophy,
@@ -89,6 +95,7 @@ const EmployeeChallenges = () => {
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
   const [selectedChallenge, setSelectedChallenge] =
     useState<ChallengeWithParticipation | null>(null);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
 
   useEffect(() => {
     fetchChallenges();
@@ -251,6 +258,11 @@ const EmployeeChallenges = () => {
     return challengeStyles[index % challengeStyles.length];
   };
 
+  const handleCardClick = (challenge: ChallengeWithParticipation) => {
+    setSelectedChallenge(challenge);
+    setIsDetailsModalOpen(true);
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center h-screen mt-6">
@@ -300,7 +312,8 @@ const EmployeeChallenges = () => {
               return (
                 <div
                   key={challenge.id}
-                  className={`rounded-lg shadow-sm p-6 ${style.bgColor} border ${style.borderColor} transition-transform hover:scale-102`}
+                  className={`rounded-lg shadow-sm p-6 ${style.bgColor} border ${style.borderColor} transition-transform hover:scale-105 hover:shadow-lg cursor-pointer`}
+                  onClick={() => handleCardClick(challenge)}
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center">
@@ -314,25 +327,22 @@ const EmployeeChallenges = () => {
                     >
                       {challenge.points} Points
                     </div>
+                    <div
+                      className={`px-2 py-1 rounded-full ${
+                        challenge.status === "Completed"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-yellow-100 text-yellow-800"
+                      } text-sm font-semibold`}
+                    >
+                      {challenge.status}
+                    </div>
                   </div>
 
                   <p className="text-gray-600 mb-4 line-clamp-3">
                     {challenge.description}
                   </p>
 
-                  <div className="mb-2">
-                    <span
-                      className={`px-3 py-1 rounded-full bg-white text-sm font-semibold ${
-                        challenge.status === "Completed"
-                          ? "text-green-600"
-                          : "text-yellow-600"
-                      }`}
-                    >
-                      {challenge.status}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between mt-auto pt-2 border-t border-gray-200">
+                  <div className="flex items-center justify-between">
                     <div className="flex items-center">
                       <FontAwesomeIcon
                         icon={faUsers}
@@ -350,7 +360,8 @@ const EmployeeChallenges = () => {
                         </span>
                       ) : (
                         <button
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.stopPropagation();
                             setSelectedChallenge(challenge);
                             setIsSubmitModalOpen(true);
                           }}
@@ -391,7 +402,8 @@ const EmployeeChallenges = () => {
               return (
                 <div
                   key={challenge.id}
-                  className={`rounded-lg shadow-sm p-6 ${style.bgColor} border ${style.borderColor} transition-transform hover:scale-102`}
+                  className={`rounded-lg shadow-sm p-6 ${style.bgColor} border ${style.borderColor} transition-transform hover:scale-105 hover:shadow-lg cursor-pointer`}
+                  onClick={() => handleCardClick(challenge)}
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center">
@@ -411,7 +423,7 @@ const EmployeeChallenges = () => {
                     {challenge.description}
                   </p>
 
-                  <div className="flex items-center justify-between mt-auto pt-2 border-t border-gray-200">
+                  <div className="flex items-center justify-between">
                     <div className="flex items-center">
                       <FontAwesomeIcon
                         icon={faUsers}
@@ -422,7 +434,10 @@ const EmployeeChallenges = () => {
                       </span>
                     </div>
                     <button
-                      onClick={() => handleJoinChallenge(challenge.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleJoinChallenge(challenge.id);
+                      }}
                       className="flex items-center space-x-1 px-3 py-1 bg-white text-blue-600 rounded hover:bg-blue-50 transition-colors border border-blue-200"
                     >
                       <UserPlus className="w-4 h-4" />
@@ -446,6 +461,15 @@ const EmployeeChallenges = () => {
         title="Submit Challenge"
         message={`Are you sure you want to submit the challenge "${selectedChallenge?.title}"? This will mark it as completed.`}
         confirmButtonColor="bg-green-600"
+      />
+
+      <ChallengeDetailsEmp
+        isOpen={isDetailsModalOpen}
+        onClose={() => {
+          setIsDetailsModalOpen(false);
+          setSelectedChallenge(null);
+        }}
+        challenge={selectedChallenge}
       />
     </div>
   );

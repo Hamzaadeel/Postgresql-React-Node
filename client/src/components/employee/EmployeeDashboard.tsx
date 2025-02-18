@@ -1,5 +1,5 @@
 import { Bell, Gauge, Trophy, Users, Clock, ArrowRight } from "lucide-react";
-
+import Leaderboards from "./Leaderboards";
 const EmployeeDashboard = () => {
   const availableChallenges = [
     {
@@ -29,31 +29,6 @@ const EmployeeDashboard = () => {
       deadline: "2024-03-20",
       participants: 15,
       difficulty: "Easy",
-    },
-  ];
-
-  // Dummy data for circle leaderboard
-  const circleLeaderboard = [
-    {
-      id: 1,
-      name: "Sarah Johnson",
-      points: 1840,
-      avatar:
-        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop",
-    },
-    {
-      id: 2,
-      name: "Michael Chen",
-      points: 1560,
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop",
-    },
-    {
-      id: 3,
-      name: "Emily Rodriguez",
-      points: 1290,
-      avatar:
-        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop",
     },
   ];
 
@@ -149,54 +124,13 @@ const EmployeeDashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Circle Leaderboard */}
-        <div className="bg-white rounded-xl shadow-md p-6 ml-4">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-gray-800">
-              Circle Leaderboard
-            </h2>
-            <Trophy size={24} className="text-yellow-500" />
-          </div>
-          <div className="space-y-4">
-            {circleLeaderboard.map((member, index) => (
-              <div
-                key={member.id}
-                className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                <div className="flex items-center space-x-3">
-                  <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                      index === 0
-                        ? "bg-yellow-100 text-yellow-600"
-                        : index === 1
-                        ? "bg-gray-100 text-gray-600"
-                        : "bg-orange-100 text-orange-600"
-                    }`}
-                  >
-                    {index + 1}
-                  </div>
-                  <img
-                    src={member.avatar}
-                    alt={member.name}
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
-                  <span className="font-medium text-gray-800">
-                    {member.name}
-                  </span>
-                </div>
-                <span className="font-semibold text-primary">
-                  {member.points.toLocaleString()} pts
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
+        <Leaderboards />
 
         {/* Circle Updates */}
-        <div className="bg-white rounded-xl shadow-md p-6 ml-4">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-gray-800">Circle Updates</h2>
-            <Bell size={24} className="text-secondary" />
+        <div className="bg-white rounded-xl shadow-md p-6 ml-4 mb-4">
+          <div className="flex items-center justify-start mb-6">
+            <Bell className="text-blue-500 w-6 h-6" />
+            <h2 className="text-xl font-bold ml-2">Circle Updates</h2>
           </div>
           <div className="space-y-4">
             {circleUpdates.map((update) => (

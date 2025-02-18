@@ -3,6 +3,7 @@ import { AppDataSource } from "../data-source";
 import { ChallengeParticipants } from "../entities/ChallengeParticipants";
 import { User } from "../entities/User";
 import { Challenge } from "../entities/Challenge";
+import { Points } from "../entities/Points";
 
 export class ChallengeParticipantsController {
   static async getParticipantsByChallenge(req: Request, res: Response) {
@@ -125,6 +126,22 @@ export class ChallengeParticipantsController {
       });
 
       await participantsRepository.save(newParticipation);
+
+      // Check if points entry already exists for the user
+      const pointsRepository = AppDataSource.getRepository(Points);
+      let userPoints = await pointsRepository.findOne({
+        where: { userId: userId },
+      });
+
+      if (!userPoints) {
+        // Create a new points entry only if it doesn't exist
+        userPoints = pointsRepository.create({
+          userId: userId,
+          totalPoints: 0, // Initialize to 0 or set based on your logic
+        });
+        await pointsRepository.save(userPoints);
+      }
+
       res.status(201).json(newParticipation);
     } catch (error) {
       console.error("Error adding participant:", error);
@@ -144,9 +161,13 @@ export class ChallengeParticipantsController {
       const participantsRepository = AppDataSource.getRepository(
         ChallengeParticipants
       );
+
       const participation = await participantsRepository.findOne({
         where: { id },
-        relations: ["challenge"],
+        relations: {
+          challenge: true,
+          user: true,
+        },
       });
 
       if (!participation) {
@@ -158,6 +179,22 @@ export class ChallengeParticipantsController {
       // If the challenge is being completed, award the points
       if (status === "Completed") {
         participation.earnedPoints = participation.challenge.points;
+
+        // Update points in the Points table
+        const pointsRepository = AppDataSource.getRepository(Points);
+        let userPoints = await pointsRepository.findOne({
+          where: { userId: participation.user.id },
+        });
+
+        if (!userPoints) {
+          userPoints = pointsRepository.create({
+            userId: participation.user.id,
+            totalPoints: participation.earnedPoints,
+          });
+        } else {
+          userPoints.totalPoints += participation.earnedPoints;
+        }
+        await pointsRepository.save(userPoints);
       }
 
       await participantsRepository.save(participation);

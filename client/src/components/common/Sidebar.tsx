@@ -13,6 +13,7 @@ import {
 import logo from "../../assets/logos/dpl-logo.png"; // Adjust the path as necessary
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUsers } from "@fortawesome/free-solid-svg-icons";
+import ConfirmationModal from "./ConfirmationModal"; // Import the ConfirmationModal
 
 interface SidebarProps {
   userRole: "Employee" | "Moderator";
@@ -26,6 +27,9 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
     location.pathname
   ); // Set initial selected tab to current path
   const navigate = useNavigate(); // Use navigate for logout
+
+  // State for confirmation modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     setSelectedTab(location.pathname); // Update selected tab when location changes
@@ -42,13 +46,17 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
   };
 
   const handleLogout = () => {
+    setIsModalOpen(true); // Open confirmation modal
+  };
+
+  const confirmLogout = () => {
     localStorage.removeItem("user");
     navigate("/login");
   };
 
   return (
     <div
-      className={`flex flex-col h-screen bg-slate-800 text-white ${
+      className={`flex flex-col shadow-lg h-screen bg-slate-800 text-white ${
         isOpen ? "w-56" : "w-10"
       } transition-width duration-300`}
     >
@@ -204,6 +212,16 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
         <LogOut className="w-5 h-5" />
         <span className={`ml-2 ${isOpen ? "block" : "hidden"}`}>Logout</span>
       </li>
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={confirmLogout}
+        title="Confirm Logout"
+        message="Are you sure you want to logout?"
+        confirmButtonColor="bg-blue-600"
+      />
     </div>
   );
 };

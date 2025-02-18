@@ -7,6 +7,7 @@ import {
 } from "typeorm";
 import { Tenant } from "./Tenant";
 import { CircleParticipants } from "./CircleParticipants";
+import { Points } from "./Points";
 
 export type UserRole = "moderator" | "employee"; // Define allowed roles
 
@@ -42,4 +43,7 @@ export class User {
     (circleParticipants) => circleParticipants.user
   )
   circleParticipants: CircleParticipants[];
+
+  @OneToMany(() => Points, (points) => points.user)
+  points: Points[];
 }

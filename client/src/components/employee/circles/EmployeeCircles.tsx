@@ -218,7 +218,7 @@ const EmployeeCircles = () => {
               return (
                 <div
                   key={circle.id}
-                  className={`border rounded-lg shadow-sm p-4 ${style.bgColor} transition-transform hover:scale-102`}
+                  className={`border rounded-lg shadow-sm p-4 ${style.bgColor} transition-transform hover:scale-105 hover:shadow-lg cursor-pointer`}
                 >
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center space-x-2">
@@ -266,7 +266,7 @@ const EmployeeCircles = () => {
               return (
                 <div
                   key={circle.id}
-                  className={`border rounded-lg shadow-sm p-4 ${style.bgColor} transition-transform hover:scale-102`}
+                  className={`border rounded-lg shadow-sm p-4 ${style.bgColor} transition-transform hover:scale-105 hover:shadow-lg cursor-pointer`}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">

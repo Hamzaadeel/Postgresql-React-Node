@@ -76,7 +76,7 @@ const EmployeeProfile = () => {
     <div className="p-8 bg-gray-100 h-screen">
       <div className="max-w-2xl">
         <div className="flex items-center mb-6">
-          <User className="w-8 h-8 mr-3" />
+          <User className="w-8 h-8 mr-3 text-blue-500" />
           <h2 className="text-2xl font-bold">My Profile</h2>
         </div>
 

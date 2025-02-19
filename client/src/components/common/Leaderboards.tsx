@@ -63,7 +63,7 @@ const Leaderboards = () => {
       <div className="overflow-x-auto">
         <table className="min-w-full">
           <thead>
-            <tr className="bg-gray-50">
+            <tr className="bg-white">
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Rank
               </th>
@@ -77,7 +77,18 @@ const Leaderboards = () => {
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {leaders.map((leader, index) => (
-              <tr key={leader.id} className={index === 0 ? "bg-yellow-50" : ""}>
+              <tr
+                key={leader.id}
+                className={
+                  index === 0
+                    ? "bg-yellow-50"
+                    : index === 1
+                    ? "bg-slate-50"
+                    : index === 2
+                    ? "bg-amber-50"
+                    : "bg-white"
+                }
+              >
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
                     <span

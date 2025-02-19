@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Trophy } from "lucide-react";
-import Loader from "../common/Loader";
+import Loader from "./Loader";
 
 interface LeaderboardEntry {
   id: number;

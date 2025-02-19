@@ -19,6 +19,7 @@ import ChallengesManagement from "./components/moderator/challenges/ChallengesMa
 import ModeratorProfile from "./components/moderator/ModeratorProfile";
 import "./App.css";
 import TenantManagement from "./components/moderator/tenant/TenantManagement";
+import EmployeeCircleView from "./components/employee/circles/EmployeeCircleView";
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
           <Route path="profile" element={<EmployeeProfile />} />
           <Route path="challenges" element={<EmployeeChallenges />} />
           <Route path="circles" element={<EmployeeCircles />} />
+          <Route path="circles/:circleId" element={<EmployeeCircleView />} />
           <Route index element={<Navigate to="dashboard" replace />} />
         </Route>
 

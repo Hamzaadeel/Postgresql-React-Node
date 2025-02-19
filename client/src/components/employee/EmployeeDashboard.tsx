@@ -1,5 +1,5 @@
 import { Bell, Gauge, Trophy, Users, Clock, ArrowRight } from "lucide-react";
-import Leaderboards from "./Leaderboards";
+import Leaderboards from "../common/Leaderboards";
 const EmployeeDashboard = () => {
   const availableChallenges = [
     {

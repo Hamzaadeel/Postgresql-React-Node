@@ -1,8 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { User } from "lucide-react";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { updateUser } from "../../store/slices/authSlice";
+import { updateUser as updateUserApi } from "../../services/api";
 
 const ModeratorProfile = () => {
+  const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.auth.user);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -11,17 +16,14 @@ const ModeratorProfile = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Get user data from localStorage
-    const userString = localStorage.getItem("user");
-    if (!userString) {
+    if (!user) {
       navigate("/login");
       return;
     }
 
-    const user = JSON.parse(userString);
     setName(user.name);
     setEmail(user.email);
-  }, [navigate]);
+  }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,42 +32,22 @@ const ModeratorProfile = () => {
     setLoading(true);
 
     try {
-      const userString = localStorage.getItem("user");
-      if (!userString) {
+      if (!user) {
         throw new Error("User not found");
       }
 
-      const user = JSON.parse(userString);
-      const response = await fetch(
-        `http://localhost:5000/api/users/${user.id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({ name, email }),
-        }
-      );
+      const updatedUser = await updateUserApi(user.id, { name, email });
 
-      if (!response.ok) {
-        if (response.status === 401) {
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
-          navigate("/login");
-          return;
-        }
-        const data = await response.json();
-        throw new Error(data.message || "Failed to update profile");
-      }
-
-      const updatedUser = await response.json();
-      // Update the user in localStorage
-      localStorage.setItem("user", JSON.stringify({ ...user, ...updatedUser }));
+      // Update Redux store
+      dispatch(updateUser(updatedUser));
 
       setSuccessMessage("Profile updated successfully!");
       setTimeout(() => setSuccessMessage(null), 5000);
     } catch (err: any) {
+      if (err.response?.status === 401) {
+        navigate("/login");
+        return;
+      }
       setError(err.message || "Failed to update profile. Please try again.");
     } finally {
       setLoading(false);

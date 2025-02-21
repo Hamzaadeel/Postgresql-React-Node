@@ -1,21 +1,24 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect } from "react";
 import { Trophy } from "lucide-react";
 import Loader from "./Loader";
-
-interface LeaderboardEntry {
-  id: number;
-  name: string;
-  totalPoints: number;
-}
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import {
+  setLeaderboard,
+  setLoading,
+  setError,
+  LeaderboardEntry,
+} from "../../store/slices/pointsSlice";
+import axios from "axios";
 
 const Leaderboards = () => {
-  const [leaders, setLeaders] = useState<LeaderboardEntry[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const dispatch = useAppDispatch();
+  const { leaderboard, loading, error } = useAppSelector(
+    (state) => state.points
+  );
 
   useEffect(() => {
     const fetchLeaders = async () => {
+      dispatch(setLoading(true));
       try {
         const token = localStorage.getItem("token");
         const response = await axios.get<LeaderboardEntry[]>(
@@ -26,16 +29,18 @@ const Leaderboards = () => {
             },
           }
         );
-        setLeaders(response.data);
+        dispatch(setLeaderboard(response.data));
       } catch (err: any) {
-        setError(err.response?.data?.message || "Error fetching leaderboard");
+        dispatch(
+          setError(err.response?.data?.message || "Error fetching leaderboard")
+        );
       } finally {
-        setLoading(false);
+        dispatch(setLoading(false));
       }
     };
 
     fetchLeaders();
-  }, []);
+  }, [dispatch]);
 
   if (loading) {
     return (
@@ -76,7 +81,7 @@ const Leaderboards = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {leaders.map((leader, index) => (
+            {leaderboard.map((leader, index) => (
               <tr
                 key={leader.id}
                 className={

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { User } from "../types/User"; // Import the User type
+import { Challenge } from "../store/slices/challengeSlice"; // Import the Challenge type
 
 // Define the user type
 export interface UserData {
@@ -253,4 +254,28 @@ export const deleteCircle = async (circleId: number): Promise<void> => {
   } catch (error) {
     throw error;
   }
+};
+
+// Challenge endpoints
+export const getChallenges = async (): Promise<Challenge[]> => {
+  const response = await api.get<Challenge[]>("/challenges");
+  return response.data;
+};
+
+export const createChallenge = async (challengeData: any) => {
+  const response = await api.post("/challenges", challengeData);
+  return response.data;
+};
+
+export const updateChallenge = async (
+  challengeId: number,
+  challengeData: any
+) => {
+  const response = await api.put(`/challenges/${challengeId}`, challengeData);
+  return response.data;
+};
+
+export const deleteChallenge = async (challengeId: number) => {
+  const response = await api.delete(`/challenges/${challengeId}`);
+  return response.data;
 };

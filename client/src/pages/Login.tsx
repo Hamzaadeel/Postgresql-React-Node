@@ -2,9 +2,18 @@ import { useState } from "react";
 import { login } from "../services/api";
 import { Link, useNavigate } from "react-router-dom";
 import Loader from "../components/common/Loader";
+import { useAppDispatch } from "../store/hooks";
+import { setCredentials } from "../store/slices/authSlice";
+import { User } from "../types/User";
+
+interface LoginResponse {
+  user: User;
+  token: string;
+}
 
 const Login = () => {
-  const [credentials, setCredentials] = useState({
+  const dispatch = useAppDispatch();
+  const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
@@ -13,8 +22,8 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCredentials({
-      ...credentials,
+    setFormData({
+      ...formData,
       [e.target.name]: e.target.value,
     });
   };
@@ -23,14 +32,11 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await login(credentials);
-      const { user, token } = response;
+      const response = await login(formData);
+      const { user, token } = response as LoginResponse;
 
-      // Store both user and token
-      localStorage.setItem("user", JSON.stringify(user));
-      localStorage.setItem("token", token);
+      dispatch(setCredentials({ user, token }));
 
-      // Redirect based on role
       if (!user.role) {
         setError("User role not defined");
         return;
@@ -71,7 +77,7 @@ const Login = () => {
               <input
                 type="email"
                 name="email"
-                value={credentials.email}
+                value={formData.email}
                 onChange={handleChange}
                 className="w-full p-2 border rounded"
                 required
@@ -83,7 +89,7 @@ const Login = () => {
               <input
                 type="password"
                 name="password"
-                value={credentials.password}
+                value={formData.password}
                 onChange={handleChange}
                 className="w-full p-2 border rounded"
                 required

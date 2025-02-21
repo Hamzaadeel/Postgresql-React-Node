@@ -274,7 +274,7 @@ const EmployeeCircles = () => {
                 return (
                   <div
                     key={circle.id}
-                    className={`relative group bg-white border rounded-lg shadow-sm p-6 ${style.bgColor} transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer`}
+                    className={`relative group  border rounded-lg shadow-sm p-6 ${style.bgColor} transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer`}
                     onClick={() => handleViewCircle(circle.id)}
                   >
                     <div className="flex items-center justify-between mb-4">
@@ -394,7 +394,7 @@ const EmployeeCircles = () => {
                 return (
                   <div
                     key={circle.id}
-                    className={`relative group bg-white border rounded-lg shadow-sm p-6 ${style.bgColor} transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer`}
+                    className={`relative group  border rounded-lg shadow-sm p-6 ${style.bgColor} transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer`}
                     onClick={() => handleViewCircle(circle.id)}
                   >
                     <div className="flex items-center justify-between mb-4">
@@ -409,7 +409,7 @@ const EmployeeCircles = () => {
                           e.stopPropagation();
                           handleJoinCircle(circle.id);
                         }}
-                        className="flex items-center space-x-2 px-4 py-2 bg-white text-blue-600 rounded-lg hover:bg-blue-50 transition-colors border border-blue-200"
+                        className="flex items-center space-x-2 px-4 py-2  text-blue-600 rounded-lg hover:bg-blue-50 transition-colors border border-blue-200"
                       >
                         <UserPlus className="w-4 h-4" />
                         <span>Join</span>

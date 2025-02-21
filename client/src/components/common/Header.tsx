@@ -15,6 +15,9 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUsers } from "@fortawesome/free-solid-svg-icons";
 import ConfirmationModal from "./ConfirmationModal"; // Import the ConfirmationModal
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { setUserPoints } from "../../store/slices/pointsSlice";
+import axios from "axios";
 
 interface HeaderProps {
   userRole: "Employee" | "Moderator";
@@ -22,10 +25,12 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ userRole }) => {
+  const dispatch = useAppDispatch();
+  const { user } = useAppSelector((state) => state.auth);
+  const { userPoints } = useAppSelector((state) => state.points);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [showNotifications, setShowNotifications] = useState(false);
-  const [totalPoints, setTotalPoints] = useState<number>(0);
   const navigate = useNavigate();
 
   const profileRef = useRef<HTMLDivElement>(null);
@@ -35,37 +40,28 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    const fetchTotalPoints = async () => {
-      try {
-        const user = JSON.parse(localStorage.getItem("user") || "{}");
-        const token = localStorage.getItem("token");
+    if (user) {
+      fetchTotalPoints();
+    }
+  }, [user]);
 
-        if (!user.id || !token) return;
-
-        const response = await fetch(
-          `http://localhost:5000/api/points/${user.id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (!response.ok) throw new Error("Failed to fetch points");
-
-        const data = await response.json();
-        setTotalPoints(data.totalPoints || 0);
-      } catch (error) {
-        console.error("Error fetching total points:", error);
-      }
-    };
-
-    fetchTotalPoints();
-    // Set up an interval to refresh points every minute
-    const intervalId = setInterval(fetchTotalPoints, 60000);
-
-    return () => clearInterval(intervalId);
-  }, []);
+  const fetchTotalPoints = async () => {
+    try {
+      if (!user) return;
+      const token = localStorage.getItem("token");
+      const response = await axios.get<{ totalPoints: number }>(
+        `http://localhost:5000/api/points/${user.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      dispatch(setUserPoints(response.data.totalPoints));
+    } catch (error) {
+      console.error("Error fetching total points:", error);
+    }
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -76,7 +72,7 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
         !notificationsRef.current.contains(event.target as Node)
       ) {
         setIsProfileOpen(false);
-        setShowNotifications(false);
+        setIsNotificationsOpen(false);
       }
     };
 
@@ -88,11 +84,11 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
 
   const handleProfileToggle = () => {
     setIsProfileOpen((prev) => !prev);
-    setShowNotifications(false);
+    setIsNotificationsOpen(false);
   };
 
   const handleNotificationsToggle = () => {
-    setShowNotifications((prev) => !prev);
+    setIsNotificationsOpen((prev) => !prev);
     setIsProfileOpen(false);
   };
 
@@ -168,7 +164,7 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
                 <div className="flex items-center bg-amber-100 px-3 py-1 rounded-full">
                   <CircleDollarSign className="w-4 h-4 text-amber-600 mr-1" />
                   <span className="text-sm font-semibold text-amber-600">
-                    {totalPoints} Points
+                    {userPoints} Points
                   </span>
                 </div>
               )}
@@ -187,7 +183,7 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
             </button>
 
             {/* Notifications Dropdown */}
-            {showNotifications && (
+            {isNotificationsOpen && (
               <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg py-2 z-50">
                 {notifications.map((notification) => (
                   <div

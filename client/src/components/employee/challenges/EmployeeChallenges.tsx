@@ -53,26 +53,31 @@ const challengeStyles = [
     icon: Trophy,
     iconColor: "text-blue-600",
     pointsColor: "text-blue-700",
+    bgColor: "bg-blue-50",
   },
   {
     icon: Target,
     iconColor: "text-purple-600",
     pointsColor: "text-purple-700",
+    bgColor: "bg-purple-50",
   },
   {
     icon: Flag,
     iconColor: "text-green-600",
     pointsColor: "text-green-700",
+    bgColor: "bg-green-50",
   },
   {
     icon: Award,
     iconColor: "text-yellow-600",
     pointsColor: "text-yellow-700",
+    bgColor: "bg-yellow-50",
   },
   {
     icon: Crown,
     iconColor: "text-red-600",
     pointsColor: "text-red-700",
+    bgColor: "bg-red-50",
   },
 ];
 
@@ -344,7 +349,7 @@ const EmployeeChallenges = () => {
                 return (
                   <div
                     key={challenge.id}
-                    className={`relative group bg-white border rounded-lg shadow-sm p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer`}
+                    className={`relative group  border rounded-lg shadow-sm p-6 ${style.bgColor} transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer`}
                     onClick={() => handleCardClick(challenge)}
                   >
                     <div className="flex items-start justify-between mb-4">
@@ -475,7 +480,7 @@ const EmployeeChallenges = () => {
                 return (
                   <div
                     key={challenge.id}
-                    className={`relative group bg-white border rounded-lg shadow-sm p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer`}
+                    className={`relative group  border rounded-lg shadow-sm p-6 ${style.bgColor} transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer`}
                     onClick={() => handleCardClick(challenge)}
                   >
                     <div className="flex items-start justify-between mb-4">

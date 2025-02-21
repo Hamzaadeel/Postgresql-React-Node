@@ -1,8 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { User } from "lucide-react";
+import { useAppDispatch } from "../../store/hooks";
+import { updateUser } from "../../store/slices/authSlice";
+import { updateUser as updateUserApi } from "../../services/api";
 
 const EmployeeProfile = () => {
+  const dispatch = useAppDispatch();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -36,32 +40,8 @@ const EmployeeProfile = () => {
       }
 
       const user = JSON.parse(userString);
-      const response = await fetch(
-        `http://localhost:5000/api/users/${user.id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({ name, email }),
-        }
-      );
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
-          navigate("/login");
-          return;
-        }
-        const data = await response.json();
-        throw new Error(data.message || "Failed to update profile");
-      }
-
-      const updatedUser = await response.json();
-      // Update the user in localStorage
-      localStorage.setItem("user", JSON.stringify({ ...user, ...updatedUser }));
+      const updatedUser = await updateUserApi(user.id, { name, email });
+      dispatch(updateUser(updatedUser));
 
       setSuccessMessage("Profile updated successfully!");
       setTimeout(() => setSuccessMessage(null), 5000);

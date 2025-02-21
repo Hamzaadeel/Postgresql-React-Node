@@ -1,5 +1,6 @@
-import { X, Swords, Circle, User, Calendar } from "lucide-react";
-
+import { X, Swords, User, Calendar } from "lucide-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUsers } from "@fortawesome/free-solid-svg-icons";
 interface Challenge {
   id: number;
   title: string;
@@ -68,7 +69,10 @@ const ChallengeDetailsView = ({
 
           {/* Circle Information */}
           <div className="flex items-center">
-            <Circle className="w-5 h-5 mr-2 text-gray-500" />
+            <FontAwesomeIcon
+              icon={faUsers}
+              className="w-5 h-5 mr-2 text-gray-500"
+            />
             <div>
               <h4 className="text-sm font-semibold text-gray-500">Circle</h4>
               <p className="text-gray-700">{challenge.circle.name}</p>

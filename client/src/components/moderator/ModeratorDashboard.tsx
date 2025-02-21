@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Users, Building2, CircleDot, Trophy, Gauge } from "lucide-react";
-import axios from "axios";
 import Leaderboards from "../common/Leaderboards";
 import Loader from "../common/Loader";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { setUsers } from "../../store/slices/userSlice";
 import { Circle, Tenant } from "../../services/api";
+import { User } from "../../types/User";
+import axios from "axios";
 
 interface Challenge {
   id: number;
@@ -15,23 +18,25 @@ interface Challenge {
   createdAt: string;
 }
 
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
-}
-
 interface StatCardProps {
   title: string;
   value: string | number;
   icon: React.ReactNode;
   color: string;
+  backgroundColor: string;
 }
 
-const StatCard: React.FC<StatCardProps> = ({ title, value, icon, color }) => (
-  <div className="bg-white ml-2 rounded-xl shadow-md p-6 flex flex-col hover:scale-105 transition-all duration-300 cursor-pointer">
-    <div className="flex items-center justify-between mb-4">
+const StatCard: React.FC<StatCardProps> = ({
+  title,
+  value,
+  icon,
+  color,
+  backgroundColor,
+}) => (
+  <div
+    className={` ml-2 rounded-xl shadow-md p-6 flex flex-col hover:scale-105 transition-all duration-300 cursor-pointer ${backgroundColor}`}
+  >
+    <div className="flex items-center justify-between mb-4 ">
       <div className={`p-3 rounded-lg ${color}`}>{icon}</div>
     </div>
     <h3 className="text-gray-500 text-sm font-medium">{title}</h3>
@@ -40,6 +45,8 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon, color }) => (
 );
 
 const ModeratorDashboard: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const { loading: usersLoading } = useAppSelector((state) => state.users);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [stats, setStats] = useState({
@@ -76,6 +83,9 @@ const ModeratorDashboard: React.FC = () => {
             axios.get<User[]>("http://localhost:5000/api/users", { headers }),
           ]);
 
+        // Update Redux store with users
+        dispatch(setUsers(usersRes.data));
+
         setStats({
           tenants: tenantsRes.data.length,
           circles: circlesRes.data.length,
@@ -92,9 +102,9 @@ const ModeratorDashboard: React.FC = () => {
     };
 
     fetchStats();
-  }, []);
+  }, [dispatch]);
 
-  if (loading) {
+  if (loading || usersLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
         <Loader />
@@ -116,24 +126,28 @@ const ModeratorDashboard: React.FC = () => {
       value: stats.tenants,
       icon: <Building2 size={24} className="text-white" />,
       color: "bg-blue-500",
+      backgroundColor: "bg-sky-200",
     },
     {
       title: "Active Circles",
       value: stats.circles,
       icon: <CircleDot size={24} className="text-white" />,
       color: "bg-purple-500",
+      backgroundColor: "bg-violet-200",
     },
     {
       title: "Active Challenges",
       value: stats.challenges,
       icon: <Trophy size={24} className="text-white" />,
       color: "bg-yellow-500",
+      backgroundColor: "bg-amber-200",
     },
     {
       title: "Total Users",
       value: stats.users,
       icon: <Users size={24} className="text-white" />,
       color: "bg-green-500",
+      backgroundColor: "bg-green-100",
     },
   ];
 

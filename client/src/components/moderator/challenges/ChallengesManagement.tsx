@@ -103,18 +103,46 @@ const ChallengesManagement = () => {
   };
 
   const handleAddChallenge = async (challengeData: any) => {
+    console.log("Challenge Data:", challengeData);
+
+    if (
+      !challengeData.title ||
+      !challengeData.points ||
+      !challengeData.circleIds ||
+      challengeData.circleIds.length === 0
+    ) {
+      dispatch(setError("Title, points, and circle are required."));
+      setTimeout(() => {
+        dispatch(setError(""));
+      }, 5000);
+      return;
+    }
+
+    const newChallengeData = {
+      title: challengeData.title,
+      description: challengeData.description,
+      points: challengeData.points,
+      circleId: challengeData.circleIds[0],
+    };
+
     try {
-      const newChallenge = await createChallenge(challengeData);
+      const newChallenge = await createChallenge(newChallengeData);
       dispatch(addChallenge(newChallenge as Challenge));
       setIsAddModalOpen(false);
       showSuccessMessage("Challenge added successfully!");
     } catch (error: any) {
-      if (error.response?.status === 401) {
-        handleAuthError();
+      if (error.response) {
+        console.error("Error adding challenge:", error.response.data);
+        if (error.response.status === 401) {
+          handleAuthError();
+        } else {
+          dispatch(
+            setError(error.response.data.message || "Error adding challenge")
+          );
+        }
       } else {
-        dispatch(
-          setError(error.response?.data?.message || "Error adding challenge")
-        );
+        console.error("Error adding challenge:", error);
+        dispatch(setError("Error adding challenge"));
       }
     }
   };

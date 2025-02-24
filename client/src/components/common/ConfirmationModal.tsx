@@ -1,3 +1,6 @@
+import { motion, AnimatePresence } from "framer-motion";
+import React from "react";
+
 interface ConfirmationModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -15,32 +18,51 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   message,
   confirmButtonColor = "bg-red-600",
 }) => {
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-96">
-        <h2 className="text-xl font-bold text-gray-800 mb-4">{title}</h2>
-        <p className="text-gray-600 mb-6">{message}</p>
-        <div className="flex justify-end space-x-3">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 border rounded hover:bg-gray-300 text-gray-700"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={() => {
-              onConfirm();
-              onClose();
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1.05 }}
+            exit={{ opacity: 0, scale: 0.5 }}
+            transition={{
+              type: "spring",
+              stiffness: 200,
+              damping: 15,
+              duration: 0.2,
             }}
-            className={`px-4 py-2 ${confirmButtonColor} text-white rounded hover:scale-105 transition-all duration-300`}
+            className="bg-white rounded-lg p-6 w-96 shadow-lg"
           >
-            Confirm
-          </button>
-        </div>
-      </div>
-    </div>
+            <h2 className="text-xl font-bold text-gray-800 mb-4">{title}</h2>
+            <p className="text-gray-600 mb-6">{message}</p>
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={onClose}
+                className="px-4 py-2 border rounded hover:bg-gray-300 text-gray-700"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  onConfirm();
+                  onClose();
+                }}
+                className={`px-4 py-2 ${confirmButtonColor} text-white rounded hover:scale-105 transition-all duration-300`}
+              >
+                Confirm
+              </button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
 

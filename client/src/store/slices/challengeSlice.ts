@@ -18,8 +18,13 @@ export interface Challenge {
   };
 }
 
+interface ChallengeWithParticipation extends Challenge {
+  participationId?: number;
+  status?: "Pending" | "Completed";
+}
+
 interface ChallengeState {
-  challenges: Challenge[];
+  challenges: ChallengeWithParticipation[];
   loading: boolean;
   error: string | null;
   totalChallenges: number;
@@ -36,7 +41,10 @@ const challengeSlice = createSlice({
   name: "challenge",
   initialState,
   reducers: {
-    setChallenges: (state, action: PayloadAction<Challenge[]>) => {
+    setChallenges: (
+      state,
+      action: PayloadAction<ChallengeWithParticipation[]>
+    ) => {
       state.challenges = action.payload;
       state.totalChallenges = action.payload.length;
     },
@@ -49,7 +57,39 @@ const challengeSlice = createSlice({
         (c) => c.id === action.payload.id
       );
       if (index !== -1) {
-        state.challenges[index] = action.payload;
+        state.challenges[index] = {
+          ...state.challenges[index],
+          ...action.payload,
+        };
+      }
+    },
+    joinChallenge: (
+      state,
+      action: PayloadAction<{ challengeId: number; participationId: number }>
+    ) => {
+      const index = state.challenges.findIndex(
+        (c) => c.id === action.payload.challengeId
+      );
+      if (index !== -1) {
+        state.challenges[index] = {
+          ...state.challenges[index],
+          participationId: action.payload.participationId,
+          status: "Pending",
+        };
+      }
+    },
+    submitChallenge: (
+      state,
+      action: PayloadAction<{ challengeId: number }>
+    ) => {
+      const index = state.challenges.findIndex(
+        (c) => c.id === action.payload.challengeId
+      );
+      if (index !== -1) {
+        state.challenges[index] = {
+          ...state.challenges[index],
+          status: "Completed",
+        };
       }
     },
     deleteChallenge: (state, action: PayloadAction<number>) => {
@@ -72,6 +112,8 @@ export const {
   addChallenge,
   updateChallenge,
   deleteChallenge,
+  joinChallenge,
+  submitChallenge,
   setLoading,
   setError,
 } = challengeSlice.actions;

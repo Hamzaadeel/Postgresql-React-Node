@@ -1,11 +1,17 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Circle } from "../../services/api";
 
+export interface CircleWithParticipation extends Circle {
+  isParticipant?: boolean;
+  participationId?: number;
+}
+
 interface CircleState {
-  circles: Circle[];
+  circles: CircleWithParticipation[];
   loading: boolean;
   error: string | null;
   totalCircles: number;
+  successMessage: string | null;
 }
 
 const initialState: CircleState = {
@@ -13,13 +19,14 @@ const initialState: CircleState = {
   loading: false,
   error: null,
   totalCircles: 0,
+  successMessage: null,
 };
 
 const circleSlice = createSlice({
-  name: "circle",
+  name: "circles",
   initialState,
   reducers: {
-    setCircles: (state, action: PayloadAction<Circle[]>) => {
+    setCircles: (state, action: PayloadAction<CircleWithParticipation[]>) => {
       state.circles = action.payload;
       state.totalCircles = action.payload.length;
     },
@@ -43,6 +50,28 @@ const circleSlice = createSlice({
     setError: (state, action: PayloadAction<string | null>) => {
       state.error = action.payload;
     },
+    setSuccessMessage: (state, action: PayloadAction<string | null>) => {
+      state.successMessage = action.payload;
+    },
+    joinCircle: (
+      state,
+      action: PayloadAction<{ circleId: number; participationId: number }>
+    ) => {
+      const circle = state.circles.find(
+        (c) => c.id === action.payload.circleId
+      );
+      if (circle) {
+        circle.isParticipant = true;
+        circle.participationId = action.payload.participationId;
+      }
+    },
+    leaveCircle: (state, action: PayloadAction<number>) => {
+      const circle = state.circles.find((c) => c.id === action.payload);
+      if (circle) {
+        circle.isParticipant = false;
+        circle.participationId = undefined;
+      }
+    },
   },
 });
 
@@ -53,5 +82,8 @@ export const {
   deleteCircle,
   setLoading,
   setError,
+  setSuccessMessage,
+  joinCircle,
+  leaveCircle,
 } = circleSlice.actions;
 export default circleSlice.reducer;

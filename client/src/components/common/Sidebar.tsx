@@ -57,11 +57,14 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
   return (
     <div
       className={`flex flex-col shadow-lg h-screen ${
-        userRole === "Employee" ? "bg-sky-900" : "bg-emerald-900"
+        userRole === "Employee"
+          ? "bg-gradient-to-b from-sky-950 via-sky-800 to-sky-600"
+          : "bg-gradient-to-b from-emerald-950 via-emerald-800 to-emerald-600"
       } text-white ${isOpen ? "w-56" : "w-10"} transition-width duration-300`}
     >
       <button
         onClick={toggleSidebar}
+        title={isOpen ? "Minimize sidebar" : "Open sidebar"}
         className="p-2 text-white hover:text-gray-100"
       >
         {isOpen ? (
@@ -87,9 +90,9 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
           {userRole === "Employee" ? (
             <>
               <li
-                className={`flex items-center p-2 cursor-pointer hover:bg-cyan-200 hover:text-black ${
+                className={`flex items-center p-2 cursor-pointer hover:bg-gradient-to-r from-cyan-200 to-teal-400 hover:text-black ${
                   selectedTab === "/employee/dashboard"
-                    ? "bg-cyan-200 text-black"
+                    ? "bg-gradient-to-r from-cyan-200 to-teal-400 text-black"
                     : ""
                 }`}
                 onClick={() => handleTabClick("/employee/dashboard")}
@@ -100,9 +103,9 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
                 </span>
               </li>
               <li
-                className={`flex items-center p-2 cursor-pointer hover:bg-cyan-200 hover:text-black ${
+                className={`flex items-center p-2 cursor-pointer hover:bg-gradient-to-r from-cyan-200 to-teal-400 hover:text-black ${
                   selectedTab === "/employee/circles"
-                    ? "bg-cyan-200 text-black"
+                    ? "bg-gradient-to-r from-cyan-200 to-teal-400 text-black"
                     : ""
                 }`}
                 onClick={() => handleTabClick("/employee/circles")}
@@ -113,9 +116,9 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
                 </span>
               </li>
               <li
-                className={`flex items-center p-2 cursor-pointer hover:bg-cyan-200 hover:text-black ${
+                className={`flex items-center p-2 cursor-pointer hover:bg-gradient-to-r from-cyan-200 to-teal-400 hover:text-black ${
                   selectedTab === "/employee/challenges"
-                    ? "bg-cyan-200 text-black"
+                    ? "bg-gradient-to-r from-cyan-200 to-teal-400 text-black"
                     : ""
                 }`}
                 onClick={() => handleTabClick("/employee/challenges")}
@@ -126,9 +129,9 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
                 </span>
               </li>
               <li
-                className={`flex items-center p-2 cursor-pointer hover:bg-cyan-200 hover:text-black ${
+                className={`flex items-center p-2 cursor-pointer hover:bg-gradient-to-r from-cyan-200 to-teal-400 hover:text-black ${
                   selectedTab === "/employee/profile"
-                    ? "bg-cyan-200 text-black"
+                    ? "bg-gradient-to-r from-cyan-200 to-teal-400 text-black"
                     : ""
                 }`}
                 onClick={() => handleTabClick("/employee/profile")}
@@ -142,9 +145,9 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
           ) : userRole === "Moderator" ? (
             <>
               <li
-                className={`flex items-center p-2 cursor-pointer hover:bg-emerald-200 hover:text-black ${
+                className={`flex items-center p-2 cursor-pointer hover:bg-gradient-to-r from-emerald-200 to-emerald-400 hover:text-black ${
                   selectedTab === "/moderator/dashboard"
-                    ? "bg-emerald-200 text-black"
+                    ? "bg-gradient-to-r from-emerald-200 to-emerald-400 text-black"
                     : ""
                 }`}
                 onClick={() => handleTabClick("/moderator/dashboard")}
@@ -155,9 +158,9 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
                 </span>
               </li>
               <li
-                className={`flex items-center p-2 cursor-pointer hover:bg-emerald-200 hover:text-black ${
+                className={`flex items-center p-2 cursor-pointer hover:bg-gradient-to-r from-emerald-200 to-emerald-400 hover:text-black ${
                   selectedTab === "/moderator/tenants"
-                    ? "bg-emerald-200 text-black"
+                    ? "bg-gradient-to-r from-emerald-200 to-emerald-400 text-black"
                     : ""
                 }`}
                 onClick={() => handleTabClick("/moderator/tenants")}
@@ -168,9 +171,9 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
                 </span>
               </li>
               <li
-                className={`flex items-center p-2 cursor-pointer hover:bg-emerald-200 hover:text-black ${
+                className={`flex items-center p-2 cursor-pointer hover:bg-gradient-to-r from-emerald-200 to-emerald-400 hover:text-black ${
                   selectedTab === "/moderator/users"
-                    ? "bg-emerald-200 text-black"
+                    ? "bg-gradient-to-r from-emerald-200 to-emerald-400 text-black"
                     : ""
                 }`}
                 onClick={() => handleTabClick("/moderator/users")}
@@ -181,9 +184,9 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
                 </span>
               </li>
               <li
-                className={`flex items-center p-2 cursor-pointer hover:bg-emerald-200 hover:text-black ${
+                className={`flex items-center p-2 cursor-pointer hover:bg-gradient-to-r from-emerald-200 to-emerald-400 hover:text-black ${
                   selectedTab === "/moderator/circles"
-                    ? "bg-emerald-200 text-black"
+                    ? "bg-gradient-to-r from-emerald-200 to-emerald-400 text-black"
                     : ""
                 }`}
                 onClick={() => handleTabClick("/moderator/circles")}
@@ -194,9 +197,9 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
                 </span>
               </li>
               <li
-                className={`flex items-center p-2 cursor-pointer hover:bg-emerald-200 hover:text-black ${
+                className={`flex items-center p-2 cursor-pointer hover:bg-gradient-to-r from-emerald-200 to-emerald-400 hover:text-black ${
                   selectedTab === "/moderator/challenges"
-                    ? "bg-emerald-200 text-black"
+                    ? "bg-gradient-to-r from-emerald-200 to-emerald-400 text-black"
                     : ""
                 }`}
                 onClick={() => handleTabClick("/moderator/challenges")}
@@ -207,9 +210,9 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
                 </span>
               </li>
               <li
-                className={`flex items-center p-2 cursor-pointer hover:bg-emerald-200 hover:text-black ${
+                className={`flex items-center p-2 cursor-pointer hover:bg-gradient-to-r from-emerald-200 to-emerald-400 hover:text-black ${
                   selectedTab === "/moderator/profile"
-                    ? "bg-emerald-200 text-black"
+                    ? "bg-gradient-to-r from-emerald-200 to-emerald-400 text-black"
                     : ""
                 }`}
                 onClick={() => handleTabClick("/moderator/profile")}
@@ -225,7 +228,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
       </div>
 
       <li
-        className="flex items-center mb-2 p-2 w-full hover:bg-red-700 cursor-pointer"
+        className="flex items-center mb-2 p-2 w-full hover:bg-gradient-to-r from-red-600 to-red-900 cursor-pointer"
         onClick={handleLogout}
       >
         <LogOut className="w-5 h-5" />

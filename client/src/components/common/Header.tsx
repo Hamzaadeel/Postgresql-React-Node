@@ -224,28 +224,28 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
                   <>
                     <button
                       onClick={() => handleNavigation("/employee/dashboard")}
-                      className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-gray-100"
+                      className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-gradient-to-r from-cyan-200 to-teal-400"
                     >
                       <Home className="h-4 w-4" />
                       <span>Dashboard</span>
                     </button>
                     <button
                       onClick={() => handleNavigation("/employee/circles")}
-                      className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-gray-100"
+                      className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-gradient-to-r from-cyan-200 to-teal-400"
                     >
                       <FontAwesomeIcon icon={faUsers} className="h-4 w-4" />
                       <span>Circles</span>
                     </button>
                     <button
                       onClick={() => handleNavigation("/employee/challenges")}
-                      className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-gray-100"
+                      className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-gradient-to-r from-cyan-200 to-teal-400"
                     >
                       <Swords className="h-4 w-4" />
                       <span>Challenges</span>
                     </button>
                     <button
                       onClick={() => handleNavigation("/employee/profile")}
-                      className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-gray-100"
+                      className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-gradient-to-r from-cyan-200 to-teal-400"
                     >
                       <User className="h-4 w-4" />
                       <span>Profile</span>
@@ -255,28 +255,28 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
                   <>
                     <button
                       onClick={() => handleNavigation("/moderator/dashboard")}
-                      className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-gray-100"
+                      className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-gradient-to-r from-emerald-200 to-emerald-400"
                     >
                       <Home className="h-4 w-4" />
                       <span>Dashboard</span>
                     </button>
                     <button
                       onClick={() => handleNavigation("/moderator/tenants")}
-                      className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-gray-100"
+                      className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-gradient-to-r from-emerald-200 to-emerald-400"
                     >
                       <Building2 className="h-4 w-4" />
                       <span>Tenants</span>
                     </button>
                     <button
                       onClick={() => handleNavigation("/moderator/users")}
-                      className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-gray-100"
+                      className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-gradient-to-r from-emerald-200 to-emerald-400"
                     >
                       <Users className="h-4 w-4" />
                       <span>Users</span>
                     </button>
                     <button
                       onClick={() => handleNavigation("/moderator/profile")}
-                      className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-gray-100"
+                      className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-gradient-to-r from-emerald-200 to-emerald-400"
                     >
                       <User className="h-4 w-4" />
                       <span>Profile</span>
@@ -286,7 +286,7 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
                 <hr className="my-2" />
                 <button
                   onClick={handleLogout}
-                  className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-red-700 hover:text-white"
+                  className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-gradient-to-r from-red-600 to-red-900 hover:text-white"
                 >
                   <LogOut className="h-4 w-4" />
                   <span>Logout</span>

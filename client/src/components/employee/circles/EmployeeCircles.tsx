@@ -20,11 +20,17 @@ import { useNavigate } from "react-router-dom";
 import ConfirmationModal from "../../common/ConfirmationModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUsers } from "@fortawesome/free-solid-svg-icons";
-
-interface CircleWithParticipation extends Circle {
-  isParticipant?: boolean;
-  participationId?: number;
-}
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../../store/store";
+import {
+  CircleWithParticipation,
+  setCircles,
+  setLoading,
+  setError,
+  setSuccessMessage,
+  joinCircle,
+  leaveCircle,
+} from "../../../store/slices/circleSlice";
 
 interface CircleParticipation {
   id: number;
@@ -42,10 +48,10 @@ const circleStyles = [
 ];
 
 const EmployeeCircles = () => {
-  const [circles, setCircles] = useState<CircleWithParticipation[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const dispatch = useDispatch();
+  const { circles, loading, error, successMessage } = useSelector(
+    (state: RootState) => state.circles
+  );
   const [isLeaveModalOpen, setIsLeaveModalOpen] = useState(false);
   const [selectedCircle, setSelectedCircle] =
     useState<CircleWithParticipation | null>(null);
@@ -56,22 +62,23 @@ const EmployeeCircles = () => {
 
   useEffect(() => {
     fetchCircles();
-  }, []);
+  }, [dispatch]);
 
   const fetchCircles = async () => {
     const token = localStorage.getItem("token");
     const userString = localStorage.getItem("user");
 
     if (!token || !userString) {
-      setError("You need to be logged in to view circles.");
-      setLoading(false);
+      dispatch(setError("You need to be logged in to view circles."));
+      dispatch(setLoading(false));
       return;
     }
 
     const user = JSON.parse(userString);
 
     try {
-      // Fetch all circles from user's tenant
+      dispatch(setLoading(true));
+
       const circlesResponse = await axios.get<Circle[]>(
         "http://localhost:5000/api/circles",
         {
@@ -81,7 +88,6 @@ const EmployeeCircles = () => {
         }
       );
 
-      // Fetch user's circle participations
       const participationsResponse = await axios.get<CircleParticipation[]>(
         `http://localhost:5000/api/circle-participants/user/${user.id}`,
         {
@@ -91,7 +97,6 @@ const EmployeeCircles = () => {
         }
       );
 
-      // Filter circles by user's tenant and add participation status
       const tenantCircles = circlesResponse.data
         .filter((circle) => circle.tenantId === user.tenantId)
         .map((circle) => {
@@ -105,12 +110,14 @@ const EmployeeCircles = () => {
           };
         });
 
-      setCircles(tenantCircles);
+      dispatch(setCircles(tenantCircles));
     } catch (err: any) {
       console.error("Error:", err);
-      setError(err.response?.data?.message || "Error fetching circles.");
+      dispatch(
+        setError(err.response?.data?.message || "Error fetching circles.")
+      );
     } finally {
-      setLoading(false);
+      dispatch(setLoading(false));
     }
   };
 
@@ -119,14 +126,14 @@ const EmployeeCircles = () => {
     const userString = localStorage.getItem("user");
 
     if (!token || !userString) {
-      setError("You need to be logged in to join circles.");
+      dispatch(setError("You need to be logged in to join circles."));
       return;
     }
 
     const user = JSON.parse(userString);
 
     try {
-      await axios.post(
+      const response = await axios.post<{ id: number }>(
         "http://localhost:5000/api/circle-participants",
         {
           userId: user.id,
@@ -139,21 +146,23 @@ const EmployeeCircles = () => {
         }
       );
 
-      setSuccessMessage("Successfully joined the circle!");
-      setTimeout(() => setSuccessMessage(null), 3000);
-      await fetchCircles();
+      dispatch(joinCircle({ circleId, participationId: response.data.id }));
+      dispatch(setSuccessMessage("Successfully joined the circle!"));
+      setTimeout(() => dispatch(setSuccessMessage(null)), 3000);
     } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to join circle.");
-      setTimeout(() => setError(null), 3000);
+      dispatch(
+        setError(err.response?.data?.message || "Failed to join circle.")
+      );
+      setTimeout(() => dispatch(setError(null)), 3000);
     }
   };
 
   const handleLeaveCircle = async () => {
-    if (!selectedCircle?.participationId) return;
+    if (!selectedCircle?.participationId || !selectedCircle.id) return;
 
     const token = localStorage.getItem("token");
     if (!token) {
-      setError("You need to be logged in to leave circles.");
+      dispatch(setError("You need to be logged in to leave circles."));
       return;
     }
 
@@ -167,14 +176,16 @@ const EmployeeCircles = () => {
         }
       );
 
-      setSuccessMessage("Successfully left the circle!");
-      setTimeout(() => setSuccessMessage(null), 3000);
-      await fetchCircles();
+      dispatch(leaveCircle(selectedCircle.id));
+      dispatch(setSuccessMessage("Successfully left the circle!"));
+      setTimeout(() => dispatch(setSuccessMessage(null)), 3000);
       setIsLeaveModalOpen(false);
       setSelectedCircle(null);
     } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to leave circle.");
-      setTimeout(() => setError(null), 3000);
+      dispatch(
+        setError(err.response?.data?.message || "Failed to leave circle.")
+      );
+      setTimeout(() => dispatch(setError(null)), 3000);
     }
   };
 

@@ -16,24 +16,16 @@ import Loader from "../../common/Loader";
 import ConfirmationModal from "../../common/ConfirmationModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ChallengeDetailsEmp from "./ChallengeDetailsEmp";
-
-interface Challenge {
-  id: number;
-  title: string;
-  description: string;
-  circleId: number;
-  points: number;
-  createdBy: number;
-  createdAt: string;
-  circle: {
-    id: number;
-    name: string;
-  };
-  creator: {
-    id: number;
-    name: string;
-  };
-}
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../../store/store";
+import {
+  Challenge,
+  setChallenges,
+  setLoading,
+  setError,
+  joinChallenge,
+  submitChallenge,
+} from "../../../store/slices/challengeSlice";
 
 interface ChallengeWithParticipation extends Challenge {
   participationId?: number;
@@ -46,6 +38,13 @@ interface CircleParticipation {
     id: number;
     name: string;
   };
+}
+
+interface ChallengeParticipationResponse {
+  id: number;
+  userId: number;
+  challengeId: number;
+  status: "Pending" | "Completed";
 }
 
 const challengeStyles = [
@@ -82,11 +81,12 @@ const challengeStyles = [
 ];
 
 const EmployeeChallenges = () => {
-  const [challenges, setChallenges] = useState<ChallengeWithParticipation[]>(
-    []
-  );
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const dispatch = useDispatch();
+  const {
+    challenges,
+    loading: reduxLoading,
+    error: reduxError,
+  } = useSelector((state: RootState) => state.challenges);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
   const [selectedChallenge, setSelectedChallenge] =
@@ -98,22 +98,23 @@ const EmployeeChallenges = () => {
 
   useEffect(() => {
     fetchChallenges();
-  }, []);
+  }, [dispatch]);
 
   const fetchChallenges = async () => {
     const token = localStorage.getItem("token");
     const userString = localStorage.getItem("user");
 
     if (!token || !userString) {
-      setError("You need to be logged in to view challenges.");
-      setLoading(false);
+      dispatch(setError("You need to be logged in to view challenges."));
+      dispatch(setLoading(false));
       return;
     }
 
     const user = JSON.parse(userString);
 
     try {
-      // First, get all challenges from user's circles
+      dispatch(setLoading(true));
+
       const participationsResponse = await axios.get<CircleParticipation[]>(
         `http://localhost:5000/api/circle-participants/user/${user.id}`,
         {
@@ -127,14 +128,12 @@ const EmployeeChallenges = () => {
         (participation) => participation.circle.id
       );
 
-      // If user hasn't joined any circles, show empty state
       if (circleIds.length === 0) {
-        setChallenges([]);
-        setLoading(false);
+        dispatch(setChallenges([]));
+        dispatch(setLoading(false));
         return;
       }
 
-      // Get all challenges from user's circles
       const challengesResponse = await axios.get<Challenge[]>(
         `http://localhost:5000/api/challenges/circles?ids=${circleIds.join(
           ","
@@ -146,7 +145,6 @@ const EmployeeChallenges = () => {
         }
       );
 
-      // Get user's challenge participations to check status
       const userChallengesResponse = await axios.get<
         {
           id: number;
@@ -162,7 +160,6 @@ const EmployeeChallenges = () => {
         }
       );
 
-      // Combine challenges with participation status
       const challengesWithParticipation = challengesResponse.data.map(
         (challenge) => {
           const participation = userChallengesResponse.data.find(
@@ -176,12 +173,14 @@ const EmployeeChallenges = () => {
         }
       );
 
-      setChallenges(challengesWithParticipation);
+      dispatch(setChallenges(challengesWithParticipation));
     } catch (err: any) {
       console.error("Error:", err);
-      setError(err.response?.data?.message || "Error fetching challenges.");
+      dispatch(
+        setError(err.response?.data?.message || "Error fetching challenges.")
+      );
     } finally {
-      setLoading(false);
+      dispatch(setLoading(false));
     }
   };
 
@@ -190,14 +189,14 @@ const EmployeeChallenges = () => {
     const userString = localStorage.getItem("user");
 
     if (!token || !userString) {
-      setError("You need to be logged in to join challenges.");
+      dispatch(setError("You need to be logged in to join challenges."));
       return;
     }
 
     const user = JSON.parse(userString);
 
     try {
-      await axios.post(
+      const response = await axios.post<ChallengeParticipationResponse>(
         "http://localhost:5000/api/challenge-participants",
         {
           userId: user.id,
@@ -211,21 +210,25 @@ const EmployeeChallenges = () => {
         }
       );
 
+      dispatch(
+        joinChallenge({ challengeId, participationId: response.data.id })
+      );
       setSuccessMessage("Successfully joined the challenge!");
       setTimeout(() => setSuccessMessage(null), 3000);
-      await fetchChallenges();
     } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to join challenge.");
-      setTimeout(() => setError(null), 3000);
+      dispatch(
+        setError(err.response?.data?.message || "Failed to join challenge.")
+      );
+      setTimeout(() => dispatch(setError(null)), 3000);
     }
   };
 
   const handleSubmitChallenge = async () => {
-    if (!selectedChallenge?.participationId) return;
+    if (!selectedChallenge?.participationId || !selectedChallenge.id) return;
 
     const token = localStorage.getItem("token");
     if (!token) {
-      setError("You need to be logged in to submit challenges.");
+      dispatch(setError("You need to be logged in to submit challenges."));
       return;
     }
 
@@ -242,14 +245,16 @@ const EmployeeChallenges = () => {
         }
       );
 
+      dispatch(submitChallenge({ challengeId: selectedChallenge.id }));
       setSuccessMessage("Challenge completed successfully!");
       setTimeout(() => setSuccessMessage(null), 3000);
-      await fetchChallenges();
       setIsSubmitModalOpen(false);
       setSelectedChallenge(null);
     } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to submit challenge.");
-      setTimeout(() => setError(null), 3000);
+      dispatch(
+        setError(err.response?.data?.message || "Failed to submit challenge.")
+      );
+      setTimeout(() => dispatch(setError(null)), 3000);
     }
   };
 
@@ -294,7 +299,7 @@ const EmployeeChallenges = () => {
       resultsPerPage
   );
 
-  if (loading) {
+  if (reduxLoading) {
     return (
       <div className="flex justify-center h-screen mt-6">
         <Loader />
@@ -302,8 +307,8 @@ const EmployeeChallenges = () => {
     );
   }
 
-  if (error) {
-    return <div className="p-8 text-red-600">{error}</div>;
+  if (reduxError) {
+    return <div className="p-8 text-red-600">{reduxError}</div>;
   }
 
   const joinedChallenges = challenges.filter(
@@ -349,7 +354,7 @@ const EmployeeChallenges = () => {
                 return (
                   <div
                     key={challenge.id}
-                    className={`relative group  border rounded-lg shadow-sm p-6 ${style.bgColor} transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer`}
+                    className={`relative group border rounded-lg shadow-sm p-6 ${style.bgColor} transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer`}
                     onClick={() => handleCardClick(challenge)}
                   >
                     <div className="flex items-start justify-between mb-4">
@@ -370,7 +375,7 @@ const EmployeeChallenges = () => {
                     <p className="text-gray-600 mb-4 line-clamp-2">
                       {challenge.description}
                     </p>
-                    <div className="flex items-center justify-between text-sm text-gray-500">
+                    <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
                       <div className="flex items-center">
                         <FontAwesomeIcon
                           icon={faUsers}
@@ -378,15 +383,30 @@ const EmployeeChallenges = () => {
                         />
                         <span>{challenge.circle.name}</span>
                       </div>
-                      <div
-                        className={`px-2 py-1 rounded-full text-sm ${
-                          challenge.status === "Completed"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-yellow-100 text-yellow-800"
-                        }`}
-                      >
-                        {challenge.status}
-                      </div>
+                      {challenge.status && (
+                        <div
+                          className={`px-3 py-2 rounded-full text-sm ${
+                            challenge.status === "Completed"
+                              ? "bg-green-100 text-green-800"
+                              : "bg-yellow-100 text-yellow-800"
+                          }`}
+                        >
+                          {challenge.status}
+                        </div>
+                      )}
+                      {/* Submit Button for Incomplete Challenges */}
+                      {challenge.status !== "Completed" && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedChallenge(challenge);
+                            setIsSubmitModalOpen(true);
+                          }}
+                          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                        >
+                          Submit
+                        </button>
+                      )}
                     </div>
                   </div>
                 );

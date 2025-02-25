@@ -31,6 +31,7 @@ import {
   joinCircle,
   leaveCircle,
 } from "../../../store/slices/circleSlice";
+import { motion } from "framer-motion";
 
 interface CircleParticipation {
   id: number;
@@ -46,6 +47,25 @@ const circleStyles = [
   { icon: Shield, bgColor: "bg-red-50", iconColor: "text-red-600" },
   { icon: Flag, bgColor: "bg-indigo-50", iconColor: "text-indigo-600" },
 ];
+
+const fadeInVariants = {
+  hidden: { opacity: 0, y: -20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: "easeOut" },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 20, scale: 0.95 },
+  visible: (index: number) => ({
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { delay: index * 0.1, duration: 0.3, ease: "easeOut" },
+  }),
+};
 
 const EmployeeCircles = () => {
   const dispatch = useDispatch();
@@ -247,7 +267,12 @@ const EmployeeCircles = () => {
   );
 
   return (
-    <div className="p-8 bg-gray-100 min-h-screen">
+    <motion.div
+      className="p-8 bg-gray-100 min-h-screen"
+      initial="hidden"
+      animate="visible"
+      variants={fadeInVariants}
+    >
       {successMessage && (
         <div className="fixed top-4 right-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded z-50">
           {successMessage}
@@ -255,12 +280,12 @@ const EmployeeCircles = () => {
       )}
 
       {/* Your Circles Section */}
-      <div className="mb-12">
+      <motion.div className="mb-12" variants={fadeInVariants}>
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center">
             <FontAwesomeIcon
               icon={faUsers}
-              className="w-8 h-8 mr-3 text-blue-600"
+              className="w-6 h-6 mr-3 text-blue-600"
             />
             <h2 className="text-2xl font-bold">Your Circles</h2>
           </div>
@@ -278,15 +303,20 @@ const EmployeeCircles = () => {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <motion.div
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              initial="hidden"
+              animate="visible"
+            >
               {currentJoinedCircles.map((circle, index) => {
                 const style = getCircleStyle(index);
                 const Icon = style.icon;
                 return (
-                  <div
+                  <motion.div
                     key={circle.id}
-                    className={`relative group  border rounded-lg shadow-sm p-6 ${style.bgColor} transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer`}
+                    className={`relative group border rounded-lg shadow-sm p-6 ${style.bgColor} transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer`}
                     onClick={() => handleViewCircle(circle.id)}
+                    variants={cardVariants}
                   >
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center space-x-3">
@@ -310,10 +340,10 @@ const EmployeeCircles = () => {
                       <User className="w-4 h-4 mr-2" />
                       <span>Created by {circle.creator.name}</span>
                     </div>
-                  </div>
+                  </motion.div>
                 );
               })}
-            </div>
+            </motion.div>
 
             <div className="flex justify-center items-center mt-6 space-x-4">
               <div className="flex items-center space-x-2">
@@ -372,15 +402,15 @@ const EmployeeCircles = () => {
             </div>
           </>
         )}
-      </div>
+      </motion.div>
 
       {/* Available Circles Section */}
-      <div>
+      <motion.div variants={fadeInVariants}>
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center">
             <FontAwesomeIcon
               icon={faUsers}
-              className="w-8 h-8 mr-3 text-blue-600"
+              className="w-6 h-6 mr-3 text-blue-600"
             />
             <h2 className="text-2xl font-bold">Available Circles</h2>
           </div>
@@ -398,15 +428,20 @@ const EmployeeCircles = () => {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <motion.div
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              initial="hidden"
+              animate="visible"
+            >
               {currentAvailableCircles.map((circle, index) => {
                 const style = getCircleStyle(index);
                 const Icon = style.icon;
                 return (
-                  <div
+                  <motion.div
                     key={circle.id}
-                    className={`relative group  border rounded-lg shadow-sm p-6 ${style.bgColor} transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer`}
+                    className={`relative group border rounded-lg shadow-sm p-6 ${style.bgColor} transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer`}
                     onClick={() => handleViewCircle(circle.id)}
+                    variants={cardVariants}
                   >
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center space-x-3">
@@ -420,7 +455,7 @@ const EmployeeCircles = () => {
                           e.stopPropagation();
                           handleJoinCircle(circle.id);
                         }}
-                        className="flex items-center space-x-2 px-4 py-2  text-blue-600 rounded-lg hover:bg-blue-50 transition-colors border border-blue-200"
+                        className="flex items-center space-x-2 px-4 py-2 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors border border-blue-200"
                       >
                         <UserPlus className="w-4 h-4" />
                         <span>Join</span>
@@ -430,10 +465,10 @@ const EmployeeCircles = () => {
                       <User className="w-4 h-4 mr-2" />
                       <span>Created by {circle.creator.name}</span>
                     </div>
-                  </div>
+                  </motion.div>
                 );
               })}
-            </div>
+            </motion.div>
 
             <div className="flex justify-center items-center mt-6 space-x-4">
               <div className="flex items-center space-x-2">
@@ -492,7 +527,7 @@ const EmployeeCircles = () => {
             </div>
           </>
         )}
-      </div>
+      </motion.div>
 
       <ConfirmationModal
         isOpen={isLeaveModalOpen}
@@ -504,7 +539,7 @@ const EmployeeCircles = () => {
         title="Leave Circle"
         message={`Are you sure you want to leave ${selectedCircle?.name}? You can always join again later.`}
       />
-    </div>
+    </motion.div>
   );
 };
 

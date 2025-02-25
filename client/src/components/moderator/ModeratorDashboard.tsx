@@ -7,7 +7,7 @@ import { setUsers } from "../../store/slices/userSlice";
 import { Circle, Tenant } from "../../services/api";
 import { User } from "../../types/User";
 import axios from "axios";
-
+import { motion } from "framer-motion";
 interface Challenge {
   id: number;
   title: string;
@@ -151,19 +151,69 @@ const ModeratorDashboard: React.FC = () => {
     },
   ];
 
+  const dashboardVariants = {
+    hidden: { opacity: 0, y: -20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, ease: "easeOut" },
+    },
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 20, scale: 0.95 },
+    visible: (index: number) => ({
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: { delay: index * 0.1, duration: 0.3, ease: "easeOut" },
+    }),
+  };
+
+  const leaderboardVariants = {
+    hidden: { opacity: 0, scale: 0.9 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: { duration: 0.4, ease: "easeOut", delay: 0.6 },
+    },
+  };
+
   return (
-    <div className="space-y-8 mt-6 ml-2">
-      <h2 className="text-2xl font-bold p-2 ml-3 flex items-center">
+    <motion.div
+      className="space-y-8 mt-6 ml-2"
+      initial="hidden"
+      animate="visible"
+      variants={dashboardVariants}
+    >
+      <motion.h2
+        className="text-2xl font-bold p-2 ml-3 flex items-center"
+        variants={dashboardVariants}
+      >
         <Gauge className="w-6 h-6 mr-2" />
         Moderator Dashboard
-      </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      </motion.h2>
+
+      <motion.div
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+        initial="hidden"
+        animate="visible"
+      >
         {statCards.map((stat, index) => (
-          <StatCard key={index} {...stat} />
+          <motion.div key={index} custom={index} variants={cardVariants}>
+            <StatCard {...stat} />
+          </motion.div>
         ))}
-      </div>
-      <Leaderboards />
-    </div>
+      </motion.div>
+
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={leaderboardVariants}
+      >
+        <Leaderboards />
+      </motion.div>
+    </motion.div>
   );
 };
 

@@ -18,6 +18,7 @@ import ConfirmationModal from "./ConfirmationModal"; // Import the ConfirmationM
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { setUserPoints } from "../../store/slices/pointsSlice";
 import axios from "axios";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface HeaderProps {
   userRole: "Employee" | "Moderator";
@@ -204,7 +205,6 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
               </div>
             )}
           </div>
-
           {/* Profile Dropdown */}
           <div className="relative" ref={profileRef}>
             <button
@@ -215,84 +215,97 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
               <span className="text-sm text-gray-800">
                 {JSON.parse(localStorage.getItem("user") || "{}").name}
               </span>
-              <ChevronDown className="h-4 w-4" />
+              <ChevronDown
+                className="h-4 w-4 transition-transform duration-200"
+                style={{
+                  transform: isProfileOpen ? "rotate(180deg)" : "rotate(0deg)",
+                }}
+              />
             </button>
 
-            {isProfileOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
-                {userRole === "Employee" ? (
-                  <>
-                    <button
-                      onClick={() => handleNavigation("/employee/dashboard")}
-                      className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-gradient-to-r from-cyan-200 to-teal-400"
-                    >
-                      <Home className="h-4 w-4" />
-                      <span>Dashboard</span>
-                    </button>
-                    <button
-                      onClick={() => handleNavigation("/employee/circles")}
-                      className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-gradient-to-r from-cyan-200 to-teal-400"
-                    >
-                      <FontAwesomeIcon icon={faUsers} className="h-4 w-4" />
-                      <span>Circles</span>
-                    </button>
-                    <button
-                      onClick={() => handleNavigation("/employee/challenges")}
-                      className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-gradient-to-r from-cyan-200 to-teal-400"
-                    >
-                      <Swords className="h-4 w-4" />
-                      <span>Challenges</span>
-                    </button>
-                    <button
-                      onClick={() => handleNavigation("/employee/profile")}
-                      className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-gradient-to-r from-cyan-200 to-teal-400"
-                    >
-                      <User className="h-4 w-4" />
-                      <span>Profile</span>
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <button
-                      onClick={() => handleNavigation("/moderator/dashboard")}
-                      className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-gradient-to-r from-emerald-200 to-emerald-400"
-                    >
-                      <Home className="h-4 w-4" />
-                      <span>Dashboard</span>
-                    </button>
-                    <button
-                      onClick={() => handleNavigation("/moderator/tenants")}
-                      className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-gradient-to-r from-emerald-200 to-emerald-400"
-                    >
-                      <Building2 className="h-4 w-4" />
-                      <span>Tenants</span>
-                    </button>
-                    <button
-                      onClick={() => handleNavigation("/moderator/users")}
-                      className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-gradient-to-r from-emerald-200 to-emerald-400"
-                    >
-                      <Users className="h-4 w-4" />
-                      <span>Users</span>
-                    </button>
-                    <button
-                      onClick={() => handleNavigation("/moderator/profile")}
-                      className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-gradient-to-r from-emerald-200 to-emerald-400"
-                    >
-                      <User className="h-4 w-4" />
-                      <span>Profile</span>
-                    </button>
-                  </>
-                )}
-                <hr className="my-2" />
-                <button
-                  onClick={handleLogout}
-                  className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-gradient-to-r from-red-600 to-red-900 hover:text-white"
+            <AnimatePresence>
+              {isProfileOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                  transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+                  className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border py-2 z-50"
                 >
-                  <LogOut className="h-4 w-4" />
-                  <span>Logout</span>
-                </button>
-              </div>
-            )}
+                  {userRole === "Employee" ? (
+                    <>
+                      <button
+                        onClick={() => handleNavigation("/employee/dashboard")}
+                        className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-gradient-to-r from-cyan-700 to-teal-900 hover:text-white"
+                      >
+                        <Home className="h-4 w-4" />
+                        <span>Dashboard</span>
+                      </button>
+                      <button
+                        onClick={() => handleNavigation("/employee/circles")}
+                        className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-gradient-to-r from-cyan-700 to-teal-900 hover:text-white"
+                      >
+                        <FontAwesomeIcon icon={faUsers} className="h-4 w-4" />
+                        <span>Circles</span>
+                      </button>
+                      <button
+                        onClick={() => handleNavigation("/employee/challenges")}
+                        className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-gradient-to-r from-cyan-700 to-teal-900 hover:text-white"
+                      >
+                        <Swords className="h-4 w-4" />
+                        <span>Challenges</span>
+                      </button>
+                      <button
+                        onClick={() => handleNavigation("/employee/profile")}
+                        className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-gradient-to-r from-cyan-700 to-teal-900 hover:text-white"
+                      >
+                        <User className="h-4 w-4" />
+                        <span>Profile</span>
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => handleNavigation("/moderator/dashboard")}
+                        className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-gradient-to-r from-emerald-700 to-emerald-900 hover:text-white"
+                      >
+                        <Home className="h-4 w-4" />
+                        <span>Dashboard</span>
+                      </button>
+                      <button
+                        onClick={() => handleNavigation("/moderator/tenants")}
+                        className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-gradient-to-r from-emerald-700 to-emerald-900 hover:text-white"
+                      >
+                        <Building2 className="h-4 w-4" />
+                        <span>Tenants</span>
+                      </button>
+                      <button
+                        onClick={() => handleNavigation("/moderator/users")}
+                        className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-gradient-to-r from-emerald-700 to-emerald-900 hover:text-white"
+                      >
+                        <Users className="h-4 w-4" />
+                        <span>Users</span>
+                      </button>
+                      <button
+                        onClick={() => handleNavigation("/moderator/profile")}
+                        className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-gradient-to-r from-emerald-700 to-emerald-900 hover:text-white"
+                      >
+                        <User className="h-4 w-4" />
+                        <span>Profile</span>
+                      </button>
+                    </>
+                  )}
+                  <hr className="my-2" />
+                  <button
+                    onClick={handleLogout}
+                    className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-gradient-to-r from-red-600 to-red-900 hover:text-white"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    <span>Logout</span>
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </div>

@@ -10,16 +10,60 @@ import circleParticipantsRoutes from "./routes/circleParticipantsRoutes";
 import challengeParticipantsRoutes from "./routes/challengeParticipantsRoutes";
 import pointsRoutes from "./routes/pointsRoutes";
 import { passportConfig } from "./middleware/passport";
+import { createServer } from "http";
+import { Server } from "socket.io";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// Create HTTP Server
+const server = createServer(app);
+
+// Initialize Socket.io
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
+
+// Store connected users
+const onlineUsers = new Map();
+
+io.on("connection", (socket) => {
+  console.log(`🔌 A user connected: ${socket.id}`);
+
+  socket.on("register", (userId) => {
+    onlineUsers.set(userId, socket.id);
+    console.log(`✅ User ${userId} registered with socket ${socket.id}`);
+  });
+
+  socket.on("disconnect", () => {
+    onlineUsers.forEach((value, key) => {
+      if (value === socket.id) {
+        onlineUsers.delete(key);
+      }
+    });
+    console.log(`❌ User disconnected: ${socket.id}`);
+  });
+});
+
+// Function to send real-time notifications
+export const sendNotification = (userId: string, notification: any) => {
+  const userSocketId = onlineUsers.get(userId);
+  if (userSocketId) {
+    io.to(userSocketId).emit("notification", notification);
+    console.log(`📩 Sent notification to User ${userId}:`, notification);
+  }
+};
 
 passportConfig(passport);
 app.use(passport.initialize());
 
 app.use(
   cors({
-    origin: "http://localhost:5173", // Adjust to your frontend's URL
+    origin: "http://localhost:5173",
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
@@ -35,15 +79,17 @@ app.use("/api/challenges", challengeRoutes);
 app.use("/api/circle-participants", circleParticipantsRoutes);
 app.use("/api/challenge-participants", challengeParticipantsRoutes);
 app.use("/api/points", pointsRoutes);
+
 // Define a route for the root path
 app.get("/", (req, res) => {
-  res.send("Welcome to the API!"); // You can customize this message
+  res.send("Welcome to the API!");
 });
 
+// Initialize Database and Start Server
 AppDataSource.initialize()
   .then(() => {
-    app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+    server.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
   })
   .catch((error) => console.log(error));
 
-export default app;
+export { io, server };

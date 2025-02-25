@@ -26,6 +26,7 @@ import {
   joinChallenge,
   submitChallenge,
 } from "../../../store/slices/challengeSlice";
+import { motion } from "framer-motion";
 
 interface ChallengeWithParticipation extends Challenge {
   participationId?: number;
@@ -299,6 +300,15 @@ const EmployeeChallenges = () => {
       resultsPerPage
   );
 
+  const fadeInVariants = {
+    hidden: { opacity: 0, y: -20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, ease: "easeOut" },
+    },
+  };
+
   if (reduxLoading) {
     return (
       <div className="flex justify-center h-screen mt-6">
@@ -319,7 +329,12 @@ const EmployeeChallenges = () => {
   );
 
   return (
-    <div className="p-8 bg-gray-100 min-h-screen">
+    <motion.div
+      className="p-8 bg-gray-100 min-h-screen"
+      initial="hidden"
+      animate="visible"
+      variants={fadeInVariants}
+    >
       {successMessage && (
         <div className="fixed top-4 right-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded z-50">
           {successMessage}
@@ -327,282 +342,286 @@ const EmployeeChallenges = () => {
       )}
 
       {/* Your Challenges Section */}
-      <div className="mb-12">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center">
-            <Swords className="w-8 h-8 mr-3 text-blue-600" />
-            <h2 className="text-2xl font-bold">Your Challenges</h2>
+      <motion.div variants={fadeInVariants}>
+        <div className="mb-12">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center">
+              <Swords className="w-6 h-6 mr-3 text-blue-600" />
+              <h2 className="text-2xl font-bold">Your Challenges</h2>
+            </div>
           </div>
-        </div>
 
-        {joinedChallenges.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-md p-8 text-center">
-            <Swords className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-            <p className="text-gray-500 text-lg">
-              You haven't joined any challenges yet.
-            </p>
-            <p className="text-gray-400 mt-2">
-              Join a challenge below to start earning points!
-            </p>
-          </div>
-        ) : (
-          <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {currentJoinedChallenges.map((challenge, index) => {
-                const style = getChallengeStyle(index);
-                const Icon = style.icon;
-                return (
-                  <div
-                    key={challenge.id}
-                    className={`relative group border rounded-lg shadow-sm p-6 ${style.bgColor} transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer`}
-                    onClick={() => handleCardClick(challenge)}
-                  >
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex items-center space-x-3">
-                        <div className={`p-2 rounded-lg ${style.iconColor}`}>
-                          <Icon className="w-6 h-6" />
+          {joinedChallenges.length === 0 ? (
+            <div className="bg-white rounded-lg shadow-md p-8 text-center">
+              <Swords className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+              <p className="text-gray-500 text-lg">
+                You haven't joined any challenges yet.
+              </p>
+              <p className="text-gray-400 mt-2">
+                Join a challenge below to start earning points!
+              </p>
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {currentJoinedChallenges.map((challenge, index) => {
+                  const style = getChallengeStyle(index);
+                  const Icon = style.icon;
+                  return (
+                    <div
+                      key={challenge.id}
+                      className={`relative group border rounded-lg shadow-sm p-6 ${style.bgColor} transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer`}
+                      onClick={() => handleCardClick(challenge)}
+                    >
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center space-x-3">
+                          <div className={`p-2 rounded-lg ${style.iconColor}`}>
+                            <Icon className="w-6 h-6" />
+                          </div>
+                          <h3 className="text-xl font-semibold">
+                            {challenge.title}
+                          </h3>
                         </div>
-                        <h3 className="text-xl font-semibold">
-                          {challenge.title}
-                        </h3>
+                        <div
+                          className={`px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-sm font-semibold`}
+                        >
+                          {challenge.points} pts
+                        </div>
                       </div>
-                      <div
-                        className={`px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-sm font-semibold`}
-                      >
-                        {challenge.points} pts
+                      <p className="text-gray-600 mb-4 line-clamp-2">
+                        {challenge.description}
+                      </p>
+                      <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+                        <div className="flex items-center">
+                          <FontAwesomeIcon
+                            icon={faUsers}
+                            className="w-4 h-4 mr-2"
+                          />
+                          <span>{challenge.circle.name}</span>
+                        </div>
+                        {challenge.status && (
+                          <div
+                            className={`px-3 py-2 rounded-full text-sm ${
+                              challenge.status === "Completed"
+                                ? "bg-green-100 text-green-800"
+                                : "bg-yellow-100 text-yellow-800"
+                            }`}
+                          >
+                            {challenge.status}
+                          </div>
+                        )}
+                        {/* Submit Button for Incomplete Challenges */}
+                        {challenge.status !== "Completed" && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedChallenge(challenge);
+                              setIsSubmitModalOpen(true);
+                            }}
+                            className="px-4 py-2 bg-gradient-to-r from-cyan-600 to-cyan-800 text-white rounded hover:bg-gradient-to-l hover:from-cyan-600 hover:to-cyan-800 transition-colors"
+                          >
+                            Submit
+                          </button>
+                        )}
                       </div>
                     </div>
-                    <p className="text-gray-600 mb-4 line-clamp-2">
-                      {challenge.description}
-                    </p>
-                    <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
-                      <div className="flex items-center">
-                        <FontAwesomeIcon
-                          icon={faUsers}
-                          className="w-4 h-4 mr-2"
-                        />
-                        <span>{challenge.circle.name}</span>
-                      </div>
-                      {challenge.status && (
-                        <div
-                          className={`px-3 py-2 rounded-full text-sm ${
-                            challenge.status === "Completed"
-                              ? "bg-green-100 text-green-800"
-                              : "bg-yellow-100 text-yellow-800"
-                          }`}
-                        >
-                          {challenge.status}
+                  );
+                })}
+              </div>
+
+              <div className="flex justify-center items-center mt-6 space-x-4">
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-gray-500">Show:</span>
+                  <select
+                    value={resultsPerPage}
+                    onChange={handleResultsPerPageChange}
+                    className="border rounded p-2 text-sm text-gray-600 bg-white"
+                  >
+                    <option value={3}>3 </option>
+                    <option value={6}>6 </option>
+                    <option value={9}>9 </option>
+                    <option value={12}>12 </option>
+                    <option value={15}>15 </option>
+                  </select>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-gray-500">
+                    Showing {currentJoinedChallenges.length} of{" "}
+                    {joinedChallenges.length} challenges
+                  </span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() =>
+                      setJoinedCurrentPage((prev) => Math.max(prev - 1, 1))
+                    }
+                    disabled={joinedCurrentPage === 1}
+                    className={`p-2 rounded ${
+                      joinedCurrentPage === 1
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-slate-700 text-white hover:bg-slate-800"
+                    }`}
+                  >
+                    <ChevronLeft size={20} />
+                  </button>
+                  <span className="text-sm text-gray-500">
+                    Page {joinedCurrentPage} of {totalJoinedPages}
+                  </span>
+                  <button
+                    onClick={() =>
+                      setJoinedCurrentPage((prev) =>
+                        Math.min(prev + 1, totalJoinedPages)
+                      )
+                    }
+                    disabled={joinedCurrentPage === totalJoinedPages}
+                    className={`p-2 rounded ${
+                      joinedCurrentPage === totalJoinedPages
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-slate-700 text-white hover:bg-slate-800"
+                    }`}
+                  >
+                    <ChevronRight size={20} />
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      </motion.div>
+
+      {/* Available Challenges Section */}
+      <motion.div variants={fadeInVariants}>
+        <div>
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center">
+              <Swords className="w-8 h-8 mr-3 text-blue-600" />
+              <h2 className="text-2xl font-bold">Available Challenges</h2>
+            </div>
+          </div>
+
+          {availableChallenges.length === 0 ? (
+            <div className="bg-white rounded-lg shadow-md p-8 text-center">
+              <Swords className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+              <p className="text-gray-500 text-lg">
+                No available challenges at the moment.
+              </p>
+              <p className="text-gray-400 mt-2">
+                Check back later for new challenges!
+              </p>
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {currentAvailableChallenges.map((challenge, index) => {
+                  const style = getChallengeStyle(index);
+                  const Icon = style.icon;
+                  return (
+                    <div
+                      key={challenge.id}
+                      className={`relative group  border rounded-lg shadow-sm p-6 ${style.bgColor} transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer`}
+                      onClick={() => handleCardClick(challenge)}
+                    >
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center space-x-3">
+                          <div className={`p-2 rounded-lg ${style.iconColor}`}>
+                            <Icon className="w-6 h-6" />
+                          </div>
+                          <h3 className="text-xl font-semibold">
+                            {challenge.title}
+                          </h3>
                         </div>
-                      )}
-                      {/* Submit Button for Incomplete Challenges */}
-                      {challenge.status !== "Completed" && (
+                        <div
+                          className={`px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-sm font-semibold`}
+                        >
+                          {challenge.points} pts
+                        </div>
+                      </div>
+                      <p className="text-gray-600 mb-4 line-clamp-2">
+                        {challenge.description}
+                      </p>
+                      <div className="flex items-center justify-between text-sm text-gray-500">
+                        <div className="flex items-center">
+                          <FontAwesomeIcon
+                            icon={faUsers}
+                            className="w-4 h-4 mr-2"
+                          />
+                          <span>{challenge.circle.name}</span>
+                        </div>
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            setSelectedChallenge(challenge);
-                            setIsSubmitModalOpen(true);
+                            handleJoinChallenge(challenge.id);
                           }}
-                          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                         >
-                          Submit
+                          <UserPlus className="w-4 h-4" />
+                          <span>Join</span>
                         </button>
-                      )}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div className="flex justify-center items-center mt-6 space-x-4">
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-500">Show:</span>
-                <select
-                  value={resultsPerPage}
-                  onChange={handleResultsPerPageChange}
-                  className="border rounded p-2 text-sm text-gray-600 bg-white"
-                >
-                  <option value={3}>3 </option>
-                  <option value={6}>6 </option>
-                  <option value={9}>9 </option>
-                  <option value={12}>12 </option>
-                  <option value={15}>15 </option>
-                </select>
+                  );
+                })}
               </div>
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-500">
-                  Showing {currentJoinedChallenges.length} of{" "}
-                  {joinedChallenges.length} challenges
-                </span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={() =>
-                    setJoinedCurrentPage((prev) => Math.max(prev - 1, 1))
-                  }
-                  disabled={joinedCurrentPage === 1}
-                  className={`p-2 rounded ${
-                    joinedCurrentPage === 1
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "bg-slate-700 text-white hover:bg-slate-800"
-                  }`}
-                >
-                  <ChevronLeft size={20} />
-                </button>
-                <span className="text-sm text-gray-500">
-                  Page {joinedCurrentPage} of {totalJoinedPages}
-                </span>
-                <button
-                  onClick={() =>
-                    setJoinedCurrentPage((prev) =>
-                      Math.min(prev + 1, totalJoinedPages)
-                    )
-                  }
-                  disabled={joinedCurrentPage === totalJoinedPages}
-                  className={`p-2 rounded ${
-                    joinedCurrentPage === totalJoinedPages
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "bg-slate-700 text-white hover:bg-slate-800"
-                  }`}
-                >
-                  <ChevronRight size={20} />
-                </button>
-              </div>
-            </div>
-          </>
-        )}
-      </div>
 
-      {/* Available Challenges Section */}
-      <div>
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center">
-            <Swords className="w-8 h-8 mr-3 text-blue-600" />
-            <h2 className="text-2xl font-bold">Available Challenges</h2>
-          </div>
-        </div>
-
-        {availableChallenges.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-md p-8 text-center">
-            <Swords className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-            <p className="text-gray-500 text-lg">
-              No available challenges at the moment.
-            </p>
-            <p className="text-gray-400 mt-2">
-              Check back later for new challenges!
-            </p>
-          </div>
-        ) : (
-          <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {currentAvailableChallenges.map((challenge, index) => {
-                const style = getChallengeStyle(index);
-                const Icon = style.icon;
-                return (
-                  <div
-                    key={challenge.id}
-                    className={`relative group  border rounded-lg shadow-sm p-6 ${style.bgColor} transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer`}
-                    onClick={() => handleCardClick(challenge)}
+              <div className="flex justify-center items-center mt-6 space-x-4">
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-gray-500">Show:</span>
+                  <select
+                    value={resultsPerPage}
+                    onChange={handleResultsPerPageChange}
+                    className="border rounded p-2 text-sm text-gray-600 bg-white"
                   >
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex items-center space-x-3">
-                        <div className={`p-2 rounded-lg ${style.iconColor}`}>
-                          <Icon className="w-6 h-6" />
-                        </div>
-                        <h3 className="text-xl font-semibold">
-                          {challenge.title}
-                        </h3>
-                      </div>
-                      <div
-                        className={`px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-sm font-semibold`}
-                      >
-                        {challenge.points} pts
-                      </div>
-                    </div>
-                    <p className="text-gray-600 mb-4 line-clamp-2">
-                      {challenge.description}
-                    </p>
-                    <div className="flex items-center justify-between text-sm text-gray-500">
-                      <div className="flex items-center">
-                        <FontAwesomeIcon
-                          icon={faUsers}
-                          className="w-4 h-4 mr-2"
-                        />
-                        <span>{challenge.circle.name}</span>
-                      </div>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleJoinChallenge(challenge.id);
-                        }}
-                        className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                      >
-                        <UserPlus className="w-4 h-4" />
-                        <span>Join</span>
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div className="flex justify-center items-center mt-6 space-x-4">
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-500">Show:</span>
-                <select
-                  value={resultsPerPage}
-                  onChange={handleResultsPerPageChange}
-                  className="border rounded p-2 text-sm text-gray-600 bg-white"
-                >
-                  <option value={3}>3 </option>
-                  <option value={6}>6 </option>
-                  <option value={9}>9 </option>
-                  <option value={12}>12 </option>
-                  <option value={15}>15 </option>
-                </select>
+                    <option value={3}>3 </option>
+                    <option value={6}>6 </option>
+                    <option value={9}>9 </option>
+                    <option value={12}>12 </option>
+                    <option value={15}>15 </option>
+                  </select>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-gray-500">
+                    Showing {currentAvailableChallenges.length} of{" "}
+                    {availableChallenges.length} challenges
+                  </span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() =>
+                      setAvailableCurrentPage((prev) => Math.max(prev - 1, 1))
+                    }
+                    disabled={availableCurrentPage === 1}
+                    className={`p-2 rounded ${
+                      availableCurrentPage === 1
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-slate-700 text-white hover:bg-slate-800"
+                    }`}
+                  >
+                    <ChevronLeft size={20} />
+                  </button>
+                  <span className="text-sm text-gray-500">
+                    Page {availableCurrentPage} of {totalAvailablePages}
+                  </span>
+                  <button
+                    onClick={() =>
+                      setAvailableCurrentPage((prev) =>
+                        Math.min(prev + 1, totalAvailablePages)
+                      )
+                    }
+                    disabled={availableCurrentPage === totalAvailablePages}
+                    className={`p-2 rounded ${
+                      availableCurrentPage === totalAvailablePages
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-slate-700 text-white hover:bg-slate-800"
+                    }`}
+                  >
+                    <ChevronRight size={20} />
+                  </button>
+                </div>
               </div>
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-500">
-                  Showing {currentAvailableChallenges.length} of{" "}
-                  {availableChallenges.length} challenges
-                </span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={() =>
-                    setAvailableCurrentPage((prev) => Math.max(prev - 1, 1))
-                  }
-                  disabled={availableCurrentPage === 1}
-                  className={`p-2 rounded ${
-                    availableCurrentPage === 1
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "bg-slate-700 text-white hover:bg-slate-800"
-                  }`}
-                >
-                  <ChevronLeft size={20} />
-                </button>
-                <span className="text-sm text-gray-500">
-                  Page {availableCurrentPage} of {totalAvailablePages}
-                </span>
-                <button
-                  onClick={() =>
-                    setAvailableCurrentPage((prev) =>
-                      Math.min(prev + 1, totalAvailablePages)
-                    )
-                  }
-                  disabled={availableCurrentPage === totalAvailablePages}
-                  className={`p-2 rounded ${
-                    availableCurrentPage === totalAvailablePages
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "bg-slate-700 text-white hover:bg-slate-800"
-                  }`}
-                >
-                  <ChevronRight size={20} />
-                </button>
-              </div>
-            </div>
-          </>
-        )}
-      </div>
+            </>
+          )}
+        </div>
+      </motion.div>
 
       {/* Challenge Details Modal */}
       <ChallengeDetailsEmp
@@ -620,7 +639,7 @@ const EmployeeChallenges = () => {
         message="Are you sure you want to submit this challenge as completed? This action cannot be undone."
         confirmButtonColor="bg-blue-600"
       />
-    </div>
+    </motion.div>
   );
 };
 

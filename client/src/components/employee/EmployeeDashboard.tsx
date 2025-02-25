@@ -275,84 +275,81 @@ const EmployeeDashboard = () => {
     },
   ];
 
+  const fadeInVariants = {
+    hidden: { opacity: 0, y: -20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, ease: "easeOut" },
+    },
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 20, scale: 0.95 },
+    visible: (index: number) => ({
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: { delay: index * 0.1, duration: 0.3, ease: "easeOut" },
+    }),
+  };
+
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
       className="space-y-4 bg-gray-100"
+      initial="hidden"
+      animate="visible"
+      variants={fadeInVariants}
     >
-      {/* Heading with Bounce-In Effect */}
+      {/* Heading */}
       <motion.h2
-        initial={{ y: -100, scale: 0.8 }}
-        animate={{ y: 0, scale: 1 }}
-        transition={{ type: "spring", stiffness: 100, damping: 10 }}
         className="text-2xl font-bold p-2 pt-6 ml-3 flex items-center"
+        variants={{
+          hidden: { opacity: 0, y: -20 },
+          visible: {
+            opacity: 1,
+            y: 0,
+            transition: { duration: 0.5, ease: "easeOut" },
+          },
+        }}
       >
         <Gauge className="w-6 h-6 mr-2 text-blue-500" />
         Employee Dashboard
       </motion.h2>
 
-      {/* Available Challenges Section with Drop-in Effect */}
-      <motion.div
-        initial={{ y: -300, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 80, damping: 15 }}
-        className="rounded-xl p-4"
-      >
+      {/* Available Challenges */}
+      <motion.div className="rounded-xl p-4" variants={cardVariants}>
         {renderChallengesSection()}
       </motion.div>
 
-      {/* Grid Layout with Staggered Pop-In Animation */}
+      {/* Grid Layout */}
       <motion.div
+        className="grid grid-cols-1 lg:grid-cols-2 gap-8"
         initial="hidden"
         animate="visible"
-        variants={{
-          hidden: { opacity: 0 },
-          visible: { opacity: 1, transition: { staggerChildren: 0.2 } },
-        }}
-        className="grid grid-cols-1 lg:grid-cols-2 gap-8"
       >
-        {/* Leaderboard with Pop-In Effect */}
-        <motion.div
-          initial={{ scale: 0.5, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: "spring", stiffness: 120, damping: 10 }}
-        >
+        {/* Leaderboard */}
+        <motion.div variants={cardVariants}>
           <Leaderboards />
         </motion.div>
 
-        {/* Circle Updates Section with Drop-in Effect */}
+        {/* Circle Updates */}
         <motion.div
-          initial={{ y: -50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ type: "spring", stiffness: 90, damping: 12 }}
           className="bg-white rounded-xl shadow-md p-6 ml-4 mb-4"
+          variants={fadeInVariants}
         >
           <div className="flex items-center justify-start mb-6">
             <Bell className="text-blue-500 w-6 h-6" />
             <h2 className="text-xl font-bold ml-2">Circle Updates</h2>
           </div>
 
-          {/* Staggered Spring Animation for List Items */}
-          <motion.div
-            variants={{
-              hidden: { opacity: 0 },
-              visible: { opacity: 1, transition: { staggerChildren: 0.15 } },
-            }}
-            initial="hidden"
-            animate="visible"
-            className="space-y-4"
-          >
+          {/* List Items */}
+          <motion.div className="space-y-4" variants={fadeInVariants}>
             {circleUpdates.map((update) => (
               <motion.div
                 key={update.id}
-                variants={{
-                  hidden: { y: 20, opacity: 0, scale: 0.9 },
-                  visible: { y: 0, opacity: 1, scale: 1 },
-                }}
-                transition={{ type: "spring", stiffness: 100, damping: 12 }}
                 className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                variants={cardVariants}
               >
                 <div
                   className={`p-2 rounded-lg ${

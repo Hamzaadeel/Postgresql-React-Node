@@ -4,6 +4,7 @@ import { User } from "lucide-react";
 import { useAppDispatch } from "../../store/hooks";
 import { updateUser } from "../../store/slices/authSlice";
 import { updateUser as updateUserApi } from "../../services/api";
+import { motion } from "framer-motion";
 
 const EmployeeProfile = () => {
   const dispatch = useAppDispatch();
@@ -52,71 +53,138 @@ const EmployeeProfile = () => {
     }
   };
 
-  return (
-    <div className="p-8 bg-gray-100 h-screen">
-      <div className="max-w-2xl">
-        <div className="flex items-center mb-6">
-          <User className="w-8 h-8 mr-3 text-blue-500" />
-          <h2 className="text-2xl font-bold">My Profile</h2>
-        </div>
+  const fadeInVariants = {
+    hidden: { opacity: 0, y: -20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, ease: "easeOut" },
+    },
+  };
 
+  const cardVariants = {
+    hidden: { opacity: 0, y: 20, scale: 0.95 },
+    visible: (index: number) => ({
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: { delay: index * 0.1, duration: 0.3, ease: "easeOut" },
+    }),
+  };
+
+  return (
+    <motion.div
+      className="space-y-4 bg-gray-100 h-full"
+      initial="hidden"
+      animate="visible"
+      variants={fadeInVariants}
+    >
+      {/* Heading */}
+      <motion.h2
+        className="text-2xl font-bold p-2 pt-6 ml-3 flex items-center"
+        variants={fadeInVariants}
+      >
+        <User className="w-6 h-6 mr-2 text-blue-500" />
+        Employee Profile
+      </motion.h2>
+
+      {/* Error & Success Messages with Staggered Animations */}
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={{
+          hidden: { opacity: 0 },
+          visible: { opacity: 1, transition: { staggerChildren: 0.2 } },
+        }}
+      >
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          <motion.div
+            initial={{ y: -10, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4"
+          >
             {error}
-          </div>
+          </motion.div>
         )}
 
         {successMessage && (
-          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+          <motion.div
+            initial={{ y: -10, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4"
+          >
             {successMessage}
-          </div>
+          </motion.div>
         )}
+      </motion.div>
 
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <label className="block text-gray-700 font-semibold mb-2">
-                Name
-              </label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-                disabled={loading}
-              />
-            </div>
+      {/* Profile Form */}
+      <motion.div
+        className="bg-white rounded-lg shadow-md ml-4 p-6 w-1/2"
+        variants={cardVariants}
+      >
+        <form onSubmit={handleSubmit}>
+          {/* Name Input with Soft Motion */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="mb-4"
+          >
+            <label className="block text-gray-700 font-semibold mb-2">
+              Name
+            </label>
+            <motion.input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition-opacity"
+              required
+              disabled={loading}
+              whileFocus={{ opacity: 0.9 }}
+            />
+          </motion.div>
 
-            <div className="mb-6">
-              <label className="block text-gray-700 font-semibold mb-2">
-                Email
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-                disabled={loading}
-              />
-            </div>
+          {/* Email Input with Soft Motion */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="mb-6"
+          >
+            <label className="block text-gray-700 font-semibold mb-2">
+              Email
+            </label>
+            <motion.input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition-opacity"
+              required
+              disabled={loading}
+              whileFocus={{ opacity: 0.9 }}
+            />
+          </motion.div>
 
-            <div className="flex justify-end">
-              <button
-                type="submit"
-                className={`px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                  loading ? "opacity-50 cursor-not-allowed" : ""
-                }`}
-                disabled={loading}
-              >
-                {loading ? "Updating..." : "Update Profile"}
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+          {/* Submit Button with Hover & Disabled Animation */}
+          <motion.div className="flex justify-end">
+            <motion.button
+              type="submit"
+              className={`px-3 py-2 bg-gradient-to-r from-cyan-600 to-cyan-800 text-white rounded hover:bg-gradient-to-l hover:from-cyan-600 hover:to-cyan-800 ${
+                loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              disabled={loading}
+              whileHover={!loading ? { scale: 1.05 } : {}}
+              whileTap={!loading ? { scale: 0.95 } : {}}
+            >
+              {loading ? "Updating..." : "Update Profile"}
+            </motion.button>
+          </motion.div>
+        </form>
+      </motion.div>
+    </motion.div>
   );
 };
 

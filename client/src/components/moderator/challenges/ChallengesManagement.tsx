@@ -33,6 +33,7 @@ import EditChallengeModal from "./EditChallengeModal";
 import ChallengeDetailsView from "./ChallengeDetailsView";
 import ConfirmationModal from "../../common/ConfirmationModal";
 import Loader from "../../common/Loader";
+import { motion } from "framer-motion";
 
 const ChallengesManagement = () => {
   const dispatch = useAppDispatch();
@@ -50,6 +51,25 @@ const ChallengesManagement = () => {
   const [selectedChallenge, setSelectedChallenge] = useState<any>(null);
   const [successMessage, setSuccessMessage] = useState<string>("");
   const navigate = useNavigate();
+
+  const dashboardVariants = {
+    hidden: { opacity: 0, y: -20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, ease: "easeOut" },
+    },
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 20, scale: 0.95 },
+    visible: (index: number) => ({
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: { delay: index * 0.1, duration: 0.3, ease: "easeOut" },
+    }),
+  };
 
   useEffect(() => {
     const initializeData = async () => {
@@ -205,189 +225,204 @@ const ChallengesManagement = () => {
 
   return (
     <div className="p-8">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold flex items-center">
-          <Swords className="w-6 h-6 mr-2" />
-          Challenges Management
-        </h2>
-        <button
-          title="Add Challenge"
-          onClick={() => setIsAddModalOpen(true)}
-          className="flex items-center space-x-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        >
-          <Plus className="w-5 h-5" />
-          <span>Add Challenge</span>
-        </button>
-      </div>
-
-      {successMessage && (
-        <div className="fixed top-4 opacity-95 right-4 bg-green-500 text-white px-6 py-3 rounded shadow-lg z-50 animate-fade-in-out flex justify-between items-center">
-          <span>{successMessage}</span>
-          <button onClick={closeSuccessMessage} className="ml-2 text-white">
-            X
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={dashboardVariants}
+      >
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold flex items-center">
+            <Swords className="w-6 h-6 mr-2" />
+            Challenges Management
+          </h2>
+          <button
+            title="Add Challenge"
+            onClick={() => setIsAddModalOpen(true)}
+            className="flex items-center space-x-2 bg-gradient-to-r from-emerald-600 to-emerald-800 text-white px-4 py-2 rounded hover:bg-gradient-to-l hover:from-emerald-600 hover:to-emerald-800"
+          >
+            <Plus className="w-5 h-5" />
+            <span>Add Challenge</span>
           </button>
         </div>
-      )}
 
-      {error && (
-        <div className="fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded shadow-lg z-50 animate-fade-in-out">
-          <span>{error}</span>
-        </div>
-      )}
+        {successMessage && (
+          <div className="fixed top-4 opacity-95 right-4 bg-green-500 text-white px-6 py-3 rounded shadow-lg z-50 animate-fade-in-out flex justify-between items-center">
+            <span>{successMessage}</span>
+            <button onClick={closeSuccessMessage} className="ml-2 text-white">
+              X
+            </button>
+          </div>
+        )}
 
-      {loading ? (
-        <div className="flex justify-center items-center h-64">
-          <Loader />
-        </div>
-      ) : (
-        <div>
-          {challenges.length === 0 ? (
-            <div className="text-center text-gray-500 mt-8">
-              No challenges found. Add a new challenge to get started.
-            </div>
-          ) : (
-            <>
-              <table className="min-w-full bg-white">
-                <thead>
-                  <tr>
-                    <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                      No.
-                    </th>
-                    <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                      Title
-                    </th>
-                    <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                      Circle
-                    </th>
-                    <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                      Points
-                    </th>
-                    <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                      Created By
-                    </th>
-                    <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                      Created At
-                    </th>
-                    <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {currentChallenges.map(
-                    (challenge: Challenge, index: number) => (
-                      <tr key={challenge.id}>
-                        <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                          {indexOfFirstChallenge + index + 1}
-                        </td>
-                        <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                          <div className="flex items-center">
-                            <Swords className="w-5 h-5 mr-2 text-gray-500" />
-                            {challenge.title}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                          {challenge.circle.name}
-                        </td>
-                        <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                          {challenge.points}
-                        </td>
-                        <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                          {challenge.creator.name}
-                        </td>
-                        <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                          {new Date(challenge.createdAt).toLocaleDateString()}
-                        </td>
-                        <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                          <div className="flex space-x-3">
-                            <button
-                              onClick={() => {
-                                setSelectedChallenge(challenge);
-                                setIsDetailsModalOpen(true);
-                              }}
-                              className="text-gray-600 hover:text-gray-900"
-                              title="View Details"
-                            >
-                              <Eye className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={() => {
-                                setSelectedChallenge(challenge);
-                                setIsEditModalOpen(true);
-                              }}
-                              className="text-blue-600 hover:text-blue-900"
-                              title="Edit Challenge"
-                            >
-                              <Pencil className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={() => {
-                                setSelectedChallenge(challenge);
-                                setIsDeleteModalOpen(true);
-                              }}
-                              className="text-red-600 hover:text-red-900"
-                              title="Delete Challenge"
-                            >
-                              <Trash className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    )
-                  )}
-                </tbody>
-              </table>
+        {error && (
+          <div className="fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded shadow-lg z-50 animate-fade-in-out">
+            <span>{error}</span>
+          </div>
+        )}
 
-              <div className="flex justify-center items-center mb-4 mt-4">
-                <span className="text-md">Show results:</span>
-                <select
-                  value={resultsPerPage}
-                  onChange={handleResultsPerPageChange}
-                  className="border rounded p-2 mx-2"
-                >
-                  <option value={5}>5</option>
-                  <option value={10}>10</option>
-                  <option value={25}>25</option>
-                  <option value={50}>50</option>
-                  <option value={100}>100</option>
-                </select>
-                <span>{`Showing ${Math.min(
-                  resultsPerPage * currentPage,
-                  totalChallenges
-                )} of ${totalChallenges} Challenges`}</span>
-                <div className="flex items-center ml-4">
-                  <button
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.max(prev - 1, 1))
-                    }
-                    disabled={currentPage === 1}
-                    className={`px-2 py-2 rounded-l ${
-                      currentPage === 1
-                        ? "bg-gray-300 text-gray-500"
-                        : "bg-slate-800 text-white"
-                    }`}
-                  >
-                    <ChevronLeft size={20} />
-                  </button>
-                  <button
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                    }
-                    disabled={currentPage === totalPages}
-                    className={`px-2 py-2 rounded-r ${
-                      currentPage === totalPages
-                        ? "bg-gray-300 text-gray-500"
-                        : "bg-slate-800 text-white"
-                    }`}
-                  >
-                    <ChevronRight size={20} />
-                  </button>
-                </div>
+        {loading ? (
+          <div className="flex justify-center items-center h-64">
+            <Loader />
+          </div>
+        ) : (
+          <div>
+            {challenges.length === 0 ? (
+              <div className="text-center text-gray-500 mt-8">
+                No challenges found. Add a new challenge to get started.
               </div>
-            </>
-          )}
-        </div>
-      )}
+            ) : (
+              <>
+                <motion.table
+                  className="min-w-full bg-white"
+                  initial="hidden"
+                  animate="visible"
+                  variants={dashboardVariants}
+                >
+                  <thead>
+                    <tr>
+                      <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                        No.
+                      </th>
+                      <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                        Title
+                      </th>
+                      <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                        Circle
+                      </th>
+                      <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                        Points
+                      </th>
+                      <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                        Created By
+                      </th>
+                      <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                        Created At
+                      </th>
+                      <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {currentChallenges.map(
+                      (challenge: Challenge, index: number) => (
+                        <motion.tr
+                          key={challenge.id}
+                          variants={cardVariants}
+                          custom={index}
+                        >
+                          <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                            {indexOfFirstChallenge + index + 1}
+                          </td>
+                          <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                            <div className="flex items-center">
+                              <Swords className="w-5 h-5 mr-2 text-gray-500" />
+                              {challenge.title}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                            {challenge.circle.name}
+                          </td>
+                          <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                            {challenge.points}
+                          </td>
+                          <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                            {challenge.creator.name}
+                          </td>
+                          <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                            {new Date(challenge.createdAt).toLocaleDateString()}
+                          </td>
+                          <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                            <div className="flex space-x-3">
+                              <button
+                                onClick={() => {
+                                  setSelectedChallenge(challenge);
+                                  setIsDetailsModalOpen(true);
+                                }}
+                                className="text-gray-600 hover:text-gray-900"
+                                title="View Details"
+                              >
+                                <Eye className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setSelectedChallenge(challenge);
+                                  setIsEditModalOpen(true);
+                                }}
+                                className="text-blue-600 hover:text-blue-900"
+                                title="Edit Challenge"
+                              >
+                                <Pencil className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setSelectedChallenge(challenge);
+                                  setIsDeleteModalOpen(true);
+                                }}
+                                className="text-red-600 hover:text-red-900"
+                                title="Delete Challenge"
+                              >
+                                <Trash className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </motion.tr>
+                      )
+                    )}
+                  </tbody>
+                </motion.table>
+
+                <div className="flex justify-center items-center mb-4 mt-4">
+                  <span className="text-md">Show results:</span>
+                  <select
+                    value={resultsPerPage}
+                    onChange={handleResultsPerPageChange}
+                    className="border rounded p-2 mx-2"
+                  >
+                    <option value={5}>5</option>
+                    <option value={10}>10</option>
+                    <option value={25}>25</option>
+                    <option value={50}>50</option>
+                    <option value={100}>100</option>
+                  </select>
+                  <span>{`Showing ${Math.min(
+                    resultsPerPage * currentPage,
+                    totalChallenges
+                  )} of ${totalChallenges} Challenges`}</span>
+                  <div className="flex items-center ml-4">
+                    <button
+                      onClick={() =>
+                        setCurrentPage((prev) => Math.max(prev - 1, 1))
+                      }
+                      disabled={currentPage === 1}
+                      className={`px-2 py-2 rounded-l ${
+                        currentPage === 1
+                          ? "bg-gray-300 text-gray-500"
+                          : "bg-slate-800 text-white"
+                      }`}
+                    >
+                      <ChevronLeft size={20} />
+                    </button>
+                    <button
+                      onClick={() =>
+                        setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                      }
+                      disabled={currentPage === totalPages}
+                      className={`px-2 py-2 rounded-r ${
+                        currentPage === totalPages
+                          ? "bg-gray-300 text-gray-500"
+                          : "bg-slate-800 text-white"
+                      }`}
+                    >
+                      <ChevronRight size={20} />
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+      </motion.div>
 
       <AddChallengeModal
         isOpen={isAddModalOpen}

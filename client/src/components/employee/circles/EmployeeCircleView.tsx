@@ -6,6 +6,7 @@ import { Swords, Calendar, User, ArrowLeft, UserPlus } from "lucide-react";
 import Loader from "../../common/Loader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUsers } from "@fortawesome/free-solid-svg-icons";
+import { motion } from "framer-motion";
 
 interface Challenge {
   id: number;
@@ -23,6 +24,25 @@ interface CircleParticipation {
   id: number;
   circle: Circle;
 }
+
+const fadeInVariants = {
+  hidden: { opacity: 0, y: -20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: "easeOut" },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 20, scale: 0.95 },
+  visible: (index: number) => ({
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { delay: index * 0.1, duration: 0.3, ease: "easeOut" },
+  }),
+};
 
 const EmployeeCircleView = () => {
   const { circleId } = useParams();
@@ -171,7 +191,12 @@ const EmployeeCircleView = () => {
   }
 
   return (
-    <div className="p-8 bg-gray-100 min-h-screen">
+    <motion.div
+      className="p-8 bg-gray-100 min-h-screen"
+      initial="hidden"
+      animate="visible"
+      variants={fadeInVariants}
+    >
       {/* Success Message */}
       {successMessage && (
         <div className="fixed top-4 right-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded z-50">
@@ -180,32 +205,37 @@ const EmployeeCircleView = () => {
       )}
 
       {/* Back Button */}
-      <button
+      <motion.button
         onClick={() => navigate("/employee/circles")}
         className="flex items-center text-gray-600 hover:text-gray-900 mb-6"
+        variants={fadeInVariants}
       >
         <ArrowLeft className="w-5 h-5 mr-2" />
         Back to Circles
-      </button>
+      </motion.button>
 
       {/* Circle Details Card */}
-      <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+      <motion.div
+        className="bg-white rounded-lg shadow-md p-6 mb-8"
+        variants={fadeInVariants}
+      >
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center">
             <FontAwesomeIcon
               icon={faUsers}
-              className="w-8 h-8 mr-3 text-blue-600"
+              className="w-6 h-6 mr-3 text-blue-600"
             />
             <h1 className="text-2xl font-bold">{circle.name}</h1>
           </div>
           {!isParticipant && (
-            <button
+            <motion.button
               onClick={handleJoinCircle}
               className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              variants={fadeInVariants}
             >
               <UserPlus className="w-5 h-5" />
               <span>Join Circle</span>
-            </button>
+            </motion.button>
           )}
         </div>
 
@@ -227,12 +257,12 @@ const EmployeeCircleView = () => {
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Challenges Section */}
-      <div>
+      <motion.div variants={fadeInVariants}>
         <div className="flex items-center mb-6">
-          <Swords className="w-6 h-6 mr-2" />
+          <Swords className="w-6 h-6 mr-2 text-blue-500" />
           <h2 className="text-xl font-bold">Circle Challenges</h2>
         </div>
 
@@ -241,25 +271,31 @@ const EmployeeCircleView = () => {
             <p className="text-yellow-700 font-medium">
               Join this circle to view and participate in its challenges
             </p>
-            <button
+            <motion.button
               onClick={handleJoinCircle}
               className="mt-4 flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors mx-auto"
+              variants={fadeInVariants}
             >
               <UserPlus className="w-5 h-5" />
               <span>Join Circle</span>
-            </button>
+            </motion.button>
           </div>
         ) : challenges.length === 0 ? (
           <p className="text-gray-500">
             No challenges available in this circle.
           </p>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            initial="hidden"
+            animate="visible"
+          >
             {challenges.map((challenge) => (
-              <div
+              <motion.div
                 key={challenge.id}
                 onClick={() => handleChallengeClick(challenge.id)}
-                className="bg-white rounded-lg p-6 shadow-md hover:shadow-lg cursor-pointer transform hover:scale-105 transition-all duration-300"
+                className="bg-white rounded-lg p-6 shadow-md hover:shadow-lg cursor-pointer"
+                variants={cardVariants}
               >
                 <div className="flex justify-between items-start mb-4">
                   <h3 className="font-semibold text-lg">{challenge.title}</h3>
@@ -279,12 +315,12 @@ const EmployeeCircleView = () => {
                     {new Date(challenge.createdAt).toLocaleDateString()}
                   </span>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         )}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 

@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../data-source";
 import { Circle } from "../entities/Circle";
+import { User } from "../entities/User";
+import { NotificationController } from "./NotificationController";
 
 // Extend Request type to include user property
 interface AuthenticatedRequest extends Request {
@@ -63,6 +65,7 @@ export class CircleController {
       }
 
       const circleRepository = AppDataSource.getRepository(Circle);
+      const userRepository = AppDataSource.getRepository(User);
 
       // Check if circle with same name exists in the same tenant
       const existingCircle = await circleRepository.findOne({
@@ -81,6 +84,23 @@ export class CircleController {
       });
 
       const savedCircle = await circleRepository.save(newCircle);
+
+      // Get all employees in the tenant
+      const employees = await userRepository.find({
+        where: {
+          tenantId,
+          role: "employee",
+        },
+      });
+
+      // Send notification to all employees
+      for (const employee of employees) {
+        await NotificationController.createNotification(
+          employee.id,
+          "New Circle Available 🎉",
+          `"${name}" has been created. Join now!✨`
+        );
+      }
 
       // Fetch the complete circle data with relations
       const completeCircle = await circleRepository.findOne({

@@ -9,9 +9,19 @@ import challengeRoutes from "./routes/challengeRoutes";
 import circleParticipantsRoutes from "./routes/circleParticipantsRoutes";
 import challengeParticipantsRoutes from "./routes/challengeParticipantsRoutes";
 import pointsRoutes from "./routes/pointsRoutes";
+import notificationRoutes from "./routes/notificationRoutes";
 import { passportConfig } from "./middleware/passport";
 import { createServer } from "http";
 import { Server } from "socket.io";
+
+// Define notification type
+interface Notification {
+  id: number;
+  title: string;
+  message: string;
+  createdAt: Date;
+  isRead?: boolean;
+}
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -50,7 +60,10 @@ io.on("connection", (socket) => {
 });
 
 // Function to send real-time notifications
-export const sendNotification = (userId: string, notification: any) => {
+export const sendNotification = (
+  userId: string,
+  notification: Notification
+) => {
   const userSocketId = onlineUsers.get(userId);
   if (userSocketId) {
     io.to(userSocketId).emit("notification", notification);
@@ -79,6 +92,7 @@ app.use("/api/challenges", challengeRoutes);
 app.use("/api/circle-participants", circleParticipantsRoutes);
 app.use("/api/challenge-participants", challengeParticipantsRoutes);
 app.use("/api/points", pointsRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 // Define a route for the root path
 app.get("/", (req, res) => {

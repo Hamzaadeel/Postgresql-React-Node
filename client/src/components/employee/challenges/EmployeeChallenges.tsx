@@ -53,31 +53,31 @@ const challengeStyles = [
     icon: Trophy,
     iconColor: "text-blue-600",
     pointsColor: "text-blue-700",
-    bgColor: "bg-blue-50",
+    bgColor: "bg-gradient-to-b from-blue-100 via-blue-200 to-blue-300",
   },
   {
     icon: Target,
     iconColor: "text-purple-600",
     pointsColor: "text-purple-700",
-    bgColor: "bg-purple-50",
+    bgColor: "bg-gradient-to-b from-blue-100 via-blue-200 to-blue-300",
   },
   {
     icon: Flag,
     iconColor: "text-green-600",
     pointsColor: "text-green-700",
-    bgColor: "bg-green-50",
+    bgColor: "bg-gradient-to-b from-blue-100 via-blue-200 to-blue-300",
   },
   {
     icon: Award,
     iconColor: "text-yellow-600",
     pointsColor: "text-yellow-700",
-    bgColor: "bg-yellow-50",
+    bgColor: "bg-gradient-to-b from-blue-100 via-blue-200 to-blue-300",
   },
   {
     icon: Crown,
     iconColor: "text-red-600",
     pointsColor: "text-red-700",
-    bgColor: "bg-red-50",
+    bgColor: "bg-gradient-to-b from-blue-100 via-blue-200 to-blue-300",
   },
 ];
 
@@ -370,7 +370,7 @@ const EmployeeChallenges = () => {
                   return (
                     <div
                       key={challenge.id}
-                      className={`relative group border rounded-lg shadow-sm p-6 ${style.bgColor} transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer`}
+                      className={`relative group border rounded-lg shadow-sm p-6 ${style.bgColor} transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer flex flex-col h-full`}
                       onClick={() => handleCardClick(challenge)}
                     >
                       <div className="flex items-start justify-between mb-4">
@@ -388,10 +388,10 @@ const EmployeeChallenges = () => {
                           {challenge.points} pts
                         </div>
                       </div>
-                      <p className="text-gray-600 mb-4 line-clamp-2">
+                      <p className="text-gray-600 mb-4 line-clamp-2 flex-grow">
                         {challenge.description}
                       </p>
-                      <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+                      <div className="flex items-center justify-between text-sm text-gray-500 mt-auto">
                         <div className="flex items-center">
                           <FontAwesomeIcon
                             icon={faUsers}

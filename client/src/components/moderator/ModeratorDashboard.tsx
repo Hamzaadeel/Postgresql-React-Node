@@ -39,7 +39,7 @@ const StatCard: React.FC<StatCardProps> = ({
     <div className="flex items-center justify-between mb-4 ">
       <div className={`p-3 rounded-lg ${color}`}>{icon}</div>
     </div>
-    <h3 className="text-gray-500 text-sm font-medium">{title}</h3>
+    <h3 className="text-gray-50 text-sm font-semibold">{title}</h3>
     <p className="text-2xl font-bold text-gray-800 mt-1">{value}</p>
   </div>
 );
@@ -126,28 +126,28 @@ const ModeratorDashboard: React.FC = () => {
       value: stats.tenants,
       icon: <Building2 size={24} className="text-white" />,
       color: "bg-blue-500",
-      backgroundColor: "bg-sky-200",
+      backgroundColor: "bg-gradient-to-r from-sky-400 to-sky-700",
     },
     {
       title: "Active Circles",
       value: stats.circles,
       icon: <CircleDot size={24} className="text-white" />,
-      color: "bg-purple-500",
-      backgroundColor: "bg-violet-200",
+      color: "bg-purple-800",
+      backgroundColor: "bg-gradient-to-r from-violet-400 to-violet-700",
     },
     {
       title: "Active Challenges",
       value: stats.challenges,
       icon: <Trophy size={24} className="text-white" />,
-      color: "bg-yellow-500",
-      backgroundColor: "bg-amber-200",
+      color: "bg-yellow-400",
+      backgroundColor: "bg-gradient-to-r from-amber-400 to-amber-700",
     },
     {
       title: "Total Users",
       value: stats.users,
       icon: <Users size={24} className="text-white" />,
-      color: "bg-green-500",
-      backgroundColor: "bg-green-100",
+      color: "bg-green-900",
+      backgroundColor: "bg-gradient-to-r from-emerald-400 to-emerald-700",
     },
   ];
 

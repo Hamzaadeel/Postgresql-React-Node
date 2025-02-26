@@ -40,12 +40,36 @@ interface CircleParticipation {
 
 // Array of circle card styles with different colors and icons
 const circleStyles = [
-  { icon: Rocket, bgColor: "bg-blue-50", iconColor: "text-blue-600" },
-  { icon: Target, bgColor: "bg-purple-50", iconColor: "text-purple-600" },
-  { icon: Compass, bgColor: "bg-green-50", iconColor: "text-green-600" },
-  { icon: Crown, bgColor: "bg-yellow-50", iconColor: "text-yellow-600" },
-  { icon: Shield, bgColor: "bg-red-50", iconColor: "text-red-600" },
-  { icon: Flag, bgColor: "bg-indigo-50", iconColor: "text-indigo-600" },
+  {
+    icon: Rocket,
+    bgColor: "bg-gradient-to-b from-blue-100 via-blue-200 to-blue-300",
+    iconColor: "text-blue-600",
+  },
+  {
+    icon: Target,
+    bgColor: "bg-gradient-to-b from-blue-100 via-blue-200 to-blue-300",
+    iconColor: "text-purple-600",
+  },
+  {
+    icon: Compass,
+    bgColor: "bg-gradient-to-b from-blue-100 via-blue-200 to-blue-300",
+    iconColor: "text-green-600",
+  },
+  {
+    icon: Crown,
+    bgColor: "bg-gradient-to-b from-blue-100 via-blue-200 to-blue-300",
+    iconColor: "text-yellow-600",
+  },
+  {
+    icon: Shield,
+    bgColor: "bg-gradient-to-b from-blue-100 via-blue-200 to-blue-300",
+    iconColor: "text-red-600",
+  },
+  {
+    icon: Flag,
+    bgColor: "bg-gradient-to-b from-blue-100 via-blue-200 to-blue-300",
+    iconColor: "text-indigo-600",
+  },
 ];
 
 const fadeInVariants = {
@@ -314,7 +338,7 @@ const EmployeeCircles = () => {
                 return (
                   <motion.div
                     key={circle.id}
-                    className={`relative group border rounded-lg shadow-sm p-6 ${style.bgColor} transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer`}
+                    className={`relative group border rounded-lg shadow-sm p-6 ${style.bgColor} transition-all duration-300 hover:shadow-lg cursor-pointer`}
                     onClick={() => handleViewCircle(circle.id)}
                     variants={cardVariants}
                   >
@@ -336,7 +360,7 @@ const EmployeeCircles = () => {
                         <LogOut className="w-5 h-5" />
                       </button>
                     </div>
-                    <div className="flex items-center text-sm text-gray-500 mt-2">
+                    <div className="flex items-center text-sm text-gray-700 mt-2">
                       <User className="w-4 h-4 mr-2" />
                       <span>Created by {circle.creator.name}</span>
                     </div>
@@ -455,13 +479,13 @@ const EmployeeCircles = () => {
                           e.stopPropagation();
                           handleJoinCircle(circle.id);
                         }}
-                        className="flex items-center space-x-2 px-4 py-2 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors border border-blue-200"
+                        className="flex items-center space-x-2 px-4 py-2 bg-white text-blue-600 rounded-lg hover:bg-blue-500 hover:text-blue-100 transition-colors border border-blue-200"
                       >
                         <UserPlus className="w-4 h-4" />
                         <span>Join</span>
                       </button>
                     </div>
-                    <div className="flex items-center text-sm text-gray-500 mt-2">
+                    <div className="flex items-center text-sm text-gray-700 mt-2">
                       <User className="w-4 h-4 mr-2" />
                       <span>Created by {circle.creator.name}</span>
                     </div>

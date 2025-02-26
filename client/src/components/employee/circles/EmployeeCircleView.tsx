@@ -216,7 +216,7 @@ const EmployeeCircleView = () => {
 
       {/* Circle Details Card */}
       <motion.div
-        className="bg-white rounded-lg shadow-md p-6 mb-8"
+        className="bg-gradient-to-b from-blue-100 via-blue-200 to-blue-300 rounded-lg shadow-md p-6 mb-8"
         variants={fadeInVariants}
       >
         <div className="flex items-center justify-between mb-6">
@@ -241,16 +241,16 @@ const EmployeeCircleView = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <div className="flex items-center">
-            <User className="w-5 h-5 mr-2 text-gray-500" />
+            <User className="w-5 h-5 mr-2 text-gray-700" />
             <div>
-              <p className="text-sm text-gray-500">Created By</p>
+              <p className="text-sm text-gray-700">Created By</p>
               <p className="font-medium">{circle.creator.name}</p>
             </div>
           </div>
           <div className="flex items-center">
-            <Calendar className="w-5 h-5 mr-2 text-gray-500" />
+            <Calendar className="w-5 h-5 mr-2 text-gray-700" />
             <div>
-              <p className="text-sm text-gray-500">Created On</p>
+              <p className="text-sm text-gray-700">Created On</p>
               <p className="font-medium">
                 {new Date(circle.createdAt).toLocaleDateString()}
               </p>
@@ -294,7 +294,7 @@ const EmployeeCircleView = () => {
               <motion.div
                 key={challenge.id}
                 onClick={() => handleChallengeClick(challenge.id)}
-                className="bg-white rounded-lg p-6 shadow-md hover:shadow-lg cursor-pointer"
+                className="bg-gradient-to-b from-blue-100 via-blue-200 to-blue-300 rounded-lg p-6 shadow-md hover:shadow-lg hover:scale-105 cursor-pointer flex flex-col h-full transition-transform duration-300"
                 variants={cardVariants}
               >
                 <div className="flex justify-between items-start mb-4">
@@ -303,10 +303,10 @@ const EmployeeCircleView = () => {
                     {challenge.points} pts
                   </span>
                 </div>
-                <p className="text-gray-600 mb-4 line-clamp-2">
+                <p className="text-gray-900 mb-4 line-clamp-2 flex-grow">
                   {challenge.description}
                 </p>
-                <div className="flex items-center justify-between text-sm text-gray-500">
+                <div className="flex items-center justify-between text-sm text-gray-900 mt-auto">
                   <div className="flex items-center">
                     <User className="w-4 h-4 mr-1" />
                     <span>{challenge.creator.name}</span>

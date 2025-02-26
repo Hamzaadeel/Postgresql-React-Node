@@ -14,15 +14,25 @@ import {
 } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUsers } from "@fortawesome/free-solid-svg-icons";
-import ConfirmationModal from "./ConfirmationModal"; // Import the ConfirmationModal
+import ConfirmationModal from "./ConfirmationModal";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { setUserPoints } from "../../store/slices/pointsSlice";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "react-toastify";
+import { io, Socket } from "socket.io-client";
 
 interface HeaderProps {
   userRole: "Employee" | "Moderator";
   isSidebarOpen: boolean;
+}
+
+interface Notification {
+  id: number;
+  title: string;
+  message: string;
+  createdAt: Date;
+  isRead: boolean;
 }
 
 const Header: React.FC<HeaderProps> = ({ userRole }) => {
@@ -32,6 +42,8 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [socket, setSocket] = useState<Socket | null>(null);
   const navigate = useNavigate();
 
   const profileRef = useRef<HTMLDivElement>(null);
@@ -43,8 +55,80 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
   useEffect(() => {
     if (user) {
       fetchTotalPoints();
+      fetchNotifications();
+      initializeSocket();
     }
+
+    return () => {
+      if (socket) {
+        socket.disconnect();
+      }
+    };
   }, [user]);
+
+  const initializeSocket = () => {
+    const newSocket = io("http://localhost:5000", {
+      withCredentials: true,
+    });
+
+    newSocket.on("connect", () => {
+      console.log("Connected to socket server");
+      if (user) {
+        newSocket.emit("register", user.id);
+      }
+    });
+
+    newSocket.on("notification", (notification: Notification) => {
+      setNotifications((prev) => [notification, ...prev]);
+      toast.info(notification.message, {
+        position: "top-right",
+        autoClose: 5000,
+      });
+    });
+
+    setSocket(newSocket);
+  };
+
+  const fetchNotifications = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get<Notification[]>(
+        "http://localhost:5000/api/notifications",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setNotifications(response.data);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
+  };
+
+  const markNotificationAsRead = async (notificationId: number) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.put(
+        `http://localhost:5000/api/notifications/${notificationId}/read`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setNotifications((prev) =>
+        prev.map((notification) =>
+          notification.id === notificationId
+            ? { ...notification, isRead: true }
+            : notification
+        )
+      );
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+    }
+  };
 
   const fetchTotalPoints = async () => {
     try {
@@ -93,28 +177,6 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
     setIsProfileOpen(false);
   };
 
-  // Hardcoded notifications for now
-  const notifications = [
-    {
-      id: 1,
-      title: "New Challenge Available",
-      message: "A new challenge has been added to your circle",
-      time: "5 min ago",
-    },
-    {
-      id: 2,
-      title: "Circle Update",
-      message: "Your circle has completed a milestone",
-      time: "1 hour ago",
-    },
-    {
-      id: 3,
-      title: "Profile Update",
-      message: "Your profile has been updated successfully",
-      time: "2 hours ago",
-    },
-  ];
-
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     // Implement search functionality here
@@ -135,6 +197,10 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
     localStorage.removeItem("token");
     navigate("/login");
   };
+
+  const unreadNotificationsCount = notifications.filter(
+    (notification) => !notification.isRead
+  ).length;
 
   return (
     <header className="bg-white shadow-lg transition-all duration-300">
@@ -178,32 +244,59 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
               className="p-2 hover:bg-gray-100 rounded-full relative"
             >
               <Bell className="h-6 w-6" />
-              <span className="absolute top-0 right-0 h-4 w-4 bg-red-500 rounded-full text-xs text-white flex items-center justify-center">
-                {notifications.length}
-              </span>
+              {unreadNotificationsCount > 0 && (
+                <span className="absolute top-0 right-0 h-4 w-4 bg-red-500 rounded-full text-xs text-white flex items-center justify-center">
+                  {unreadNotificationsCount}
+                </span>
+              )}
             </button>
 
             {/* Notifications Dropdown */}
-            {isNotificationsOpen && (
-              <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg py-2 z-50">
-                {notifications.map((notification) => (
-                  <div
-                    key={notification.id}
-                    className="px-4 py-3 hover:bg-gray-50 border-b last:border-b-0"
-                  >
-                    <p className="font-semibold text-sm">
-                      {notification.title}
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      {notification.message}
-                    </p>
-                    <p className="text-xs text-gray-400 mt-1">
-                      {notification.time}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            )}
+            <AnimatePresence>
+              {isNotificationsOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                  transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+                  className={`absolute right-0 mt-2 w-80 ${
+                    userRole === "Employee"
+                      ? "bg-gradient-to-b from-blue-100 to-blue-300"
+                      : "bg-gradient-to-b from-emerald-100 to-emerald-300"
+                  } rounded-lg shadow-lg py-2 z-50`}
+                >
+                  {notifications.length === 0 ? (
+                    <div className="px-4 py-3 text-gray-500 text-center">
+                      No notifications
+                    </div>
+                  ) : (
+                    <div className="max-h-72 overflow-y-auto">
+                      {notifications.map((notification) => (
+                        <div
+                          key={notification.id}
+                          onClick={() =>
+                            markNotificationAsRead(notification.id)
+                          }
+                          className={`px-4 py-3 hover:bg-gray-50 border-b last:border-b-0 cursor-pointer ${
+                            !notification.isRead ? "bg-blue-50" : ""
+                          }`}
+                        >
+                          <p className="font-semibold text-sm">
+                            {notification.title}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            {notification.message}
+                          </p>
+                          <p className="text-xs text-gray-500 mt-1">
+                            {new Date(notification.createdAt).toLocaleString()}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
           {/* Profile Dropdown */}
           <div className="relative" ref={profileRef}>

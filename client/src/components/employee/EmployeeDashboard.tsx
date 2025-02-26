@@ -198,11 +198,11 @@ const EmployeeDashboard = () => {
         {challengesToShow.map((challenge) => (
           <div
             key={challenge.id}
-            className="bg-white rounded-lg p-5 hover:shadow-md hover:scale-105 transition-all duration-300 cursor-pointer"
+            className="bg-white rounded-lg p-5 hover:shadow-md hover:scale-105 transition-all duration-300 cursor-pointer bg-gradient-to-b from-sky-400 via-sky-600 to-sky-800 flex flex-col h-full"
             onClick={() => navigate("/employee/challenges")}
           >
             <div className="flex justify-between items-start mb-3">
-              <h3 className="font-semibold text-gray-800">{challenge.title}</h3>
+              <h3 className="font-semibold text-black">{challenge.title}</h3>
               {challenge.status && (
                 <span
                   className={`px-3 py-1 rounded-full text-xs font-medium ${
@@ -215,10 +215,10 @@ const EmployeeDashboard = () => {
                 </span>
               )}
             </div>
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-gray-50 mb-4 line-clamp-3 flex-grow">
               {challenge.description}
             </p>
-            <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+            <div className="flex items-center justify-between text-sm text-gray-50 mt-auto">
               <div className="flex items-center justify-between">
                 <Users size={16} className="mr-1" />
                 <span>{challenge.circle.name}</span>

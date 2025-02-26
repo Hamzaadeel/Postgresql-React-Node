@@ -116,22 +116,24 @@ const ChallengeDetailsEmp = ({
                 <h3 className="text-xl font-semibold mb-2">
                   {challenge.title}
                 </h3>
-                <div className="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
-                  {challenge.points} Points
-                </div>
-                {challenge.status && (
-                  <div
-                    className={`inline-block ml-2 px-3 py-1 rounded-full text-sm ${
-                      challenge.status === "Pending"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : challenge.status === "Completed"
-                        ? "bg-green-100 text-green-800"
-                        : "bg-white text-gray-800"
-                    }`}
-                  >
-                    Status: {challenge.status}
+                <div className="flex justify-between">
+                  <div className="inline-block  bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                    {challenge.points} Points
                   </div>
-                )}
+                  {challenge.status && (
+                    <div
+                      className={`inline-block ml-2 px-3 py-1 rounded-full text-sm ${
+                        challenge.status === "Pending"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : challenge.status === "Completed"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-white text-gray-800"
+                      }`}
+                    >
+                      Status: {challenge.status}
+                    </div>
+                  )}
+                </div>
               </motion.div>
 
               {/* Description Section */}
@@ -144,7 +146,7 @@ const ChallengeDetailsEmp = ({
                 <h4 className="text-sm font-semibold text-gray-500 uppercase mb-2">
                   Description
                 </h4>
-                <p className="text-gray-700 whitespace-pre-wrap">
+                <p className="text-gray-700 whitespace-pre-wrap text-sm">
                   {challenge.description}
                 </p>
               </motion.div>
@@ -165,7 +167,9 @@ const ChallengeDetailsEmp = ({
                   <h4 className="text-sm font-semibold text-gray-500">
                     Circle
                   </h4>
-                  <p className="text-gray-700">{challenge.circle.name}</p>
+                  <p className="text-gray-700 text-sm">
+                    {challenge.circle.name}
+                  </p>
                 </div>
               </motion.div>
 
@@ -182,7 +186,9 @@ const ChallengeDetailsEmp = ({
                   <h4 className="text-sm font-semibold text-gray-500">
                     Created By
                   </h4>
-                  <p className="text-gray-700">{challenge.creator.name}</p>
+                  <p className="text-gray-700 text-sm">
+                    {challenge.creator.name}
+                  </p>
                 </div>
               </motion.div>
 
@@ -199,7 +205,7 @@ const ChallengeDetailsEmp = ({
                   <h4 className="text-sm font-semibold text-gray-500">
                     Created On
                   </h4>
-                  <p className="text-gray-700">
+                  <p className="text-gray-700 text-sm">
                     {new Date(challenge.createdAt).toLocaleDateString()} at{" "}
                     {new Date(challenge.createdAt).toLocaleTimeString()}
                   </p>

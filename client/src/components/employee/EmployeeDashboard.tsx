@@ -1,4 +1,4 @@
-import { Bell, Gauge, Trophy, Users, ArrowRight } from "lucide-react";
+import { Gauge, Trophy, Users, ArrowRight } from "lucide-react";
 import Leaderboards from "../common/Leaderboards";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -226,11 +226,9 @@ const EmployeeDashboard = () => {
               <span className="text-blue-700 font-medium bg-blue-100 rounded-full p-2 text-xs">
                 {challenge.points} points
               </span>
-            </div>
-            <div className="flex items-center justify-between mt-auto">
               {!challenge.participationId && (
-                <button className="flex items-center text-blue-500 hover:text-blue-600 transition-colors">
-                  Join Challenge
+                <button className="flex items-center p-2 bg-gradient-to-r from-cyan-600 to-cyan-800 text-white rounded-full hover:bg-gradient-to-l hover:from-cyan-600 hover:to-cyan-800 transition-colors">
+                  Join
                   <ArrowRight size={16} className="ml-1" />
                 </button>
               )}
@@ -240,40 +238,6 @@ const EmployeeDashboard = () => {
       </div>
     );
   };
-
-  // Dummy data for circle updates
-  const circleUpdates = [
-    {
-      id: 1,
-      type: "join",
-      user: "Alex Kim",
-      circle: "Frontend Circle",
-      time: "2 hours ago",
-    },
-    {
-      id: 2,
-      type: "achievement",
-      user: "Maria Garcia",
-      circle: "Design Circle",
-      achievement: "UI Master Badge",
-      time: "4 hours ago",
-    },
-    {
-      id: 3,
-      type: "challenge",
-      user: "John Smith",
-      circle: "Backend Circle",
-      challenge: "API Performance Sprint",
-      time: "1 day ago",
-    },
-    {
-      id: 4,
-      type: "join",
-      user: "Lisa Chen",
-      circle: "DevOps Circle",
-      time: "2 days ago",
-    },
-  ];
 
   const fadeInVariants = {
     hidden: { opacity: 0, y: -20 },
@@ -322,67 +286,9 @@ const EmployeeDashboard = () => {
         {renderChallengesSection()}
       </motion.div>
 
-      {/* Grid Layout */}
-      <motion.div
-        className="grid grid-cols-1 lg:grid-cols-2 gap-8"
-        initial="hidden"
-        animate="visible"
-      >
-        {/* Leaderboard */}
-        <motion.div variants={cardVariants}>
-          <Leaderboards />
-        </motion.div>
-
-        {/* Circle Updates */}
-        <motion.div
-          className="bg-white rounded-xl shadow-md p-6 ml-4 mb-4"
-          variants={fadeInVariants}
-        >
-          <div className="flex items-center justify-start mb-6">
-            <Bell className="text-blue-500 w-6 h-6" />
-            <h2 className="text-xl font-bold ml-2">Circle Updates</h2>
-          </div>
-
-          {/* List Items */}
-          <motion.div className="space-y-4" variants={fadeInVariants}>
-            {circleUpdates.map((update) => (
-              <motion.div
-                key={update.id}
-                className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
-                variants={cardVariants}
-              >
-                <div
-                  className={`p-2 rounded-lg ${
-                    update.type === "join"
-                      ? "bg-green-100 text-green-600"
-                      : update.type === "achievement"
-                      ? "bg-purple-100 text-purple-600"
-                      : "bg-blue-100 text-blue-600"
-                  }`}
-                >
-                  {update.type === "join" ? (
-                    <Users size={20} />
-                  ) : update.type === "achievement" ? (
-                    <Trophy size={20} />
-                  ) : (
-                    <Bell size={20} />
-                  )}
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm text-gray-800">
-                    <span className="font-medium">{update.user}</span>
-                    {update.type === "join" && ` joined ${update.circle}`}
-                    {update.type === "achievement" &&
-                      ` earned ${update.achievement} in ${update.circle}`}
-                    {update.type === "challenge" &&
-                      ` started ${update.challenge} in ${update.circle}`}
-                  </p>
-                  <span className="text-xs text-gray-500">{update.time}</span>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </motion.div>
+      {/* Leaderboard */}
+      <motion.div className="mr-2 mb-2" variants={cardVariants}>
+        <Leaderboards />
       </motion.div>
     </motion.div>
   );

@@ -4,6 +4,8 @@ import { ChallengeParticipants } from "../entities/ChallengeParticipants";
 import { User } from "../entities/User";
 import { Challenge } from "../entities/Challenge";
 import { Points } from "../entities/Points";
+import { NotificationController } from "./NotificationController";
+import { Circle } from "../entities/Circle";
 
 export class ChallengeParticipantsController {
   static async getParticipantsByChallenge(req: Request, res: Response) {
@@ -87,15 +89,32 @@ export class ChallengeParticipantsController {
 
       // Check if user exists
       const userRepository = AppDataSource.getRepository(User);
-      const user = await userRepository.findOne({ where: { id: userId } });
+      const user = await userRepository.findOne({
+        where: { id: userId },
+        select: ["id", "name"],
+      });
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
 
-      // Check if challenge exists
+      // Check if challenge exists and get creator info
       const challengeRepository = AppDataSource.getRepository(Challenge);
       const challenge = await challengeRepository.findOne({
         where: { id: challengeId },
+        relations: ["circle", "creator"],
+        select: {
+          id: true,
+          title: true,
+          createdBy: true,
+          circle: {
+            id: true,
+            name: true,
+          },
+          creator: {
+            id: true,
+            name: true,
+          },
+        },
       });
       if (!challenge) {
         return res.status(404).json({ message: "Challenge not found" });
@@ -127,6 +146,13 @@ export class ChallengeParticipantsController {
 
       await participantsRepository.save(newParticipation);
 
+      // Send notification to the challenge creator (moderator)
+      await NotificationController.createNotification(
+        challenge.creator.id,
+        "New Challenge Participant 🔥",
+        `${user.name} has joined your challenge "${challenge.title}" in circle "${challenge.circle.name}"`
+      );
+
       // Check if points entry already exists for the user
       const pointsRepository = AppDataSource.getRepository(Points);
       let userPoints = await pointsRepository.findOne({
@@ -134,10 +160,9 @@ export class ChallengeParticipantsController {
       });
 
       if (!userPoints) {
-        // Create a new points entry only if it doesn't exist
         userPoints = pointsRepository.create({
           userId: userId,
-          totalPoints: 0, // Initialize to 0 or set based on your logic
+          totalPoints: 0,
         });
         await pointsRepository.save(userPoints);
       }
@@ -165,7 +190,10 @@ export class ChallengeParticipantsController {
       const participation = await participantsRepository.findOne({
         where: { id },
         relations: {
-          challenge: true,
+          challenge: {
+            circle: true,
+            creator: true,
+          },
           user: true,
         },
       });
@@ -174,11 +202,19 @@ export class ChallengeParticipantsController {
         return res.status(404).json({ message: "Participation not found" });
       }
 
+      const previousStatus = participation.status;
       participation.status = status;
 
-      // If the challenge is being completed, award the points
-      if (status === "Completed") {
+      // If the challenge is being completed and wasn't completed before
+      if (status === "Completed" && previousStatus !== "Completed") {
         participation.earnedPoints = participation.challenge.points;
+
+        // Send notification to the challenge creator
+        await NotificationController.createNotification(
+          participation.challenge.creator.id,
+          "Challenge Submission ✅",
+          `${participation.user.name} has submitted the challenge "${participation.challenge.title}" from circle "${participation.challenge.circle.name}"`
+        );
 
         // Update points in the Points table
         const pointsRepository = AppDataSource.getRepository(Points);

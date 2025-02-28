@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import { AppDataSource } from "../data-source";
 import { Challenge } from "../entities/Challenge";
 import { In } from "typeorm";
+import { CircleParticipants } from "../entities/CircleParticipants";
+import { NotificationController } from "./NotificationController";
 
 // Extend Request type to include user property
 interface AuthenticatedRequest extends Request {
@@ -149,6 +151,8 @@ export class ChallengeController {
       }
 
       const challengeRepository = AppDataSource.getRepository(Challenge);
+      const circleParticipantsRepository =
+        AppDataSource.getRepository(CircleParticipants);
 
       // Check if challenge with same title exists in the same circle
       const existingChallenge = await challengeRepository.findOne({
@@ -169,6 +173,23 @@ export class ChallengeController {
       });
 
       const savedChallenge = await challengeRepository.save(newChallenge);
+
+      // Fetch circle participants to send notifications
+      const circleParticipants = await circleParticipantsRepository.find({
+        where: { circle: { id: circleId } },
+        relations: ["user", "circle"],
+      });
+
+      // Send notifications to all circle participants except the creator
+      for (const participant of circleParticipants) {
+        if (participant.user.id !== userId) {
+          await NotificationController.createNotification(
+            participant.user.id,
+            "New Challenge Available 🎇",
+            `A new challenge "${title}" worth ${points} points has been added to circle "${participant.circle.name}"`
+          );
+        }
+      }
 
       // Fetch the complete challenge data with relations
       const completeChallenge = await challengeRepository.findOne({

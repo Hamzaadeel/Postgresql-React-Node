@@ -97,4 +97,73 @@ export class NotificationController {
       res.status(500).json({ message: "Error marking notification as read" });
     }
   }
+
+  static async deleteNotification(req: AuthenticatedRequest, res: Response) {
+    try {
+      const userId = req.user?.id;
+      const notificationId = parseInt(req.params.id);
+
+      if (!userId) {
+        return res.status(401).json({ message: "User not authenticated" });
+      }
+
+      const notificationRepository = AppDataSource.getRepository(Notification);
+      const notification = await notificationRepository.findOne({
+        where: { id: notificationId, userId },
+      });
+
+      if (!notification) {
+        return res.status(404).json({ message: "Notification not found" });
+      }
+
+      await notificationRepository.remove(notification);
+      res.json({ message: "Notification deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting notification:", error);
+      res.status(500).json({ message: "Error deleting notification" });
+    }
+  }
+
+  static async clearAllNotifications(req: AuthenticatedRequest, res: Response) {
+    try {
+      const userId = req.user?.id;
+
+      if (!userId) {
+        return res.status(401).json({ message: "User not authenticated" });
+      }
+
+      const notificationRepository = AppDataSource.getRepository(Notification);
+      await notificationRepository.delete({ userId });
+
+      res.json({ message: "All notifications cleared successfully" });
+    } catch (error) {
+      console.error("Error clearing notifications:", error);
+      res.status(500).json({ message: "Error clearing notifications" });
+    }
+  }
+
+  static async markAllAsRead(req: AuthenticatedRequest, res: Response) {
+    try {
+      const userId = req.user?.id;
+
+      if (!userId) {
+        return res.status(401).json({ message: "User not authenticated" });
+      }
+
+      const notificationRepository = AppDataSource.getRepository(Notification);
+      await notificationRepository
+        .createQueryBuilder()
+        .update(Notification)
+        .set({ isRead: true })
+        .where("userId = :userId", { userId })
+        .execute();
+
+      res.json({ message: "All notifications marked as read" });
+    } catch (error) {
+      console.error("Error marking all notifications as read:", error);
+      res
+        .status(500)
+        .json({ message: "Error marking all notifications as read" });
+    }
+  }
 }

@@ -5,6 +5,7 @@ import tenantReducer from "./slices/tenantSlice";
 import circleReducer from "./slices/circleSlice";
 import challengeReducer from "./slices/challengeSlice";
 import pointsReducer from "./slices/pointsSlice";
+import notificationsReducer from "./slices/notificationSlice";
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     circles: circleReducer,
     challenges: challengeReducer,
     points: pointsReducer,
+    notifications: notificationsReducer,
   },
 });
 

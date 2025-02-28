@@ -518,7 +518,7 @@ const EmployeeChallenges = () => {
                   return (
                     <div
                       key={challenge.id}
-                      className={`relative group  border rounded-lg shadow-sm p-6 ${style.bgColor} transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer`}
+                      className={`relative group border rounded-lg shadow-sm p-6 ${style.bgColor} transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer flex flex-col h-full`}
                       onClick={() => handleCardClick(challenge)}
                     >
                       <div className="flex items-start justify-between mb-4">
@@ -536,10 +536,10 @@ const EmployeeChallenges = () => {
                           {challenge.points} pts
                         </div>
                       </div>
-                      <p className="text-gray-600 mb-4 line-clamp-2">
+                      <p className="text-gray-600 mb-4 line-clamp-2 flex-grow">
                         {challenge.description}
                       </p>
-                      <div className="flex items-center justify-between text-sm text-gray-500">
+                      <div className="flex items-center justify-between text-sm text-gray-500 mt-auto">
                         <div className="flex items-center">
                           <FontAwesomeIcon
                             icon={faUsers}
@@ -552,7 +552,7 @@ const EmployeeChallenges = () => {
                             e.stopPropagation();
                             handleJoinChallenge(challenge.id);
                           }}
-                          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                          className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-cyan-600 to-cyan-800 text-white rounded hover:bg-gradient-to-l hover:from-cyan-600 hover:to-cyan-800 transition-colors"
                         >
                           <UserPlus className="w-4 h-4" />
                           <span>Join</span>

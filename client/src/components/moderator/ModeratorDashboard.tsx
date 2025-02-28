@@ -8,6 +8,7 @@ import { Circle, Tenant } from "../../services/api";
 import { User } from "../../types/User";
 import axios from "axios";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 interface Challenge {
   id: number;
   title: string;
@@ -26,15 +27,17 @@ interface StatCardProps {
   backgroundColor: string;
 }
 
-const StatCard: React.FC<StatCardProps> = ({
+const StatCard: React.FC<StatCardProps & { onClick: () => void }> = ({
   title,
   value,
   icon,
   color,
   backgroundColor,
+  onClick,
 }) => (
   <div
     className={` ml-2 rounded-xl shadow-md p-6 flex flex-col hover:scale-105 transition-all duration-300 cursor-pointer ${backgroundColor}`}
+    onClick={onClick}
   >
     <div className="flex items-center justify-between mb-4 ">
       <div className={`p-3 rounded-lg ${color}`}>{icon}</div>
@@ -48,6 +51,7 @@ const ModeratorDashboard: React.FC = () => {
   const dispatch = useAppDispatch();
   const { loading: usersLoading } = useAppSelector((state) => state.users);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const [stats, setStats] = useState({
     tenants: 0,
@@ -104,6 +108,12 @@ const ModeratorDashboard: React.FC = () => {
     fetchStats();
   }, [dispatch]);
 
+  const handleStatCardClick = (statType: string) => {
+    // Logic to navigate to the corresponding tab
+    navigate(`/moderator/${statType}`);
+    console.log(`Navigating to ${statType} tab`); // Replace with actual navigation logic
+  };
+
   if (loading || usersLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -127,6 +137,7 @@ const ModeratorDashboard: React.FC = () => {
       icon: <Building2 size={24} className="text-white" />,
       color: "bg-blue-500",
       backgroundColor: "bg-gradient-to-r from-sky-400 to-sky-700",
+      onClick: () => handleStatCardClick("tenants"),
     },
     {
       title: "Active Circles",
@@ -134,6 +145,7 @@ const ModeratorDashboard: React.FC = () => {
       icon: <CircleDot size={24} className="text-white" />,
       color: "bg-purple-800",
       backgroundColor: "bg-gradient-to-r from-violet-400 to-violet-700",
+      onClick: () => handleStatCardClick("circles"),
     },
     {
       title: "Active Challenges",
@@ -141,6 +153,7 @@ const ModeratorDashboard: React.FC = () => {
       icon: <Trophy size={24} className="text-white" />,
       color: "bg-yellow-400",
       backgroundColor: "bg-gradient-to-r from-amber-400 to-amber-700",
+      onClick: () => handleStatCardClick("challenges"),
     },
     {
       title: "Total Users",
@@ -148,6 +161,7 @@ const ModeratorDashboard: React.FC = () => {
       icon: <Users size={24} className="text-white" />,
       color: "bg-green-900",
       backgroundColor: "bg-gradient-to-r from-emerald-400 to-emerald-700",
+      onClick: () => handleStatCardClick("users"),
     },
   ];
 
@@ -210,6 +224,7 @@ const ModeratorDashboard: React.FC = () => {
         initial="hidden"
         animate="visible"
         variants={leaderboardVariants}
+        className="mr-2 mb-2"
       >
         <Leaderboards />
       </motion.div>

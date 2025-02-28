@@ -11,6 +11,10 @@ import {
   ChevronDown,
   Swords,
   CircleDollarSign,
+  Check,
+  Trash2,
+  CheckCheck,
+  X,
 } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUsers } from "@fortawesome/free-solid-svg-icons";
@@ -21,6 +25,16 @@ import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-toastify";
 import { io, Socket } from "socket.io-client";
+import {
+  setNotifications,
+  addNotification,
+  markNotificationAsRead,
+  markAllNotificationsAsRead,
+  deleteNotification,
+  clearNotifications,
+  selectNotifications,
+  selectUnreadCount,
+} from "../../store/slices/notificationSlice";
 
 interface HeaderProps {
   userRole: "Employee" | "Moderator";
@@ -39,10 +53,11 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
   const { userPoints } = useAppSelector((state) => state.points);
+  const notifications = useAppSelector(selectNotifications);
+  const unreadNotificationsCount = useAppSelector(selectUnreadCount);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [socket, setSocket] = useState<Socket | null>(null);
   const navigate = useNavigate();
 
@@ -79,7 +94,7 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
     });
 
     newSocket.on("notification", (notification: Notification) => {
-      setNotifications((prev) => [notification, ...prev]);
+      dispatch(addNotification(notification));
       toast.info(notification.message, {
         position: "top-right",
         autoClose: 5000,
@@ -100,13 +115,13 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
           },
         }
       );
-      setNotifications(response.data);
+      dispatch(setNotifications(response.data));
     } catch (error) {
       console.error("Error fetching notifications:", error);
     }
   };
 
-  const markNotificationAsRead = async (notificationId: number) => {
+  const handleMarkNotificationAsRead = async (notificationId: number) => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
@@ -118,15 +133,62 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
           },
         }
       );
-      setNotifications((prev) =>
-        prev.map((notification) =>
-          notification.id === notificationId
-            ? { ...notification, isRead: true }
-            : notification
-        )
-      );
+      dispatch(markNotificationAsRead(notificationId));
     } catch (error) {
       console.error("Error marking notification as read:", error);
+      toast.error("Failed to mark notification as read");
+    }
+  };
+
+  const handleDeleteNotification = async (notificationId: number) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(
+        `http://localhost:5000/api/notifications/${notificationId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      dispatch(deleteNotification(notificationId));
+    } catch (error) {
+      console.error("Error deleting notification:", error);
+      toast.error("Failed to delete notification");
+    }
+  };
+
+  const handleMarkAllAsRead = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.put(
+        "http://localhost:5000/api/notifications/mark-all-read",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      dispatch(markAllNotificationsAsRead());
+    } catch (error) {
+      console.error("Error marking all notifications as read:", error);
+      toast.error("Failed to mark all notifications as read");
+    }
+  };
+
+  const handleClearAll = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete("http://localhost:5000/api/notifications/clear-all", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      dispatch(clearNotifications());
+    } catch (error) {
+      console.error("Error clearing notifications:", error);
+      toast.error("Failed to clear notifications");
     }
   };
 
@@ -198,10 +260,6 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
     navigate("/login");
   };
 
-  const unreadNotificationsCount = notifications.filter(
-    (notification) => !notification.isRead
-  ).length;
-
   return (
     <header className="bg-white shadow-lg transition-all duration-300">
       <div className="px-4 py-3 flex items-center justify-between">
@@ -259,37 +317,91 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -10, scale: 0.95 }}
                   transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
-                  className={`absolute right-0 mt-2 w-80 ${
+                  className={`absolute right-0 mt-2 w-96 ${
                     userRole === "Employee"
                       ? "bg-gradient-to-b from-blue-100 to-blue-300"
                       : "bg-gradient-to-b from-emerald-100 to-emerald-300"
                   } rounded-lg shadow-lg py-2 z-50`}
                 >
+                  {/* Header */}
+                  <div className="px-4 py-2 border-b border-gray-700">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-semibold text-gray-800">
+                        Notifications ({notifications.length})
+                      </h3>
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={handleMarkAllAsRead}
+                          className="p-1 hover:bg-blue-200 rounded-full transition-colors"
+                          title="Mark all as read"
+                        >
+                          <CheckCheck className="h-4 w-4 text-gray-600" />
+                        </button>
+                        <button
+                          onClick={handleClearAll}
+                          className="p-1 hover:bg-red-200 rounded-full transition-colors"
+                          title="Clear all notifications"
+                        >
+                          <Trash2 className="h-4 w-4 text-gray-600" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
                   {notifications.length === 0 ? (
                     <div className="px-4 py-3 text-gray-500 text-center">
                       No notifications
                     </div>
                   ) : (
-                    <div className="max-h-72 overflow-y-auto">
+                    <div className="max-h-[400px] overflow-y-auto">
                       {notifications.map((notification) => (
                         <div
                           key={notification.id}
-                          onClick={() =>
-                            markNotificationAsRead(notification.id)
-                          }
-                          className={`px-4 py-3 hover:bg-gray-50 border-b last:border-b-0 cursor-pointer ${
+                          className={`px-4 py-3 hover:bg-gray-50 border-b last:border-b-0 ${
                             !notification.isRead ? "bg-blue-50" : ""
                           }`}
                         >
-                          <p className="font-semibold text-sm">
-                            {notification.title}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            {notification.message}
-                          </p>
-                          <p className="text-xs text-gray-500 mt-1">
-                            {new Date(notification.createdAt).toLocaleString()}
-                          </p>
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                              <p className="font-semibold text-sm">
+                                {notification.title}
+                              </p>
+                              <p className="text-sm text-gray-600">
+                                {notification.message}
+                              </p>
+                              <p className="text-xs text-gray-500 mt-1">
+                                {new Date(
+                                  notification.createdAt
+                                ).toLocaleString()}
+                              </p>
+                            </div>
+                            <div className="flex space-x-1 ml-2">
+                              {!notification.isRead && (
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleMarkNotificationAsRead(
+                                      notification.id
+                                    );
+                                  }}
+                                  className="p-1 hover:bg-blue-200 rounded-full transition-colors"
+                                  title="Mark as read"
+                                >
+                                  <Check className="h-4 w-4 text-gray-600" />
+                                </button>
+                              )}
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDeleteNotification(notification.id);
+                                }}
+                                className="p-1 hover:bg-red-200 rounded-full transition-colors"
+                                title="Delete notification"
+                              >
+                                <X className="h-4 w-4 text-gray-600" />
+                              </button>
+                            </div>
+                          </div>
                         </div>
                       ))}
                     </div>

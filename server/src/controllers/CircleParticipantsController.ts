@@ -3,6 +3,7 @@ import { AppDataSource } from "../data-source";
 import { CircleParticipants } from "../entities/CircleParticipants"; // Import the CircleParticipants entity
 import { User } from "../entities/User"; // Import the User entity
 import { Circle } from "../entities/Circle"; // Import the Circle entity
+import { NotificationController } from "./NotificationController";
 
 export class CircleParticipantsController {
   // Add a user to a circle
@@ -69,6 +70,44 @@ export class CircleParticipantsController {
 
       if (!participant) {
         return res.status(404).json({ message: "Participant not found" });
+      }
+
+      const circleRepository = AppDataSource.getRepository(Circle);
+      const circle = await circleRepository.findOne({
+        where: { id: circleId },
+        relations: {
+          creator: true,
+          circleParticipants: {
+            user: true,
+          },
+        },
+      });
+
+      // Send notification to the moderator
+      await NotificationController.createNotification(
+        circle.creator.id,
+        "Circle Member Left! 😔",
+        `${participant.user.name} has left the ${circle.name} circle.`
+      );
+
+      // Log to verify notification sent to moderator
+      console.log(`Notification sent to moderator: ${circle.creator.id}`);
+
+      // Send notifications to existing circle members
+      const existingMembers = circle.circleParticipants
+        ? circle.circleParticipants.map((cp) => cp.user)
+        : [];
+      for (const member of existingMembers) {
+        if (member.id !== userId && member.id !== circle.creator.id) {
+          await NotificationController.createNotification(
+            member.id,
+            "Circle Member Left! 😔",
+            `${participant.user.name} has left the ${circle.name} circle.`
+          );
+
+          // Log to verify notification sent to each member
+          console.log(`Notification sent to member: ${member.id}`);
+        }
       }
 
       await circleParticipantsRepository.remove(participant);
@@ -139,15 +178,27 @@ export class CircleParticipantsController {
 
       // Check if user exists
       const userRepository = AppDataSource.getRepository(User);
-      const user = await userRepository.findOne({ where: { id: userId } });
+      const user = await userRepository.findOne({
+        where: { id: userId },
+        select: {
+          id: true,
+          name: true,
+        },
+      });
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
 
-      // Check if circle exists
+      // Check if circle exists with all necessary relations
       const circleRepository = AppDataSource.getRepository(Circle);
       const circle = await circleRepository.findOne({
         where: { id: circleId },
+        relations: {
+          creator: true,
+          circleParticipants: {
+            user: true,
+          },
+        },
       });
       if (!circle) {
         return res.status(404).json({ message: "Circle not found" });
@@ -175,8 +226,35 @@ export class CircleParticipantsController {
         circle,
       });
 
-      await participantsRepository.save(newParticipation);
-      res.status(201).json(newParticipation);
+      const savedParticipation = await participantsRepository.save(
+        newParticipation
+      );
+
+      // Send notification to circle creator
+      if (circle.creator.id !== userId) {
+        await NotificationController.createNotification(
+          circle.creator.id,
+          "New Circle Member! 🎉",
+          `${user.name} just joined the ${circle.name} circle!`
+        );
+      }
+
+      // Send notifications to existing circle members
+      const existingMembers = circle.circleParticipants || [];
+      for (const participant of existingMembers) {
+        if (
+          participant.user.id !== userId &&
+          participant.user.id !== circle.creator.id
+        ) {
+          await NotificationController.createNotification(
+            participant.user.id,
+            "New Circle Member! 🎉",
+            `${user.name} just joined the ${circle.name} circle!`
+          );
+        }
+      }
+
+      res.status(201).json(savedParticipation);
     } catch (error) {
       console.error("Error adding participant:", error);
       res.status(500).json({ message: "Error adding participant" });
@@ -189,13 +267,51 @@ export class CircleParticipantsController {
       const participantsRepository =
         AppDataSource.getRepository(CircleParticipants);
 
+      // Fetch the participation with all necessary relations
       const participation = await participantsRepository.findOne({
         where: { id },
+        relations: {
+          user: true,
+          circle: {
+            creator: true,
+            circleParticipants: {
+              user: true,
+            },
+          },
+        },
       });
+
       if (!participation) {
         return res.status(404).json({ message: "Participation not found" });
       }
 
+      const { user, circle } = participation;
+
+      // Send notification to the circle creator
+      if (circle.creator.id !== user.id) {
+        await NotificationController.createNotification(
+          circle.creator.id,
+          "Circle Member Left! 😔",
+          `${user.name} has left the ${circle.name} circle.`
+        );
+      }
+
+      // Send notifications to other circle members
+      const existingMembers = circle.circleParticipants || [];
+      for (const participant of existingMembers) {
+        if (
+          participant.user.id !== user.id &&
+          participant.user.id !== circle.creator.id
+        ) {
+          await NotificationController.createNotification(
+            participant.user.id,
+            "Circle Member Left! 😔",
+            `${user.name} has left the ${circle.name} circle.`
+          );
+        }
+      }
+
+      // Remove the participation
       await participantsRepository.remove(participation);
       res.json({ message: "Participant removed successfully" });
     } catch (error) {

@@ -21,11 +21,17 @@ const Leaderboards = () => {
       dispatch(setLoading(true));
       try {
         const token = localStorage.getItem("token");
+        const userString = localStorage.getItem("user");
+        const user = userString ? JSON.parse(userString) : null;
+
         const response = await axios.get<LeaderboardEntry[]>(
           "http://localhost:5000/api/points/leaderboard/top",
           {
             headers: {
               Authorization: `Bearer ${token}`,
+            },
+            params: {
+              tenantId: user?.tenantId,
             },
           }
         );

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { AppDataSource } from "../data-source";
 import { Tenant } from "../entities/Tenant";
 import { User } from "../entities/User";
+import { ILike } from "typeorm";
 
 // Extend Request type to include user property
 interface AuthenticatedRequest extends Request {
@@ -15,12 +16,29 @@ interface AuthenticatedRequest extends Request {
 export class TenantController {
   static async getTenants(req: Request, res: Response) {
     try {
+      const { search, sortBy } = req.query;
       const tenantRepository = AppDataSource.getRepository(Tenant);
-      const tenants = await tenantRepository.find({
-        order: {
-          name: "ASC",
-        },
-      });
+
+      const queryOptions: any = {
+        order: {},
+      };
+
+      if (search) {
+        queryOptions.where = {
+          name: ILike(`%${search}%`),
+        };
+      }
+
+      // Determine sorting
+      if (sortBy === "createdAt") {
+        queryOptions.order.createdAt = "DESC"; // Sort by createdAt
+      } else if (sortBy === "totalEmployees") {
+        // Sort by total employees logic will be handled after fetching tenants
+      } else {
+        queryOptions.order.name = "ASC"; // Default sort by name
+      }
+
+      const tenants = await tenantRepository.find(queryOptions);
 
       // Fetch employee counts for each tenant
       const tenantWithEmployeeCounts = await Promise.all(
@@ -31,6 +49,13 @@ export class TenantController {
           return { ...tenant, employeeCount };
         })
       );
+
+      // Sort by total employees if specified
+      if (sortBy === "totalEmployees") {
+        tenantWithEmployeeCounts.sort(
+          (a, b) => b.employeeCount - a.employeeCount
+        );
+      }
 
       res.json(tenantWithEmployeeCounts);
     } catch (error) {

@@ -90,7 +90,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
           {userRole === "Employee" ? (
             <>
               <li
-                className={`flex items-center p-2 cursor-pointer hover:bg-gradient-to-r from-cyan-200 to-teal-400 hover:text-black ${
+                className={`flex items-center p-2 mb-1 cursor-pointer  hover:bg-gradient-to-r from-cyan-200 to-teal-400 hover:text-black ${
                   selectedTab === "/employee/dashboard"
                     ? "bg-gradient-to-r from-cyan-200 to-teal-400 text-black"
                     : ""
@@ -103,7 +103,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
                 </span>
               </li>
               <li
-                className={`flex items-center p-2 cursor-pointer hover:bg-gradient-to-r from-cyan-200 to-teal-400 hover:text-black ${
+                className={`flex items-center p-2 mb-1 cursor-pointer hover:bg-gradient-to-r from-cyan-200 to-teal-400 hover:text-black ${
                   selectedTab === "/employee/circles"
                     ? "bg-gradient-to-r from-cyan-200 to-teal-400 text-black"
                     : ""
@@ -116,7 +116,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
                 </span>
               </li>
               <li
-                className={`flex items-center p-2 cursor-pointer hover:bg-gradient-to-r from-cyan-200 to-teal-400 hover:text-black ${
+                className={`flex items-center p-2 mb-1 cursor-pointer hover:bg-gradient-to-r from-cyan-200 to-teal-400 hover:text-black ${
                   selectedTab === "/employee/challenges"
                     ? "bg-gradient-to-r from-cyan-200 to-teal-400 text-black"
                     : ""
@@ -129,7 +129,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
                 </span>
               </li>
               <li
-                className={`flex items-center p-2 cursor-pointer hover:bg-gradient-to-r from-cyan-200 to-teal-400 hover:text-black ${
+                className={`flex items-center p-2 mb-1 cursor-pointer hover:bg-gradient-to-r from-cyan-200 to-teal-400 hover:text-black ${
                   selectedTab === "/employee/profile"
                     ? "bg-gradient-to-r from-cyan-200 to-teal-400 text-black"
                     : ""
@@ -145,7 +145,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
           ) : userRole === "Moderator" ? (
             <>
               <li
-                className={`flex items-center p-2 cursor-pointer hover:bg-gradient-to-r from-emerald-200 to-emerald-400 hover:text-black ${
+                className={`flex items-center p-2 mb-1 cursor-pointer ease-in-out hover:bg-gradient-to-r from-emerald-200 to-emerald-400 hover:text-black ${
                   selectedTab === "/moderator/dashboard"
                     ? "bg-gradient-to-r from-emerald-200 to-emerald-400 text-black"
                     : ""
@@ -158,7 +158,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
                 </span>
               </li>
               <li
-                className={`flex items-center p-2 cursor-pointer hover:bg-gradient-to-r from-emerald-200 to-emerald-400 hover:text-black ${
+                className={`flex items-center p-2 mb-1 cursor-pointer hover:bg-gradient-to-r from-emerald-200 to-emerald-400 hover:text-black ${
                   selectedTab === "/moderator/tenants"
                     ? "bg-gradient-to-r from-emerald-200 to-emerald-400 text-black"
                     : ""
@@ -171,7 +171,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
                 </span>
               </li>
               <li
-                className={`flex items-center p-2 cursor-pointer hover:bg-gradient-to-r from-emerald-200 to-emerald-400 hover:text-black ${
+                className={`flex items-center p-2 mb-1 cursor-pointer hover:bg-gradient-to-r from-emerald-200 to-emerald-400 hover:text-black ${
                   selectedTab === "/moderator/users"
                     ? "bg-gradient-to-r from-emerald-200 to-emerald-400 text-black"
                     : ""
@@ -184,7 +184,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
                 </span>
               </li>
               <li
-                className={`flex items-center p-2 cursor-pointer hover:bg-gradient-to-r from-emerald-200 to-emerald-400 hover:text-black ${
+                className={`flex items-center p-2 mb-1 cursor-pointer hover:bg-gradient-to-r from-emerald-200 to-emerald-400 hover:text-black ${
                   selectedTab === "/moderator/circles"
                     ? "bg-gradient-to-r from-emerald-200 to-emerald-400 text-black"
                     : ""
@@ -197,7 +197,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
                 </span>
               </li>
               <li
-                className={`flex items-center p-2 cursor-pointer hover:bg-gradient-to-r from-emerald-200 to-emerald-400 hover:text-black ${
+                className={`flex items-center p-2 mb-1 cursor-pointer hover:bg-gradient-to-r from-emerald-200 to-emerald-400 hover:text-black ${
                   selectedTab === "/moderator/challenges"
                     ? "bg-gradient-to-r from-emerald-200 to-emerald-400 text-black"
                     : ""
@@ -210,7 +210,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
                 </span>
               </li>
               <li
-                className={`flex items-center p-2 cursor-pointer hover:bg-gradient-to-r from-emerald-200 to-emerald-400 hover:text-black ${
+                className={`flex items-center p-2 mb-1 cursor-pointer hover:bg-gradient-to-r from-emerald-200 to-emerald-400 hover:text-black ${
                   selectedTab === "/moderator/profile"
                     ? "bg-gradient-to-r from-emerald-200 to-emerald-400 text-black"
                     : ""

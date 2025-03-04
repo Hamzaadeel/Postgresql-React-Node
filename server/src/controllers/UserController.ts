@@ -3,18 +3,61 @@ import { AppDataSource } from "../data-source";
 import { User } from "../entities/User";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { ILike, In } from "typeorm";
 
 export class UserController {
   static async getUsers(req: Request, res: Response) {
     try {
+      const { search, roles, tenants } = req.query;
       const userRepository = AppDataSource.getRepository(User);
-      const users = await userRepository.find({
-        order: {
-          name: "ASC",
-        },
-      });
+
+      let whereConditions = [];
+
+      // Handle search across multiple fields
+      if (search) {
+        whereConditions.push([
+          { name: ILike(`%${search}%`) },
+          { email: ILike(`%${search}%`) },
+        ]);
+      }
+
+      // Handle role filtering
+      if (roles) {
+        const roleArray = (roles as string)
+          .split(",")
+          .map((role) => role.toLowerCase());
+        whereConditions.push({ role: In(roleArray) });
+      }
+
+      // Handle tenant filtering
+      if (tenants) {
+        const tenantArray = (tenants as string).split(",").map(Number);
+        whereConditions.push({ tenantId: In(tenantArray) });
+      }
+
+      const queryOptions: any = {
+        order: { name: "ASC" },
+      };
+
+      // Combine all conditions with AND
+      if (whereConditions.length > 0) {
+        queryOptions.where =
+          whereConditions.length === 1
+            ? whereConditions[0]
+            : whereConditions.reduce((acc, condition) => {
+                if (Array.isArray(condition)) {
+                  // OR conditions (for search)
+                  return { ...acc, ...{ $or: condition } };
+                }
+                // AND conditions (for filters)
+                return { ...acc, ...condition };
+              }, {});
+      }
+
+      const users = await userRepository.find(queryOptions);
       res.json(users);
     } catch (error) {
+      console.error("Error fetching users:", error);
       res.status(500).json({ message: "Error fetching users" });
     }
   }

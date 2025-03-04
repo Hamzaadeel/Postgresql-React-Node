@@ -86,7 +86,10 @@ export const login = async (credentials: {
 
 export const getUsers = async (
   page: number,
-  limit: number
+  limit: number,
+  search?: string,
+  roles?: string[],
+  tenants?: number[]
 ): Promise<User[]> => {
   try {
     const token = localStorage.getItem("token");
@@ -97,6 +100,9 @@ export const getUsers = async (
       params: {
         page,
         limit,
+        search,
+        roles: roles?.join(","),
+        tenants: tenants?.join(","),
       },
     });
     return response.data;
@@ -136,7 +142,9 @@ export const deleteUser = async (userId: number): Promise<void> => {
 // Tenant-related API calls
 export const getTenants = async (
   page: number,
-  limit: number
+  limit: number,
+  search?: string,
+  sortBy?: "name" | "createdAt" | "totalEmployees"
 ): Promise<Tenant[]> => {
   try {
     const token = localStorage.getItem("token");
@@ -147,6 +155,8 @@ export const getTenants = async (
       params: {
         page,
         limit,
+        search,
+        sortBy,
       },
     });
     return response.data;

@@ -57,10 +57,12 @@ export class PointsController {
   static async getLeaderboard(req: Request, res: Response) {
     try {
       const pointsRepository = AppDataSource.getRepository(Points);
+      const tenantId = req.query.tenantId; // Get tenant ID from query parameters
 
       const leaderboard = await pointsRepository
         .createQueryBuilder("points")
         .leftJoinAndSelect("points.user", "user")
+        .where("user.tenantId = :tenantId", { tenantId }) // Filter by tenant ID
         .select(["points.id", "points.totalPoints", "user.id", "user.name"])
         .orderBy("points.totalPoints", "DESC")
         .take(5)

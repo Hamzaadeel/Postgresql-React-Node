@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { getUsers } from "../../../services/api";
 import { User } from "../../../types/User";
 import {
@@ -9,6 +9,7 @@ import {
   User as UserIcon,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
 } from "lucide-react";
 import AddUserModal from "./AddUserModal";
 import EditUserModal from "./EditUserModal";
@@ -41,12 +42,20 @@ const UserManagement = () => {
   const { tenants } = useAppSelector((state) => state.tenants);
   const [currentPage, setCurrentPage] = useState(1);
   const [resultsPerPage, setResultsPerPage] = useState(10);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
+  const [selectedTenants, setSelectedTenants] = useState<number[]>([]);
+  const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState(false);
+  const [isTenantDropdownOpen, setIsTenantDropdownOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [successMessage, setSuccessMessage] = useState<string>("");
   const navigate = useNavigate();
+
+  const roleDropdownRef = useRef<HTMLDivElement>(null);
+  const tenantDropdownRef = useRef<HTMLDivElement>(null);
 
   const dashboardVariants = {
     hidden: { opacity: 0, y: -20 },
@@ -68,16 +77,50 @@ const UserManagement = () => {
   };
 
   useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        roleDropdownRef.current &&
+        !roleDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsRoleDropdownOpen(false);
+      }
+      if (
+        tenantDropdownRef.current &&
+        !tenantDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsTenantDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
     const initializeData = async () => {
       await Promise.all([fetchUsers(), fetchTenants()]);
     };
     initializeData();
-  }, [currentPage, resultsPerPage]);
+  }, [
+    currentPage,
+    resultsPerPage,
+    searchQuery,
+    selectedRoles,
+    selectedTenants,
+  ]);
 
   const fetchUsers = async () => {
     dispatch(setLoading(true));
     try {
-      const data = await getUsers(currentPage, resultsPerPage);
+      const data = await getUsers(
+        currentPage,
+        resultsPerPage,
+        searchQuery,
+        selectedRoles.length > 0
+          ? selectedRoles.map((role) => role.toLowerCase())
+          : undefined,
+        selectedTenants.length > 0 ? selectedTenants : undefined
+      );
       dispatch(setUsers(data));
     } catch (error: any) {
       if (error.response?.status === 401) {
@@ -204,6 +247,186 @@ const UserManagement = () => {
           </button>
         </div>
 
+        {/* Search, Sort, and Filter Controls */}
+        <div className="mb-6 space-y-4">
+          <div className="flex justify-between items-center">
+            <div className="flex-1 max-w-md">
+              <input
+                type="text"
+                placeholder="Search by name or email..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              />
+            </div>
+            <div className="flex justify-between items-center">
+              {/* Role Filter Dropdown */}
+              <div
+                className="relative mr-2 bg-white rounded-xl"
+                ref={roleDropdownRef}
+              >
+                <button
+                  onClick={() => setIsRoleDropdownOpen(!isRoleDropdownOpen)}
+                  className="px-4 py-2 border rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 flex items-center justify-between min-w-[150px]"
+                >
+                  <span>
+                    {selectedRoles.length === 0
+                      ? "All Roles"
+                      : `${selectedRoles.length} Role${
+                          selectedRoles.length > 1 ? "s" : ""
+                        } Selected`}
+                  </span>
+                  <ChevronDown
+                    className="h-4 w-4 transition-transform duration-200"
+                    style={{
+                      transform: isRoleDropdownOpen
+                        ? "rotate(180deg)"
+                        : "rotate(0deg)",
+                    }}
+                  />
+                </button>
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{
+                    opacity: isRoleDropdownOpen ? 1 : 0,
+                    y: isRoleDropdownOpen ? 0 : -10,
+                  }}
+                  transition={{ duration: 0.2 }}
+                  className={`absolute z-10 mt-2 w-48 bg-white rounded-lg shadow-lg border ${
+                    isRoleDropdownOpen ? "block" : "hidden"
+                  }`}
+                >
+                  <div className="p-2">
+                    {/* Select All Checkbox for Roles */}
+                    <label className="flex items-center p-2 hover:bg-gray-50">
+                      <input
+                        type="checkbox"
+                        checked={selectedRoles.length === 2} // Assuming there are 2 roles: employee and moderator
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedRoles(["employee", "moderator"]);
+                          } else {
+                            setSelectedRoles([]);
+                          }
+                        }}
+                        className="mr-2"
+                      />
+                      Select All
+                    </label>
+                    <label className="flex items-center p-2 hover:bg-gray-50">
+                      <input
+                        type="checkbox"
+                        checked={selectedRoles.includes("employee")}
+                        onChange={(e) => {
+                          setSelectedRoles(
+                            e.target.checked
+                              ? [...selectedRoles, "employee"]
+                              : selectedRoles.filter((r) => r !== "employee")
+                          );
+                        }}
+                        className="mr-2"
+                      />
+                      Employee
+                    </label>
+                    <label className="flex items-center p-2 hover:bg-gray-50">
+                      <input
+                        type="checkbox"
+                        checked={selectedRoles.includes("moderator")}
+                        onChange={(e) => {
+                          setSelectedRoles(
+                            e.target.checked
+                              ? [...selectedRoles, "moderator"]
+                              : selectedRoles.filter((r) => r !== "moderator")
+                          );
+                        }}
+                        className="mr-2"
+                      />
+                      Moderator
+                    </label>
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* Tenant Filter Dropdown */}
+              <div
+                className="relative bg-white rounded-xl"
+                ref={tenantDropdownRef}
+              >
+                <button
+                  onClick={() => setIsTenantDropdownOpen(!isTenantDropdownOpen)}
+                  className="px-4 py-2 border rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 flex items-center justify-between min-w-[150px]"
+                >
+                  <span>
+                    {selectedTenants.length === 0
+                      ? "All Tenants"
+                      : `${selectedTenants.length} Tenant${
+                          selectedTenants.length > 1 ? "s" : ""
+                        } Selected`}
+                  </span>
+                  <ChevronDown
+                    className="h-4 w-4 transition-transform duration-200"
+                    style={{
+                      transform: isTenantDropdownOpen
+                        ? "rotate(180deg)"
+                        : "rotate(0deg)",
+                    }}
+                  />
+                </button>
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{
+                    opacity: isTenantDropdownOpen ? 1 : 0,
+                    y: isTenantDropdownOpen ? 0 : -10,
+                  }}
+                  transition={{ duration: 0.2 }}
+                  className={`absolute z-10 mt-2 w-64 bg-white rounded-lg shadow-lg border max-h-60 overflow-y-auto ${
+                    isTenantDropdownOpen ? "block" : "hidden"
+                  }`}
+                >
+                  <div className="p-2">
+                    {/* Select All Checkbox for Tenants */}
+                    <label className="flex items-center p-2 hover:bg-gray-50">
+                      <input
+                        type="checkbox"
+                        checked={selectedTenants.length === tenants.length}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedTenants(tenants.map((t) => t.id));
+                          } else {
+                            setSelectedTenants([]);
+                          }
+                        }}
+                        className="mr-2"
+                      />
+                      Select All
+                    </label>
+                    {tenants.map((tenant) => (
+                      <label
+                        key={tenant.id}
+                        className="flex items-center p-2 hover:bg-gray-50"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedTenants.includes(tenant.id)}
+                          onChange={(e) => {
+                            setSelectedTenants(
+                              e.target.checked
+                                ? [...selectedTenants, tenant.id]
+                                : selectedTenants.filter((t) => t !== tenant.id)
+                            );
+                          }}
+                          className="mr-2"
+                        />
+                        {tenant.name}
+                      </label>
+                    ))}
+                  </div>
+                </motion.div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {successMessage && (
           <div className="fixed top-4 opacity-95 right-4 bg-green-500 text-white px-6 py-3 rounded shadow-lg z-50 animate-fade-in-out flex justify-between items-center">
             <span>{successMessage}</span>
@@ -231,7 +454,7 @@ const UserManagement = () => {
               </div>
             ) : (
               <>
-                <table className="min-w-full bg-white">
+                <table className="min-w-full  bg-white">
                   <thead>
                     <tr>
                       <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">

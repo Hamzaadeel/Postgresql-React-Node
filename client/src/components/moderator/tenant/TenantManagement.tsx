@@ -43,6 +43,10 @@ const TenantManagement = () => {
   const { users } = useAppSelector((state) => state.users);
   const [currentPage, setCurrentPage] = useState(1);
   const [resultsPerPage, setResultsPerPage] = useState(10);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState<"name" | "createdAt" | "totalEmployees">(
+    "name"
+  );
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -55,12 +59,17 @@ const TenantManagement = () => {
       await Promise.all([fetchTenants(), fetchUsers()]);
     };
     initializeData();
-  }, [currentPage, resultsPerPage]);
+  }, [currentPage, resultsPerPage, searchQuery, sortBy]);
 
   const fetchTenants = async () => {
     dispatch(setLoading(true));
     try {
-      const data = await getTenants(currentPage, resultsPerPage);
+      const data = await getTenants(
+        currentPage,
+        resultsPerPage,
+        searchQuery,
+        sortBy
+      );
       dispatch(setTenants(data));
     } catch (error: any) {
       if (error.response?.status === 401) {
@@ -207,6 +216,34 @@ const TenantManagement = () => {
             <Plus className="w-5 h-5" />
             <span>Add Tenant</span>
           </button>
+        </div>
+
+        {/* Search and Sort Controls */}
+        <div className="mb-6 flex justify-between items-center">
+          <div className="flex-1 max-w-md">
+            <input
+              type="text"
+              placeholder="Search tenants..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            />
+          </div>
+          <div className="ml-4">
+            <select
+              value={sortBy}
+              onChange={(e) =>
+                setSortBy(
+                  e.target.value as "name" | "createdAt" | "totalEmployees"
+                )
+              }
+              className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            >
+              <option value="name">Sort by Name</option>
+              <option value="createdAt">Sort by Created Date</option>
+              <option value="totalEmployees">Sort by Total Employees</option>
+            </select>
+          </div>
         </div>
 
         {successMessage && (

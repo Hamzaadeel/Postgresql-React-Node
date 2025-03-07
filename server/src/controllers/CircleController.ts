@@ -3,6 +3,7 @@ import { AppDataSource } from "../data-source";
 import { Circle } from "../entities/Circle";
 import { User } from "../entities/User";
 import { NotificationController } from "./NotificationController";
+import { ILike, In } from "typeorm";
 
 // Extend Request type to include user property
 interface AuthenticatedRequest extends Request {
@@ -16,8 +17,10 @@ interface AuthenticatedRequest extends Request {
 export class CircleController {
   static async getCircles(req: Request, res: Response) {
     try {
+      const { search, sortBy, tenants } = req.query;
       const circleRepository = AppDataSource.getRepository(Circle);
-      const circles = await circleRepository.find({
+
+      const queryOptions: any = {
         relations: {
           tenant: true,
           creator: true,
@@ -38,10 +41,36 @@ export class CircleController {
             name: true,
           },
         },
-        order: {
-          name: "ASC",
-        },
-      });
+        where: {},
+        order: {},
+      };
+
+      // Handle search
+      if (search) {
+        queryOptions.where = {
+          name: ILike(`%${search}%`),
+        };
+      }
+
+      // Handle tenant filtering
+      if (tenants) {
+        const tenantArray = (tenants as string).split(",").map(Number);
+        queryOptions.where = {
+          ...queryOptions.where,
+          tenantId: In(tenantArray),
+        };
+      }
+
+      // Handle sorting
+      if (sortBy === "createdAt_desc") {
+        queryOptions.order.createdAt = "DESC";
+      } else if (sortBy === "createdAt_asc") {
+        queryOptions.order.createdAt = "ASC";
+      } else {
+        queryOptions.order.name = "ASC"; // Default sort by name
+      }
+
+      const circles = await circleRepository.find(queryOptions);
       res.json(circles);
     } catch (error) {
       console.error("Error fetching circles:", error);

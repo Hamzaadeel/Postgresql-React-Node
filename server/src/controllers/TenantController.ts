@@ -16,7 +16,7 @@ interface AuthenticatedRequest extends Request {
 export class TenantController {
   static async getTenants(req: Request, res: Response) {
     try {
-      const { search, sortBy } = req.query;
+      const { search, sortBy, order } = req.query;
       const tenantRepository = AppDataSource.getRepository(Tenant);
 
       const queryOptions: any = {
@@ -31,7 +31,8 @@ export class TenantController {
 
       // Determine sorting
       if (sortBy === "createdAt") {
-        queryOptions.order.createdAt = "DESC"; // Sort by createdAt
+        queryOptions.order.createdAt =
+          (order as string)?.toUpperCase() || "DESC"; // Sort by createdAt with specified order
       } else if (sortBy === "totalEmployees") {
         // Sort by total employees logic will be handled after fetching tenants
       } else {

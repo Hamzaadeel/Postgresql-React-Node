@@ -16,15 +16,12 @@ export interface Challenge {
     id: number;
     name: string;
   };
-}
-
-interface ChallengeWithParticipation extends Challenge {
   participationId?: number;
   status?: "Pending" | "Completed";
 }
 
 interface ChallengeState {
-  challenges: ChallengeWithParticipation[];
+  challenges: Challenge[];
   loading: boolean;
   error: string | null;
   totalChallenges: number;
@@ -43,10 +40,10 @@ const challengeSlice = createSlice({
   reducers: {
     setChallenges: (
       state,
-      action: PayloadAction<ChallengeWithParticipation[]>
+      action: PayloadAction<{ challenges: Challenge[]; total: number }>
     ) => {
-      state.challenges = action.payload;
-      state.totalChallenges = action.payload.length;
+      state.challenges = action.payload.challenges;
+      state.totalChallenges = action.payload.total;
     },
     addChallenge: (state, action: PayloadAction<Challenge>) => {
       state.challenges.push(action.payload);

@@ -328,6 +328,7 @@ const EmployeeCircles = () => {
         ) : (
           <>
             <motion.div
+              title="View Circle Details"
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
               initial="hidden"
               animate="visible"
@@ -396,6 +397,7 @@ const EmployeeCircles = () => {
                     setJoinedCurrentPage((prev) => Math.max(prev - 1, 1))
                   }
                   disabled={joinedCurrentPage === 1}
+                  title="Previous"
                   className={`p-2 rounded ${
                     joinedCurrentPage === 1
                       ? "bg-gray-100 text-gray-400 cursor-not-allowed"
@@ -414,6 +416,7 @@ const EmployeeCircles = () => {
                     )
                   }
                   disabled={joinedCurrentPage === totalJoinedPages}
+                  title="Next"
                   className={`p-2 rounded ${
                     joinedCurrentPage === totalJoinedPages
                       ? "bg-gray-100 text-gray-400 cursor-not-allowed"
@@ -454,6 +457,7 @@ const EmployeeCircles = () => {
           <>
             <motion.div
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              title="View Circle Details"
               initial="hidden"
               animate="visible"
             >
@@ -479,6 +483,7 @@ const EmployeeCircles = () => {
                           e.stopPropagation();
                           handleJoinCircle(circle.id);
                         }}
+                        title="Join Circle"
                         className="flex items-center space-x-2 px-4 py-2 bg-white text-blue-600 rounded-lg hover:bg-blue-500 hover:text-blue-100 transition-colors border border-blue-200"
                       >
                         <UserPlus className="w-4 h-4" />
@@ -521,6 +526,7 @@ const EmployeeCircles = () => {
                     setAvailableCurrentPage((prev) => Math.max(prev - 1, 1))
                   }
                   disabled={availableCurrentPage === 1}
+                  title="Previous"
                   className={`p-2 rounded ${
                     availableCurrentPage === 1
                       ? "bg-gray-100 text-gray-400 cursor-not-allowed"
@@ -538,6 +544,7 @@ const EmployeeCircles = () => {
                       Math.min(prev + 1, totalAvailablePages)
                     )
                   }
+                  title="Next"
                   disabled={availableCurrentPage === totalAvailablePages}
                   className={`p-2 rounded ${
                     availableCurrentPage === totalAvailablePages

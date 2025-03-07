@@ -133,9 +133,15 @@ const EmployeeDashboard = () => {
           }
         );
 
-        dispatch(setChallenges(challengesWithParticipation));
+        const totalChallenges = challengesWithParticipation.length;
+        dispatch(
+          setChallenges({
+            challenges: challengesWithParticipation,
+            total: totalChallenges,
+          })
+        );
       } else {
-        dispatch(setChallenges([]));
+        dispatch(setChallenges({ challenges: [], total: 0 }));
       }
     } catch (err: any) {
       console.error("Error:", err);

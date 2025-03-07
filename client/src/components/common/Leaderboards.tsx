@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { Trophy } from "lucide-react";
-import Loader from "./Loader";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
   setLeaderboard,
@@ -9,6 +8,7 @@ import {
   LeaderboardEntry,
 } from "../../store/slices/pointsSlice";
 import axios from "axios";
+import SkeletonTable from "./SkeletonTable";
 
 const Leaderboards = () => {
   const dispatch = useAppDispatch();
@@ -51,7 +51,7 @@ const Leaderboards = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <Loader />
+        <SkeletonTable />
       </div>
     );
   }

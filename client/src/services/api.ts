@@ -144,7 +144,7 @@ export const getTenants = async (
   page: number,
   limit: number,
   search?: string,
-  sortBy?: "name" | "createdAt" | "totalEmployees"
+  sortBy?: "name" | "createdAt_desc" | "createdAt_asc" | "totalEmployees"
 ): Promise<Tenant[]> => {
   try {
     const token = localStorage.getItem("token");
@@ -156,7 +156,18 @@ export const getTenants = async (
         page,
         limit,
         search,
-        sortBy,
+        sortBy:
+          sortBy === "createdAt_desc"
+            ? "createdAt"
+            : sortBy === "createdAt_asc"
+            ? "createdAt"
+            : sortBy,
+        order:
+          sortBy === "createdAt_desc"
+            ? "desc"
+            : sortBy === "createdAt_asc"
+            ? "asc"
+            : undefined,
       },
     });
     return response.data;
@@ -209,13 +220,27 @@ export const deleteTenant = async (tenantId: number): Promise<void> => {
 };
 
 // Circle-related API calls
-export const getCircles = async (): Promise<Circle[]> => {
+export const getCircles = async (
+  page: number,
+  limit: number,
+  search?: string,
+  sortBy?: "name" | "createdAt_asc" | "createdAt_desc",
+  tenants?: number[]
+): Promise<Circle[]> => {
   try {
     const token = localStorage.getItem("token");
     if (!token) {
       throw new Error("No authentication token found");
     }
-    const response = await api.get<Circle[]>("/circles");
+    const response = await api.get<Circle[]>("/circles", {
+      params: {
+        page,
+        limit,
+        search,
+        sortBy,
+        tenants: tenants?.join(","),
+      },
+    });
     return response.data;
   } catch (error) {
     throw error;
@@ -267,8 +292,38 @@ export const deleteCircle = async (circleId: number): Promise<void> => {
 };
 
 // Challenge endpoints
-export const getChallenges = async (): Promise<Challenge[]> => {
-  const response = await api.get<Challenge[]>("/challenges");
+export const getChallenges = async (
+  page?: number,
+  limit?: number,
+  search?: string,
+  sortBy?: "newest" | "oldest" | "points_highest" | "points_lowest" | "name",
+  circleIds?: number[]
+): Promise<{
+  challenges: Challenge[];
+  total: number;
+  page: number;
+  limit: number;
+}> => {
+  let url = "/challenges";
+  const params = new URLSearchParams();
+
+  if (page) params.append("page", page.toString());
+  if (limit) params.append("limit", limit.toString());
+  if (search) params.append("search", search);
+  if (sortBy) params.append("sortBy", sortBy);
+  if (circleIds && circleIds.length > 0)
+    params.append("circleIds", circleIds.join(","));
+
+  if (params.toString()) {
+    url += `?${params.toString()}`;
+  }
+
+  const response = await api.get<{
+    challenges: Challenge[];
+    total: number;
+    page: number;
+    limit: number;
+  }>(url);
   return response.data;
 };
 

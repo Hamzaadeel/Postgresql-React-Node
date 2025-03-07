@@ -1,6 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Circle } from "../../../services/api";
-import { Pencil, Trash, Plus, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Pencil,
+  Trash,
+  Plus,
+  ChevronLeft,
+  ChevronRight,
+  ChevronDown,
+} from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUsers } from "@fortawesome/free-solid-svg-icons";
 import AddCircleModal from "./AddCircleModal";
@@ -42,18 +49,60 @@ const CirclesManagement = () => {
   const [selectedCircle, setSelectedCircle] = useState<Circle | null>(null);
   const [successMessage, setSuccessMessage] = useState<string>("");
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState<
+    "name" | "createdAt_asc" | "createdAt_desc"
+  >("name");
+  const [selectedTenants, setSelectedTenants] = useState<number[]>([]);
+  const [isTenantDropdownOpen, setIsTenantDropdownOpen] = useState(false);
+  const tenantDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        tenantDropdownRef.current &&
+        !tenantDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsTenantDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const initializeData = async () => {
       await Promise.all([fetchCircles(), fetchTenants()]);
     };
     initializeData();
-  }, [currentPage, resultsPerPage]);
+  }, [
+    currentPage,
+    resultsPerPage,
+    debouncedSearchQuery,
+    sortBy,
+    selectedTenants,
+  ]);
 
   const fetchCircles = async () => {
     dispatch(setLoading(true));
     try {
-      const data = await getCircles();
+      const data = await getCircles(
+        currentPage,
+        resultsPerPage,
+        debouncedSearchQuery,
+        sortBy,
+        selectedTenants.length > 0 ? selectedTenants : undefined
+      );
       dispatch(setCircles(data));
     } catch (error: any) {
       if (error.response?.status === 401) {
@@ -219,6 +268,113 @@ const CirclesManagement = () => {
             <span>{error}</span>
           </div>
         )}
+
+        <div className="mb-6 space-y-4">
+          <div className="flex justify-between items-center">
+            <div className="flex-1 max-w-md">
+              <input
+                type="text"
+                placeholder="Search circles..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              />
+            </div>
+            <div className="flex space-x-4">
+              {/* Sort Dropdown */}
+              <select
+                value={sortBy}
+                onChange={(e) =>
+                  setSortBy(
+                    e.target.value as
+                      | "name"
+                      | "createdAt_asc"
+                      | "createdAt_desc"
+                  )
+                }
+                className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              >
+                <option value="name">Sort by Name</option>
+                <option value="createdAt_desc">Sort by Date (Newest)</option>
+                <option value="createdAt_asc">Sort by Date (Oldest)</option>
+              </select>
+
+              {/* Tenant Filter Dropdown */}
+              <div className="relative" ref={tenantDropdownRef}>
+                <button
+                  onClick={() => setIsTenantDropdownOpen(!isTenantDropdownOpen)}
+                  className="px-4 py-2 border rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 flex items-center justify-between min-w-[150px]"
+                >
+                  <span>
+                    {selectedTenants.length === 0
+                      ? "All Tenants"
+                      : `${selectedTenants.length} Tenant${
+                          selectedTenants.length > 1 ? "s" : ""
+                        } Selected`}
+                  </span>
+                  <ChevronDown
+                    className="h-4 w-4 transition-transform duration-200"
+                    style={{
+                      transform: isTenantDropdownOpen
+                        ? "rotate(180deg)"
+                        : "rotate(0deg)",
+                    }}
+                  />
+                </button>
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{
+                    opacity: isTenantDropdownOpen ? 1 : 0,
+                    y: isTenantDropdownOpen ? 0 : -10,
+                  }}
+                  transition={{ duration: 0.2 }}
+                  className={`absolute z-10 mt-2 w-64 bg-white rounded-lg shadow-lg border max-h-60 overflow-y-auto ${
+                    isTenantDropdownOpen ? "block" : "hidden"
+                  }`}
+                >
+                  <div className="p-2">
+                    {/* Select All Checkbox for Tenants */}
+                    <label className="flex items-center p-2 hover:bg-gray-50">
+                      <input
+                        type="checkbox"
+                        checked={selectedTenants.length === tenants.length}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedTenants(tenants.map((t) => t.id));
+                          } else {
+                            setSelectedTenants([]);
+                          }
+                        }}
+                        className="mr-2"
+                      />
+                      Select All
+                    </label>
+                    {tenants.map((tenant) => (
+                      <label
+                        key={tenant.id}
+                        className="flex items-center p-2 hover:bg-gray-50"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedTenants.includes(tenant.id)}
+                          onChange={(e) => {
+                            setSelectedTenants(
+                              e.target.checked
+                                ? [...selectedTenants, tenant.id]
+                                : selectedTenants.filter((t) => t !== tenant.id)
+                            );
+                          }}
+                          className="mr-2"
+                        />
+                        {tenant.name}
+                      </label>
+                    ))}
+                  </div>
+                </motion.div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         {loading ? (
           <div className="flex justify-center items-center h-64">

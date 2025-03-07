@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   Pencil,
   Trash,
@@ -7,6 +7,7 @@ import {
   ChevronRight,
   Eye,
   Swords,
+  ChevronDown,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
@@ -44,6 +45,14 @@ const ChallengesManagement = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [resultsPerPage, setResultsPerPage] = useState(10);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState<
+    "newest" | "oldest" | "points_highest" | "points_lowest" | "name"
+  >("newest");
+  const [selectedCircles, setSelectedCircles] = useState<number[]>([]);
+  const [isCircleDropdownOpen, setIsCircleDropdownOpen] = useState(false);
+  const circleDropdownRef = useRef<HTMLDivElement>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -72,17 +81,56 @@ const ChallengesManagement = () => {
   };
 
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        circleDropdownRef.current &&
+        !circleDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsCircleDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
     const initializeData = async () => {
       await Promise.all([fetchChallenges(), fetchCircles()]);
     };
     initializeData();
-  }, [currentPage, resultsPerPage]);
+  }, [
+    currentPage,
+    resultsPerPage,
+    debouncedSearchQuery,
+    sortBy,
+    selectedCircles,
+  ]);
 
   const fetchChallenges = async () => {
     dispatch(setLoading(true));
     try {
-      const data = await getChallenges();
-      dispatch(setChallenges(data));
+      const data = await getChallenges(
+        currentPage,
+        resultsPerPage,
+        debouncedSearchQuery,
+        sortBy,
+        selectedCircles.length > 0 ? selectedCircles : undefined
+      );
+      dispatch(
+        setChallenges({
+          challenges: data.challenges,
+          total: data.total,
+        })
+      );
     } catch (error: any) {
       if (error.response?.status === 401) {
         handleAuthError();
@@ -98,7 +146,7 @@ const ChallengesManagement = () => {
 
   const fetchCircles = async () => {
     try {
-      const data = await getCircles();
+      const data = await getCircles(1, 100);
       dispatch(setCircles(data));
     } catch (error: any) {
       console.error("Error fetching circles:", error);
@@ -259,6 +307,120 @@ const ChallengesManagement = () => {
             <span>{error}</span>
           </div>
         )}
+
+        {/* Search, Sort, and Filter Controls */}
+        <div className="mb-6 space-y-4">
+          <div className="flex justify-between items-center">
+            <div className="flex-1 max-w-md">
+              <input
+                type="text"
+                placeholder="Search challenges..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              />
+            </div>
+            <div className="flex space-x-4">
+              {/* Sort Dropdown */}
+              <select
+                value={sortBy}
+                onChange={(e) =>
+                  setSortBy(
+                    e.target.value as
+                      | "newest"
+                      | "oldest"
+                      | "points_highest"
+                      | "points_lowest"
+                      | "name"
+                  )
+                }
+                className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              >
+                <option value="newest">Sort by Date (Newest)</option>
+                <option value="oldest">Sort by Date (Oldest)</option>
+                <option value="points_highest">Sort by Points (Highest)</option>
+                <option value="points_lowest">Sort by Points (Lowest)</option>
+                <option value="name">Sort by Name</option>
+              </select>
+
+              {/* Circle Filter Dropdown */}
+              <div className="relative" ref={circleDropdownRef}>
+                <button
+                  onClick={() => setIsCircleDropdownOpen(!isCircleDropdownOpen)}
+                  className="px-4 py-2 border rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 flex items-center justify-between min-w-[150px]"
+                >
+                  <span>
+                    {selectedCircles.length === 0
+                      ? "All Circles"
+                      : `${selectedCircles.length} Circle${
+                          selectedCircles.length > 1 ? "s" : ""
+                        } Selected`}
+                  </span>
+                  <ChevronDown
+                    className="h-4 w-4 transition-transform duration-200"
+                    style={{
+                      transform: isCircleDropdownOpen
+                        ? "rotate(180deg)"
+                        : "rotate(0deg)",
+                    }}
+                  />
+                </button>
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{
+                    opacity: isCircleDropdownOpen ? 1 : 0,
+                    y: isCircleDropdownOpen ? 0 : -10,
+                  }}
+                  transition={{ duration: 0.2 }}
+                  className={`absolute z-10 mt-2 w-64 bg-white rounded-lg shadow-lg border max-h-60 overflow-y-auto ${
+                    isCircleDropdownOpen ? "block" : "hidden"
+                  }`}
+                >
+                  <div className="p-2">
+                    {/* Select All Checkbox */}
+                    <label className="flex items-center p-2 hover:bg-gray-50">
+                      <input
+                        type="checkbox"
+                        checked={selectedCircles.length === circles.length}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedCircles(circles.map((c) => c.id));
+                          } else {
+                            setSelectedCircles([]);
+                          }
+                        }}
+                        className="mr-2"
+                      />
+                      Select All
+                    </label>
+                    {circles.map((circle) => (
+                      <label
+                        key={circle.id}
+                        className="flex items-center p-2 hover:bg-gray-50"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedCircles.includes(circle.id)}
+                          onChange={(e) => {
+                            setSelectedCircles(
+                              e.target.checked
+                                ? [...selectedCircles, circle.id]
+                                : selectedCircles.filter(
+                                    (id) => id !== circle.id
+                                  )
+                            );
+                          }}
+                          className="mr-2"
+                        />
+                        {circle.name}
+                      </label>
+                    ))}
+                  </div>
+                </motion.div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         {loading ? (
           <div className="flex justify-center items-center h-64">

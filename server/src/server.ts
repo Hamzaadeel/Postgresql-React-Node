@@ -12,6 +12,7 @@ import pointsRoutes from "./routes/pointsRoutes";
 import notificationRoutes from "./routes/notificationRoutes";
 import { passportConfig } from "./middleware/passport";
 import { createServer } from "http";
+import searchRoutes from "./routes/search";
 import { Server } from "socket.io";
 
 // Define notification type
@@ -93,6 +94,7 @@ app.use("/api/circle-participants", circleParticipantsRoutes);
 app.use("/api/challenge-participants", challengeParticipantsRoutes);
 app.use("/api/points", pointsRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/search", searchRoutes);
 
 // Define a route for the root path
 app.get("/", (req, res) => {

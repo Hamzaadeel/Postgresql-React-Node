@@ -122,7 +122,7 @@ const EmployeeProfile = () => {
 
       {/* Profile Form */}
       <motion.div
-        className="bg-white rounded-lg shadow-md ml-4 p-6 w-1/2"
+        className="bg-white rounded-lg shadow-md ml-8 p-6 w-1/2"
         variants={cardVariants}
       >
         <form onSubmit={handleSubmit}>

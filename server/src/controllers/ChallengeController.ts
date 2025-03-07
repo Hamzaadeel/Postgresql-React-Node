@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../data-source";
 import { Challenge } from "../entities/Challenge";
-import { In } from "typeorm";
+import { In, ILike } from "typeorm";
 import { CircleParticipants } from "../entities/CircleParticipants";
 import { NotificationController } from "./NotificationController";
 
@@ -17,8 +17,10 @@ interface AuthenticatedRequest extends Request {
 export class ChallengeController {
   static async getChallenges(req: Request, res: Response) {
     try {
+      const { search, sortBy, circleIds, page, limit } = req.query;
       const challengeRepository = AppDataSource.getRepository(Challenge);
-      const challenges = await challengeRepository.find({
+
+      const queryOptions: any = {
         relations: {
           circle: true,
           creator: true,
@@ -40,11 +42,65 @@ export class ChallengeController {
             name: true,
           },
         },
-        order: {
-          createdAt: "DESC",
-        },
+        where: {},
+        order: {},
+      };
+
+      // Handle search
+      if (search) {
+        queryOptions.where = {
+          title: ILike(`%${search}%`),
+        };
+      }
+
+      // Handle circle filtering
+      if (circleIds) {
+        const circleIdArray = (circleIds as string).split(",").map(Number);
+        queryOptions.where = {
+          ...queryOptions.where,
+          circleId: In(circleIdArray),
+        };
+      }
+
+      // Handle sorting
+      switch (sortBy) {
+        case "newest":
+          queryOptions.order.createdAt = "DESC";
+          break;
+        case "oldest":
+          queryOptions.order.createdAt = "ASC";
+          break;
+        case "points_highest":
+          queryOptions.order.points = "DESC";
+          break;
+        case "points_lowest":
+          queryOptions.order.points = "ASC";
+          break;
+        case "name":
+          queryOptions.order.title = "ASC";
+          break;
+        default:
+          queryOptions.order.createdAt = "DESC"; // Default sort
+      }
+
+      // Handle pagination
+      if (page && limit) {
+        const pageNum = parseInt(page as string);
+        const limitNum = parseInt(limit as string);
+        queryOptions.skip = (pageNum - 1) * limitNum;
+        queryOptions.take = limitNum;
+      }
+
+      const [challenges, total] = await challengeRepository.findAndCount(
+        queryOptions
+      );
+
+      res.json({
+        challenges,
+        total,
+        page: page ? parseInt(page as string) : 1,
+        limit: limit ? parseInt(limit as string) : total,
       });
-      res.json(challenges);
     } catch (error) {
       console.error("Error fetching challenges:", error);
       res.status(500).json({ message: "Error fetching challenges" });

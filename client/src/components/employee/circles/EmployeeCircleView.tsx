@@ -230,11 +230,11 @@ const EmployeeCircleView = () => {
           {!isParticipant && (
             <motion.button
               onClick={handleJoinCircle}
-              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="flex items-center space-x-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-500 hover:text-blue-100 transition-colors border border-blue-200"
               variants={fadeInVariants}
             >
               <UserPlus className="w-5 h-5" />
-              <span>Join Circle</span>
+              <span>Join</span>
             </motion.button>
           )}
         </div>
@@ -273,11 +273,11 @@ const EmployeeCircleView = () => {
             </p>
             <motion.button
               onClick={handleJoinCircle}
-              className="mt-4 flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors mx-auto"
+              className="flex mx-auto mt-2 items-center space-x-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-500 hover:text-blue-100 transition-colors border border-blue-200"
               variants={fadeInVariants}
             >
               <UserPlus className="w-5 h-5" />
-              <span>Join Circle</span>
+              <span>Join</span>
             </motion.button>
           </div>
         ) : challenges.length === 0 ? (

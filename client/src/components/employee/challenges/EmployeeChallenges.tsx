@@ -130,7 +130,7 @@ const EmployeeChallenges = () => {
       );
 
       if (circleIds.length === 0) {
-        dispatch(setChallenges([]));
+        dispatch(setChallenges({ challenges: [], total: 0 }));
         dispatch(setLoading(false));
         return;
       }
@@ -174,7 +174,13 @@ const EmployeeChallenges = () => {
         }
       );
 
-      dispatch(setChallenges(challengesWithParticipation));
+      const totalChallenges = challengesWithParticipation.length;
+      dispatch(
+        setChallenges({
+          challenges: challengesWithParticipation,
+          total: totalChallenges,
+        })
+      );
     } catch (err: any) {
       console.error("Error:", err);
       dispatch(

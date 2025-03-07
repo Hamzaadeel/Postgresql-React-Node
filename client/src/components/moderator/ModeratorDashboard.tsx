@@ -81,9 +81,12 @@ const ModeratorDashboard: React.FC = () => {
             axios.get<Circle[]>("http://localhost:5000/api/circles", {
               headers,
             }),
-            axios.get<Challenge[]>("http://localhost:5000/api/challenges", {
-              headers,
-            }),
+            axios.get<{ challenges: Challenge[]; total: number }>(
+              "http://localhost:5000/api/challenges",
+              {
+                headers,
+              }
+            ),
             axios.get<User[]>("http://localhost:5000/api/users", { headers }),
           ]);
 
@@ -93,7 +96,7 @@ const ModeratorDashboard: React.FC = () => {
         setStats({
           tenants: tenantsRes.data.length,
           circles: circlesRes.data.length,
-          challenges: challengesRes.data.length,
+          challenges: challengesRes.data.total,
           users: usersRes.data.length,
         });
       } catch (err: any) {

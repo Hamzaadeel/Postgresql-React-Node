@@ -35,6 +35,7 @@ import {
   selectNotifications,
   selectUnreadCount,
 } from "../../store/slices/notificationSlice";
+import { debounce } from "lodash";
 
 interface HeaderProps {
   userRole: "Employee" | "Moderator";
@@ -47,6 +48,20 @@ interface Notification {
   message: string;
   createdAt: Date;
   isRead: boolean;
+}
+
+interface SearchResult {
+  id: number;
+  type: "challenge" | "circle" | "tenant" | "user";
+  displayName: string;
+  subtitle: string;
+}
+
+interface SearchResults {
+  challenges: SearchResult[];
+  circles: SearchResult[];
+  tenants: SearchResult[];
+  users: SearchResult[];
 }
 
 const Header: React.FC<HeaderProps> = ({ userRole }) => {
@@ -66,6 +81,16 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
 
   // State for confirmation modal
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [searchResults, setSearchResults] = useState<SearchResults>({
+    challenges: [],
+    circles: [],
+    tenants: [],
+    users: [],
+  });
+  const [isSearching, setIsSearching] = useState(false);
+  const [showSearchDropdown, setShowSearchDropdown] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (user) {
@@ -239,10 +264,76 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
     setIsProfileOpen(false);
   };
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Implement search functionality here
-    console.log("Searching for:", searchQuery);
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        searchRef.current &&
+        !searchRef.current.contains(event.target as Node)
+      ) {
+        setShowSearchDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const performSearch = async (query: string) => {
+    if (!query.trim()) {
+      setSearchResults({ challenges: [], circles: [], tenants: [], users: [] });
+      setShowSearchDropdown(false);
+      return;
+    }
+
+    setIsSearching(true);
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get<SearchResults>(
+        `http://localhost:5000/api/search?query=${encodeURIComponent(query)}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setSearchResults(response.data);
+      setShowSearchDropdown(true);
+    } catch (error) {
+      console.error("Error performing search:", error);
+      toast.error("Error performing search");
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const debouncedSearch = useRef(
+    debounce((query: string) => performSearch(query), 300)
+  ).current;
+
+  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    debouncedSearch(query);
+  };
+
+  const handleSearchResultClick = (result: SearchResult) => {
+    setShowSearchDropdown(false);
+    setSearchQuery("");
+
+    switch (result.type) {
+      case "challenge":
+        navigate(`/${userRole.toLowerCase()}/challenges`);
+        break;
+      case "circle":
+        navigate(`/${userRole.toLowerCase()}/circles`);
+        break;
+      case "tenant":
+        navigate("/moderator/tenants");
+        break;
+      case "user":
+        navigate("/moderator/users");
+        break;
+    }
   };
 
   const handleNavigation = (path: string) => {
@@ -260,22 +351,63 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
     navigate("/login");
   };
 
+  const renderSearchBar = () => (
+    <div className="flex-1 max-w-xl relative" ref={searchRef}>
+      <div className="relative">
+        <input
+          type="text"
+          placeholder="Search..."
+          value={searchQuery}
+          onChange={handleSearchInputChange}
+          className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+      </div>
+
+      {/* Search Results Dropdown */}
+      {showSearchDropdown && (
+        <div className="absolute mt-2 w-full bg-white rounded-lg shadow-lg border z-50 max-h-[80vh] overflow-y-auto">
+          {Object.entries(searchResults).some(
+            ([_, results]) => results.length > 0
+          ) ? (
+            Object.entries(searchResults).map(([category, results]) => {
+              if (results.length === 0) return null;
+
+              return (
+                <div key={category} className="py-2">
+                  <div className="px-4 py-1 bg-gray-50 text-sm font-semibold text-gray-600 uppercase">
+                    {category}
+                  </div>
+                  {results.map((result: SearchResult) => (
+                    <div
+                      key={`${result.type}-${result.id}`}
+                      onClick={() => handleSearchResultClick(result)}
+                      className="px-4 py-2 hover:bg-gray-50 cursor-pointer"
+                    >
+                      <div className="font-medium">{result.displayName}</div>
+                      <div className="text-sm text-gray-500">
+                        {result.subtitle}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              );
+            })
+          ) : (
+            <div className="px-4 py-3 text-gray-500 text-center">
+              No results found
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <header className="bg-white shadow-lg transition-all duration-300">
       <div className="px-4 py-3 flex items-center justify-between">
         {/* Search Bar */}
-        <form onSubmit={handleSearch} className="flex-1 max-w-xl">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
-            />
-            <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-          </div>
-        </form>
+        {renderSearchBar()}
 
         {/* Right Section */}
         <div className="flex items-center space-x-4">

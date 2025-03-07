@@ -44,9 +44,9 @@ const TenantManagement = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [resultsPerPage, setResultsPerPage] = useState(10);
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState<"name" | "createdAt" | "totalEmployees">(
-    "name"
-  );
+  const [sortBy, setSortBy] = useState<
+    "name" | "createdAt_desc" | "createdAt_asc" | "totalEmployees"
+  >("name");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -234,13 +234,18 @@ const TenantManagement = () => {
               value={sortBy}
               onChange={(e) =>
                 setSortBy(
-                  e.target.value as "name" | "createdAt" | "totalEmployees"
+                  e.target.value as
+                    | "name"
+                    | "createdAt_desc"
+                    | "createdAt_asc"
+                    | "totalEmployees"
                 )
               }
               className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
             >
               <option value="name">Sort by Name</option>
-              <option value="createdAt">Sort by Created Date</option>
+              <option value="createdAt_desc">Sort by Date (Newest)</option>
+              <option value="createdAt_asc">Sort by Date (Oldest)</option>
               <option value="totalEmployees">Sort by Total Employees</option>
             </select>
           </div>

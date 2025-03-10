@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { User } from "lucide-react";
-import { useAppDispatch } from "../../store/hooks";
-import { updateUser } from "../../store/slices/authSlice";
-import { updateUser as updateUserApi } from "../../services/api";
+import { useAppDispatch } from "../../../store/hooks";
+import { updateUser } from "../../../store/slices/authSlice";
+import { updateUser as updateUserApi } from "../../../services/api";
 import { motion } from "framer-motion";
 
 const EmployeeProfile = () => {

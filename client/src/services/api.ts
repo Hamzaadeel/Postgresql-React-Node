@@ -344,3 +344,11 @@ export const deleteChallenge = async (challengeId: number) => {
   const response = await api.delete(`/challenges/${challengeId}`);
   return response.data;
 };
+
+export const updatePassword = async (
+  userId: number,
+  data: { currentPassword: string; newPassword: string }
+) => {
+  const response = await api.put(`/users/${userId}/password`, data);
+  return response.data;
+};

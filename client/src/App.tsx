@@ -12,12 +12,16 @@ import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
 import EmployeePage from "./pages/EmployeePage";
 import EmployeeDashboard from "./components/employee/EmployeeDashboard";
-import EmployeeProfile from "./components/employee/EmployeeProfile";
+import EmployeeProfile from "./components/employee/settings/EmployeeProfile";
+import EmployeeNotifications from "./components/employee/settings/EmployeeNotifications";
+import EmployeeSecurity from "./components/employee/settings/EmployeeSecurity";
 import EmployeeChallenges from "./components/employee/challenges/EmployeeChallenges";
 import EmployeeCircles from "./components/employee/circles/EmployeeCircles";
 import ModeratorPage from "./pages/ModeratorPage";
 import ModeratorDashboard from "./components/moderator/ModeratorDashboard";
-import ModeratorProfile from "./components/moderator/ModeratorProfile";
+import ModeratorProfile from "./components/moderator/settings/ModeratorProfile";
+import ModeratorNotifications from "./components/moderator/settings/ModeratorNotifications";
+import ModeratorSecurity from "./components/moderator/settings/ModeratorSecurity";
 import UserManagement from "./components/moderator/user/UserManagement";
 import CirclesManagement from "./components/moderator/circle/CirclesManagement";
 import ChallengesManagement from "./components/moderator/challenges/ChallengesManagement";
@@ -36,10 +40,17 @@ function App() {
           {/* Employee Routes */}
           <Route path="/employee" element={<EmployeePage />}>
             <Route path="dashboard" element={<EmployeeDashboard />} />
-            <Route path="profile" element={<EmployeeProfile />} />
             <Route path="challenges" element={<EmployeeChallenges />} />
             <Route path="circles" element={<EmployeeCircles />} />
             <Route path="circles/:circleId" element={<EmployeeCircleView />} />
+
+            {/* Employee Settings Routes */}
+            <Route path="settings">
+              <Route path="profile" element={<EmployeeProfile />} />
+              <Route path="notifications" element={<EmployeeNotifications />} />
+              <Route path="security" element={<EmployeeSecurity />} />
+            </Route>
+
             <Route index element={<Navigate to="dashboard" replace />} />
           </Route>
 
@@ -50,7 +61,17 @@ function App() {
             <Route path="tenants" element={<TenantManagement />} />
             <Route path="circles" element={<CirclesManagement />} />
             <Route path="challenges" element={<ChallengesManagement />} />
-            <Route path="profile" element={<ModeratorProfile />} />
+
+            {/* Moderator Settings Routes */}
+            <Route path="settings">
+              <Route path="profile" element={<ModeratorProfile />} />
+              <Route
+                path="notifications"
+                element={<ModeratorNotifications />}
+              />
+              <Route path="security" element={<ModeratorSecurity />} />
+            </Route>
+
             <Route index element={<Navigate to="dashboard" replace />} />
           </Route>
 

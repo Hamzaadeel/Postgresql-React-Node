@@ -7,6 +7,7 @@ import {
   Plus,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
 } from "lucide-react";
 import {
   getTenants,
@@ -52,7 +53,20 @@ const TenantManagement = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedTenant, setSelectedTenant] = useState<Tenant | null>(null);
   const [successMessage, setSuccessMessage] = useState<string>("");
+  const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest(".sort-dropdown")) {
+        setIsSortDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const initializeData = async () => {
@@ -229,25 +243,79 @@ const TenantManagement = () => {
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
           </div>
-          <div className="ml-4">
-            <select
-              value={sortBy}
-              onChange={(e) =>
-                setSortBy(
-                  e.target.value as
-                    | "name"
-                    | "createdAt_desc"
-                    | "createdAt_asc"
-                    | "totalEmployees"
-                )
-              }
-              className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          <div className="ml-4 relative sort-dropdown">
+            <button
+              onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
+              className="px-2 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white flex items-center justify-between min-w-[180px]"
             >
-              <option value="name">Sort by Name</option>
-              <option value="createdAt_desc">Sort by Date (Newest)</option>
-              <option value="createdAt_asc">Sort by Date (Oldest)</option>
-              <option value="totalEmployees">Sort by Total Employees</option>
-            </select>
+              <span>
+                {sortBy === "name"
+                  ? "Sort by Name"
+                  : sortBy === "createdAt_desc"
+                  ? "Sort by Date (Newest)"
+                  : sortBy === "createdAt_asc"
+                  ? "Sort by Date (Oldest)"
+                  : "Sort by Total Employees"}
+              </span>
+              <ChevronDown
+                className="h-4 w-4 transition-transform duration-200"
+                style={{
+                  transform: isSortDropdownOpen
+                    ? "rotate(180deg)"
+                    : "rotate(0deg)",
+                }}
+              />
+            </button>
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{
+                opacity: isSortDropdownOpen ? 1 : 0,
+                y: isSortDropdownOpen ? 0 : -10,
+              }}
+              transition={{ duration: 0.2 }}
+              className={`absolute z-10 mt-2 w-48 bg-white rounded-lg shadow-lg border ${
+                isSortDropdownOpen ? "block" : "hidden"
+              }`}
+            >
+              <div className="p-2">
+                <button
+                  onClick={() => {
+                    setSortBy("name");
+                    setIsSortDropdownOpen(false);
+                  }}
+                  className="w-full px-4 py-2 text-left hover:bg-gray-100 rounded"
+                >
+                  Sort by Name
+                </button>
+                <button
+                  onClick={() => {
+                    setSortBy("createdAt_desc");
+                    setIsSortDropdownOpen(false);
+                  }}
+                  className="w-full px-4 py-2 text-left hover:bg-gray-100 rounded"
+                >
+                  Sort by Date (Newest)
+                </button>
+                <button
+                  onClick={() => {
+                    setSortBy("createdAt_asc");
+                    setIsSortDropdownOpen(false);
+                  }}
+                  className="w-full px-4 py-2 text-left hover:bg-gray-100 rounded"
+                >
+                  Sort by Date (Oldest)
+                </button>
+                <button
+                  onClick={() => {
+                    setSortBy("totalEmployees");
+                    setIsSortDropdownOpen(false);
+                  }}
+                  className="w-full px-4 py-2 text-left hover:bg-gray-100 rounded"
+                >
+                  Sort by Total Employees
+                </button>
+              </div>
+            </motion.div>
           </div>
         </div>
 

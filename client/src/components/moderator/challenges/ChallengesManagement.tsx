@@ -57,8 +57,11 @@ const ChallengesManagement = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-  const [selectedChallenge, setSelectedChallenge] = useState<any>(null);
+  const [selectedChallenge, setSelectedChallenge] = useState<Challenge | null>(
+    null
+  );
   const [successMessage, setSuccessMessage] = useState<string>("");
+  const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
   const dashboardVariants = {
@@ -271,6 +274,18 @@ const ChallengesManagement = () => {
     indexOfLastChallenge
   );
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest(".sort-dropdown")) {
+        setIsSortDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
     <div className="p-8">
       <motion.div
@@ -308,117 +323,101 @@ const ChallengesManagement = () => {
           </div>
         )}
 
-        {/* Search, Sort, and Filter Controls */}
-        <div className="mb-6 space-y-4">
-          <div className="flex justify-between items-center">
-            <div className="flex-1 max-w-md">
-              <input
-                type="text"
-                placeholder="Search challenges..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+        {/* Search and Sort Controls */}
+        <div className="mb-6 flex justify-between items-center">
+          <div className="flex-1 max-w-md">
+            <input
+              type="text"
+              placeholder="Search challenges..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            />
+          </div>
+          <div className="ml-4 relative sort-dropdown">
+            <button
+              onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
+              className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white flex items-center justify-between min-w-[180px]"
+            >
+              <span>
+                {sortBy === "name"
+                  ? "Sort by Name"
+                  : sortBy === "newest"
+                  ? "Sort by Date (Newest)"
+                  : sortBy === "oldest"
+                  ? "Sort by Date (Oldest)"
+                  : sortBy === "points_highest"
+                  ? "Sort by Points (Highest)"
+                  : "Sort by Points (Lowest)"}
+              </span>
+              <ChevronDown
+                className="h-4 w-4 transition-transform duration-200"
+                style={{
+                  transform: isSortDropdownOpen
+                    ? "rotate(180deg)"
+                    : "rotate(0deg)",
+                }}
               />
-            </div>
-            <div className="flex space-x-4">
-              {/* Sort Dropdown */}
-              <select
-                value={sortBy}
-                onChange={(e) =>
-                  setSortBy(
-                    e.target.value as
-                      | "newest"
-                      | "oldest"
-                      | "points_highest"
-                      | "points_lowest"
-                      | "name"
-                  )
-                }
-                className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              >
-                <option value="newest">Sort by Date (Newest)</option>
-                <option value="oldest">Sort by Date (Oldest)</option>
-                <option value="points_highest">Sort by Points (Highest)</option>
-                <option value="points_lowest">Sort by Points (Lowest)</option>
-                <option value="name">Sort by Name</option>
-              </select>
-
-              {/* Circle Filter Dropdown */}
-              <div className="relative" ref={circleDropdownRef}>
+            </button>
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{
+                opacity: isSortDropdownOpen ? 1 : 0,
+                y: isSortDropdownOpen ? 0 : -10,
+              }}
+              transition={{ duration: 0.2 }}
+              className={`absolute z-10 mt-2 w-48 bg-white rounded-lg shadow-lg border ${
+                isSortDropdownOpen ? "block" : "hidden"
+              }`}
+            >
+              <div className="p-2">
                 <button
-                  onClick={() => setIsCircleDropdownOpen(!isCircleDropdownOpen)}
-                  className="px-4 py-2 border rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 flex items-center justify-between min-w-[150px]"
-                >
-                  <span>
-                    {selectedCircles.length === 0
-                      ? "All Circles"
-                      : `${selectedCircles.length} Circle${
-                          selectedCircles.length > 1 ? "s" : ""
-                        } Selected`}
-                  </span>
-                  <ChevronDown
-                    className="h-4 w-4 transition-transform duration-200"
-                    style={{
-                      transform: isCircleDropdownOpen
-                        ? "rotate(180deg)"
-                        : "rotate(0deg)",
-                    }}
-                  />
-                </button>
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{
-                    opacity: isCircleDropdownOpen ? 1 : 0,
-                    y: isCircleDropdownOpen ? 0 : -10,
+                  onClick={() => {
+                    setSortBy("name");
+                    setIsSortDropdownOpen(false);
                   }}
-                  transition={{ duration: 0.2 }}
-                  className={`absolute z-10 mt-2 w-64 bg-white rounded-lg shadow-lg border max-h-60 overflow-y-auto ${
-                    isCircleDropdownOpen ? "block" : "hidden"
-                  }`}
+                  className="w-full px-4 py-2 text-left hover:bg-gray-100 rounded"
                 >
-                  <div className="p-2">
-                    {/* Select All Checkbox */}
-                    <label className="flex items-center p-2 hover:bg-gray-50">
-                      <input
-                        type="checkbox"
-                        checked={selectedCircles.length === circles.length}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setSelectedCircles(circles.map((c) => c.id));
-                          } else {
-                            setSelectedCircles([]);
-                          }
-                        }}
-                        className="mr-2"
-                      />
-                      Select All
-                    </label>
-                    {circles.map((circle) => (
-                      <label
-                        key={circle.id}
-                        className="flex items-center p-2 hover:bg-gray-50"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={selectedCircles.includes(circle.id)}
-                          onChange={(e) => {
-                            setSelectedCircles(
-                              e.target.checked
-                                ? [...selectedCircles, circle.id]
-                                : selectedCircles.filter(
-                                    (id) => id !== circle.id
-                                  )
-                            );
-                          }}
-                          className="mr-2"
-                        />
-                        {circle.name}
-                      </label>
-                    ))}
-                  </div>
-                </motion.div>
+                  Sort by Name
+                </button>
+                <button
+                  onClick={() => {
+                    setSortBy("newest");
+                    setIsSortDropdownOpen(false);
+                  }}
+                  className="w-full px-4 py-2 text-left hover:bg-gray-100 rounded"
+                >
+                  Sort by Date (Newest)
+                </button>
+                <button
+                  onClick={() => {
+                    setSortBy("oldest");
+                    setIsSortDropdownOpen(false);
+                  }}
+                  className="w-full px-4 py-2 text-left hover:bg-gray-100 rounded"
+                >
+                  Sort by Date (Oldest)
+                </button>
+                <button
+                  onClick={() => {
+                    setSortBy("points_highest");
+                    setIsSortDropdownOpen(false);
+                  }}
+                  className="w-full px-4 py-2 text-left hover:bg-gray-100 rounded"
+                >
+                  Sort by Points (Highest)
+                </button>
+                <button
+                  onClick={() => {
+                    setSortBy("points_lowest");
+                    setIsSortDropdownOpen(false);
+                  }}
+                  className="w-full px-4 py-2 text-left hover:bg-gray-100 rounded"
+                >
+                  Sort by Points (Lowest)
+                </button>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
 

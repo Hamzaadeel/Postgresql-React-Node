@@ -52,11 +52,12 @@ const CirclesManagement = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<
-    "name" | "createdAt_asc" | "createdAt_desc"
+    "name" | "createdAt_desc" | "createdAt_asc"
   >("name");
   const [selectedTenants, setSelectedTenants] = useState<number[]>([]);
   const [isTenantDropdownOpen, setIsTenantDropdownOpen] = useState(false);
   const tenantDropdownRef = useRef<HTMLDivElement>(null);
+  const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -73,6 +74,10 @@ const CirclesManagement = () => {
         !tenantDropdownRef.current.contains(event.target as Node)
       ) {
         setIsTenantDropdownOpen(false);
+      }
+      const target = event.target as HTMLElement;
+      if (!target.closest(".sort-dropdown")) {
+        setIsSortDropdownOpen(false);
       }
     };
 
@@ -281,23 +286,70 @@ const CirclesManagement = () => {
               />
             </div>
             <div className="flex space-x-4">
-              {/* Sort Dropdown */}
-              <select
-                value={sortBy}
-                onChange={(e) =>
-                  setSortBy(
-                    e.target.value as
-                      | "name"
-                      | "createdAt_asc"
-                      | "createdAt_desc"
-                  )
-                }
-                className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              >
-                <option value="name">Sort by Name</option>
-                <option value="createdAt_desc">Sort by Date (Newest)</option>
-                <option value="createdAt_asc">Sort by Date (Oldest)</option>
-              </select>
+              {/* Search and Sort Controls */}
+              <div className="ml-4 relative sort-dropdown">
+                <button
+                  onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
+                  className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white flex items-center justify-between min-w-[180px]"
+                >
+                  <span>
+                    {sortBy === "name"
+                      ? "Sort by Name"
+                      : sortBy === "createdAt_desc"
+                      ? "Sort by Date (Newest)"
+                      : "Sort by Date (Oldest)"}
+                  </span>
+                  <ChevronDown
+                    className="h-4 w-4 transition-transform duration-200"
+                    style={{
+                      transform: isSortDropdownOpen
+                        ? "rotate(180deg)"
+                        : "rotate(0deg)",
+                    }}
+                  />
+                </button>
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{
+                    opacity: isSortDropdownOpen ? 1 : 0,
+                    y: isSortDropdownOpen ? 0 : -10,
+                  }}
+                  transition={{ duration: 0.2 }}
+                  className={`absolute z-10 mt-2 w-48 bg-white rounded-lg shadow-lg border ${
+                    isSortDropdownOpen ? "block" : "hidden"
+                  }`}
+                >
+                  <div className="p-2">
+                    <button
+                      onClick={() => {
+                        setSortBy("name");
+                        setIsSortDropdownOpen(false);
+                      }}
+                      className="w-full px-4 py-2 text-left hover:bg-gray-100 rounded"
+                    >
+                      Sort by Name
+                    </button>
+                    <button
+                      onClick={() => {
+                        setSortBy("createdAt_desc");
+                        setIsSortDropdownOpen(false);
+                      }}
+                      className="w-full px-4 py-2 text-left hover:bg-gray-100 rounded"
+                    >
+                      Sort by Date (Newest)
+                    </button>
+                    <button
+                      onClick={() => {
+                        setSortBy("createdAt_asc");
+                        setIsSortDropdownOpen(false);
+                      }}
+                      className="w-full px-4 py-2 text-left hover:bg-gray-100 rounded"
+                    >
+                      Sort by Date (Oldest)
+                    </button>
+                  </div>
+                </motion.div>
+              </div>
 
               {/* Tenant Filter Dropdown */}
               <div className="relative" ref={tenantDropdownRef}>

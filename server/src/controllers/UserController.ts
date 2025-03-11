@@ -130,6 +130,36 @@ export class UserController {
     }
   }
 
+  static async updatePassword(req: Request, res: Response) {
+    try {
+      const { currentPassword, newPassword } = req.body;
+      const userId = parseInt(req.params.id);
+
+      const userRepository = AppDataSource.getRepository(User);
+      const user = await userRepository.findOne({ where: { id: userId } });
+
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const isMatch = await bcrypt.compare(currentPassword, user.password);
+      if (!isMatch) {
+        return res
+          .status(401)
+          .json({ message: "Current password is incorrect" });
+      }
+
+      // Hash the new password
+      const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+      user.password = hashedNewPassword;
+
+      await userRepository.save(user);
+      res.json({ message: "Password updated successfully" });
+    } catch (error) {
+      console.error("Error updating password:", error);
+      res.status(500).json({ message: "Error updating password" });
+    }
+  }
   static async deleteUser(req: Request, res: Response) {
     try {
       const id = parseInt(req.params.id);

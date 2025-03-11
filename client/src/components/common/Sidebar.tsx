@@ -10,6 +10,9 @@ import {
   Swords,
   Settings,
   ChevronDown,
+  User,
+  Bell,
+  Shield,
 } from "lucide-react";
 import logo from "../../assets/logos/dpl-logo.png"; // Adjust the path as necessary
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -45,6 +48,9 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
   };
 
   const handleTabClick = (tab: string) => {
+    if (!tab.includes("/settings")) {
+      setIsSettingsOpen(false);
+    }
     navigate(tab); // Navigate to the selected tab
   };
 
@@ -61,7 +67,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
     <>
       <li
         className={`flex items-center p-2 mb-1 cursor-pointer justify-between rounded-xl mx-1 ${
-          isSettingsOpen || selectedTab?.includes("/settings")
+          selectedTab?.includes("/settings")
             ? userRole === "Employee"
               ? "bg-gradient-to-r from-cyan-200 to-teal-400 text-black"
               : "bg-gradient-to-r from-emerald-200 to-emerald-400 text-black"
@@ -102,12 +108,16 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
             className="ml-4"
           >
             <li
-              className={`flex items-center p-2 mb-1 cursor-pointer rounded-xl mr-1
-                hover:bg-gradient-to-r from-emerald-200 to-emerald-400 hover:text-black
+              className={`flex items-center p-2 mb-1 cursor-pointer rounded-xl mr-1 
+                ${
+                  userRole === "Employee"
+                    ? "hover:bg-gradient-to-r from-cyan-200 to-teal-400 hover:text-black"
+                    : "hover:bg-gradient-to-r from-emerald-200 to-emerald-400 hover:text-black"
+                }
                 ${
                   selectedTab === `/${userRole.toLowerCase()}/settings/profile`
                     ? userRole === "Employee"
-                      ? "bg-cyan-100 text-black"
+                      ? "bg-gradient-to-r from-cyan-200 to-teal-400 text-black"
                       : "bg-gradient-to-r from-emerald-200 to-emerald-400 text-black"
                     : ""
                 }`}
@@ -115,16 +125,21 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
                 handleTabClick(`/${userRole.toLowerCase()}/settings/profile`)
               }
             >
-              <span>Profile</span>
+              <User className="w-5 h-5" />
+              <span className="ml-2">Profile</span>
             </li>
             <li
               className={`flex items-center p-2 mb-1 cursor-pointer rounded-xl mr-1
-                hover:bg-gradient-to-r from-emerald-200 to-emerald-400 hover:text-black
+               ${
+                 userRole === "Employee"
+                   ? "hover:bg-gradient-to-r from-cyan-200 to-teal-400 hover:text-black"
+                   : "hover:bg-gradient-to-r from-emerald-200 to-emerald-400 hover:text-black"
+               }
                 ${
                   selectedTab ===
                   `/${userRole.toLowerCase()}/settings/notifications`
                     ? userRole === "Employee"
-                      ? "bg-cyan-100 text-black"
+                      ? "bg-gradient-to-r from-cyan-200 to-teal-400 text-black"
                       : "bg-gradient-to-r from-emerald-200 to-emerald-400 text-black"
                     : ""
                 }`}
@@ -134,15 +149,20 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
                 )
               }
             >
-              <span>Notifications</span>
+              <Bell className="w-5 h-5" />
+              <span className="ml-2">Notifications</span>
             </li>
             <li
               className={`flex items-center p-2 mb-1 cursor-pointer rounded-xl mr-1
-                hover:bg-gradient-to-r from-emerald-200 to-emerald-400 hover:text-black
+              ${
+                userRole === "Employee"
+                  ? "hover:bg-gradient-to-r from-cyan-200 to-teal-400 hover:text-black"
+                  : "hover:bg-gradient-to-r from-emerald-200 to-emerald-400 hover:text-black"
+              }
                 ${
                   selectedTab === `/${userRole.toLowerCase()}/settings/security`
                     ? userRole === "Employee"
-                      ? "bg-cyan-100 text-black"
+                      ? "bg-gradient-to-r from-cyan-200 to-teal-400 text-black"
                       : "bg-gradient-to-r from-emerald-200 to-emerald-400 text-black"
                     : ""
                 }`}
@@ -150,7 +170,8 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
                 handleTabClick(`/${userRole.toLowerCase()}/settings/security`)
               }
             >
-              <span>Security</span>
+              <Shield className="w-5 h-5" />
+              <span className="ml-2">Security</span>
             </li>
           </motion.div>
         )}
@@ -164,7 +185,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
         userRole === "Employee"
           ? "bg-gradient-to-b from-sky-950 via-sky-800 to-sky-600"
           : "bg-gradient-to-b from-emerald-950 via-emerald-800 to-emerald-600"
-      } text-white ${isOpen ? "w-56" : "w-10"} transition-width duration-300`}
+      } text-white ${isOpen ? "w-56" : "w-11"} transition-width duration-300`}
     >
       <button
         onClick={toggleSidebar}
@@ -184,7 +205,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
         <img
           src={logo}
           alt="Logo"
-          className="ml-1 w-8 h-8 cursor-pointer"
+          className="ml-1.5 w-8 h-8 cursor-pointer"
           onClick={toggleSidebar}
         />
       )}

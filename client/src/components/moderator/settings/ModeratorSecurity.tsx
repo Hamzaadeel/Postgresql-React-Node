@@ -1,111 +1,220 @@
-import React from "react";
-import { Shield } from "lucide-react";
+import { useState } from "react";
+import { Shield, Eye, EyeOff } from "lucide-react";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "../../../store/hooks";
+import { updatePassword } from "../../../services/api";
+import { toast } from "react-toastify";
 
-const ModeratorSecurity: React.FC = () => {
+const ModeratorSecurity = () => {
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const user = useAppSelector((state) => state.auth.user);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPassword !== confirmPassword) {
+      toast.error("New passwords do not match");
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      toast.error("New password must be at least 6 characters long");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      await updatePassword(user.id, {
+        currentPassword,
+        newPassword,
+      });
+
+      toast.success("Password updated successfully");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (err: any) {
+      if (err.response?.status === 401) {
+        toast.error("Current password is incorrect");
+      } else if (err.response?.status === 404) {
+        navigate("/login");
+      } else {
+        toast.error(err.response?.data?.message || "Failed to update password");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const dashboardVariants = {
+    hidden: { opacity: 0, y: -20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, ease: "easeOut" },
+    },
+  };
+
   return (
-    <div className="max-w-2xl mx-auto">
-      <div className="flex items-center space-x-4 mb-6">
-        <Shield size={24} className="text-primary" />
-        <h2 className="text-2xl font-bold">Security Settings</h2>
-      </div>
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      variants={dashboardVariants}
+      className="p-8 bg-gray-100 h-screen flex justify-start"
+    >
+      <motion.div
+        initial={{ scale: 0.95, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
+        className="max-w-2xl w-full"
+      >
+        {/* Heading */}
+        <motion.h2
+          initial={{ y: -30, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+          className="text-2xl font-bold flex items-center mb-6"
+        >
+          <Shield className="w-6 h-6 mr-2" />
+          Security Settings
+        </motion.h2>
 
-      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-        <h3 className="text-lg font-semibold mb-4">Change Password</h3>
-
-        <form className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Current Password
-            </label>
-            <input
-              type="password"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              New Password
-            </label>
-            <input
-              type="password"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Confirm New Password
-            </label>
-            <input
-              type="password"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
-            />
-          </div>
-
-          <div className="flex justify-end">
-            <button
-              type="submit"
-              className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-light"
+        {/* Security Form */}
+        <motion.div
+          initial={{ scale: 0.95, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="bg-white rounded-lg shadow-md p-6"
+        >
+          <form onSubmit={handleSubmit}>
+            {/* Current Password */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
+              className="mb-4 relative"
             >
-              Update Password
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-lg font-semibold mb-4">
-          Two-Factor Authentication
-        </h3>
-
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <p className="font-medium">Enable 2FA</p>
-            <p className="text-sm text-gray-500">
-              Add an extra layer of security to your account
-            </p>
-          </div>
-          <label className="relative inline-flex items-center cursor-pointer">
-            <input type="checkbox" className="sr-only peer" />
-            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-          </label>
-        </div>
-
-        <div className="border-t pt-4">
-          <h4 className="font-medium mb-2">Login Sessions</h4>
-          <p className="text-sm text-gray-500 mb-4">
-            Manage your active sessions across devices
-          </p>
-
-          <div className="space-y-3">
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div>
-                <p className="font-medium">Current Browser</p>
-                <p className="text-xs text-gray-500">
-                  Chrome on Windows • Active now
-                </p>
-              </div>
-              <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
-                Current
-              </span>
-            </div>
-
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div>
-                <p className="font-medium">iPhone 13</p>
-                <p className="text-xs text-gray-500">
-                  Safari • Last active 2 hours ago
-                </p>
-              </div>
-              <button className="text-red-500 text-sm hover:text-red-700">
-                Logout
+              <label className="block text-gray-700 font-semibold text-sm mb-2">
+                Current Password
+              </label>
+              <motion.input
+                type={showCurrentPassword ? "text" : "password"}
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition-opacity"
+                required
+                disabled={loading}
+                whileFocus={{ opacity: 0.9 }}
+              />
+              <button
+                type="button"
+                title="View Password"
+                onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2  mt-3"
+              >
+                {showCurrentPassword ? (
+                  <EyeOff className="w-5 h-5 opacity-70" />
+                ) : (
+                  <Eye className="w-5 h-5 opacity-70" />
+                )}
               </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+            </motion.div>
+
+            {/* New Password */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
+              className="mb-4 relative"
+            >
+              <label className="block text-gray-700 font-semibold text-sm mb-2">
+                New Password
+              </label>
+              <motion.input
+                type={showNewPassword ? "text" : "password"}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition-opacity"
+                required
+                disabled={loading}
+                whileFocus={{ opacity: 0.9 }}
+              />
+              <button
+                type="button"
+                title="View Password"
+                onClick={() => setShowNewPassword(!showNewPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 mt-3"
+              >
+                {showNewPassword ? (
+                  <EyeOff className="w-5 h-5 opacity-70" />
+                ) : (
+                  <Eye className="w-5 h-5 opacity-70" />
+                )}
+              </button>
+            </motion.div>
+
+            {/* Confirm New Password */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
+              className="mb-6 relative"
+            >
+              <label className="block text-gray-700 font-semibold text-sm mb-2">
+                Confirm New Password
+              </label>
+              <motion.input
+                type={showConfirmPassword ? "text" : "password"}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition-opacity"
+                required
+                disabled={loading}
+                whileFocus={{ opacity: 0.9 }}
+              />
+              <button
+                type="button"
+                title="View Password"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 mt-3"
+              >
+                {showConfirmPassword ? (
+                  <EyeOff className="w-5 h-5 opacity-70" />
+                ) : (
+                  <Eye className="w-5 h-5 opacity-70" />
+                )}
+              </button>
+            </motion.div>
+
+            {/* Submit Button */}
+            <motion.div className="flex justify-end">
+              <motion.button
+                type="submit"
+                className={`px-4 py-2 bg-gradient-to-r from-emerald-600 to-emerald-800 text-white rounded hover:bg-gradient-to-l hover:from-emerald-600 hover:to-emerald-800 ${
+                  loading ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+                disabled={loading}
+                whileHover={!loading ? { scale: 1.05 } : {}}
+                whileTap={!loading ? { scale: 0.95 } : {}}
+              >
+                {loading ? "Updating..." : "Update Password"}
+              </motion.button>
+            </motion.div>
+          </form>
+        </motion.div>
+      </motion.div>
+    </motion.div>
   );
 };
 

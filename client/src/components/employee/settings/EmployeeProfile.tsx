@@ -84,7 +84,7 @@ const EmployeeProfile = () => {
         className="text-2xl font-bold p-2 pt-6 ml-3 flex items-center"
         variants={fadeInVariants}
       >
-        <User className="w-6 h-6 mr-2 text-blue-500" />
+        <User className="w-6 h-6 mr-2 ml-2 text-blue-500" />
         Employee Profile
       </motion.h2>
 

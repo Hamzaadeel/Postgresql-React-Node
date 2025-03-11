@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Shield } from "lucide-react";
+import { Shield, Eye, EyeOff } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../../store/hooks";
@@ -11,6 +11,9 @@ const EmployeeSecurity = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const user = useAppSelector((state) => state.auth.user);
   const navigate = useNavigate();
 
@@ -18,6 +21,11 @@ const EmployeeSecurity = () => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
       toast.error("New passwords do not match");
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      toast.error("New password must be at least 6 characters long");
       return;
     }
 
@@ -38,10 +46,12 @@ const EmployeeSecurity = () => {
       setConfirmPassword("");
     } catch (err: any) {
       if (err.response?.status === 401) {
+        toast.error("Current password is incorrect");
+      } else if (err.response?.status === 404) {
         navigate("/login");
-        return;
+      } else {
+        toast.error(err.response?.data?.message || "Failed to update password");
       }
-      toast.error(err.message || "Failed to update password");
     } finally {
       setLoading(false);
     }
@@ -76,7 +86,7 @@ const EmployeeSecurity = () => {
           transition={{ duration: 0.3, ease: "easeOut" }}
           className="text-2xl font-bold flex items-center mb-6"
         >
-          <Shield className="w-6 h-6 mr-2" />
+          <Shield className="w-6 h-6 mr-2 text-blue-500" />
           Security Settings
         </motion.h2>
 
@@ -93,13 +103,13 @@ const EmployeeSecurity = () => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, ease: "easeOut" }}
-              className="mb-4"
+              className="mb-4 relative"
             >
-              <label className="block text-gray-700 font-semibold mb-2">
+              <label className="block text-gray-700 font-semibold text-sm mb-2">
                 Current Password
               </label>
               <motion.input
-                type="password"
+                type={showCurrentPassword ? "text" : "password"}
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
                 className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition-opacity"
@@ -107,6 +117,17 @@ const EmployeeSecurity = () => {
                 disabled={loading}
                 whileFocus={{ opacity: 0.9 }}
               />
+              <button
+                type="button"
+                onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2  mt-3"
+              >
+                {showCurrentPassword ? (
+                  <EyeOff className="w-5 h-5 opacity-70" />
+                ) : (
+                  <Eye className="w-5 h-5 opacity-70" />
+                )}
+              </button>
             </motion.div>
 
             {/* New Password */}
@@ -114,13 +135,13 @@ const EmployeeSecurity = () => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, ease: "easeOut" }}
-              className="mb-4"
+              className="mb-4 relative"
             >
-              <label className="block text-gray-700 font-semibold mb-2">
+              <label className="block text-gray-700 font-semibold text-sm mb-2">
                 New Password
               </label>
               <motion.input
-                type="password"
+                type={showNewPassword ? "text" : "password"}
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition-opacity"
@@ -128,6 +149,17 @@ const EmployeeSecurity = () => {
                 disabled={loading}
                 whileFocus={{ opacity: 0.9 }}
               />
+              <button
+                type="button"
+                onClick={() => setShowNewPassword(!showNewPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 mt-3"
+              >
+                {showNewPassword ? (
+                  <EyeOff className="w-5 h-5 opacity-70" />
+                ) : (
+                  <Eye className="w-5 h-5 opacity-70" />
+                )}
+              </button>
             </motion.div>
 
             {/* Confirm New Password */}
@@ -135,13 +167,13 @@ const EmployeeSecurity = () => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, ease: "easeOut" }}
-              className="mb-6"
+              className="mb-6 relative"
             >
-              <label className="block text-gray-700 font-semibold mb-2">
+              <label className="block text-gray-700 font-semibold text-sm mb-2">
                 Confirm New Password
               </label>
               <motion.input
-                type="password"
+                type={showConfirmPassword ? "text" : "password"}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition-opacity"
@@ -149,13 +181,24 @@ const EmployeeSecurity = () => {
                 disabled={loading}
                 whileFocus={{ opacity: 0.9 }}
               />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 mt-3"
+              >
+                {showConfirmPassword ? (
+                  <EyeOff className="w-5 h-5 opacity-70" />
+                ) : (
+                  <Eye className="w-5 h-5 opacity-70" />
+                )}
+              </button>
             </motion.div>
 
             {/* Submit Button */}
             <motion.div className="flex justify-end">
               <motion.button
                 type="submit"
-                className={`px-4 py-2 bg-gradient-to-r from-cyan-600 to-teal-800 text-white rounded hover:bg-gradient-to-l hover:from-cyan-600 hover:to-teal-800 focus:outline-none ${
+                className={`px-4 py-2 bg-gradient-to-r from-cyan-600 to-teal-800 text-white rounded hover:bg-gradient-to-l hover:from-cyan-600 hover:to-teal-800 ${
                   loading ? "opacity-50 cursor-not-allowed" : ""
                 }`}
                 disabled={loading}

@@ -16,6 +16,10 @@ router.post("/", async (req: Request, res: Response) => {
 // Protected routes
 router.use(passport.authenticate("jwt", { session: false }));
 
+router.put("/:id/password", async (req: Request, res: Response) => {
+  await UserController.updatePassword(req, res);
+});
+
 router.get("/", async (req: Request, res: Response) => {
   await UserController.getUsers(req, res);
 });

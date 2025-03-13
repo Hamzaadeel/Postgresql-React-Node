@@ -13,7 +13,6 @@ import {
 } from "lucide-react";
 import { faUsers } from "@fortawesome/free-solid-svg-icons";
 import Loader from "../../common/Loader";
-import ConfirmationModal from "../../common/ConfirmationModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ChallengeDetailsEmp from "./ChallengeDetailsEmp";
 import { useDispatch, useSelector } from "react-redux";
@@ -27,6 +26,7 @@ import {
   submitChallenge,
 } from "../../../store/slices/challengeSlice";
 import { motion } from "framer-motion";
+import SubmitChallenge from "./SubmitChallenge";
 
 interface ChallengeWithParticipation extends Challenge {
   participationId?: number;
@@ -230,7 +230,7 @@ const EmployeeChallenges = () => {
     }
   };
 
-  const handleSubmitChallenge = async () => {
+  const handleSubmitChallenge = async (file: File) => {
     if (!selectedChallenge?.participationId || !selectedChallenge.id) return;
 
     const token = localStorage.getItem("token");
@@ -240,14 +240,19 @@ const EmployeeChallenges = () => {
     }
 
     try {
+      // Create form data for file upload
+      const formData = new FormData();
+      formData.append("proof", file);
+      formData.append("status", "Completed");
+
+      // Upload file and update status
       await axios.put(
         `http://localhost:5000/api/challenge-participants/${selectedChallenge.participationId}`,
-        {
-          status: "Completed",
-        },
+        formData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -637,13 +642,11 @@ const EmployeeChallenges = () => {
       />
 
       {/* Submit Challenge Modal */}
-      <ConfirmationModal
+      <SubmitChallenge
         isOpen={isSubmitModalOpen}
         onClose={() => setIsSubmitModalOpen(false)}
-        onConfirm={handleSubmitChallenge}
-        title="Submit Challenge"
-        message="Are you sure you want to submit this challenge as completed? This action cannot be undone."
-        confirmButtonColor="bg-blue-600"
+        challenge={selectedChallenge!}
+        onSubmit={handleSubmitChallenge}
       />
     </motion.div>
   );

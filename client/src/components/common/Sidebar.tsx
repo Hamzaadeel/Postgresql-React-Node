@@ -11,13 +11,12 @@ import {
   Settings,
   ChevronDown,
   User,
-  Bell,
   Shield,
 } from "lucide-react";
-import logo from "../../assets/logos/dpl-logo.png"; // Adjust the path as necessary
+import logo from "../../assets/logos/dpl-logo.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUsers } from "@fortawesome/free-solid-svg-icons";
-import ConfirmationModal from "./ConfirmationModal"; // Import the ConfirmationModal
+import ConfirmationModal from "./ConfirmationModal";
 import { AnimatePresence, motion } from "framer-motion";
 
 interface SidebarProps {
@@ -26,12 +25,12 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
-  const [isOpen, setIsOpen] = useState(true); // State to manage sidebar open/close
-  const location = useLocation(); // Get the current location
+  const [isOpen, setIsOpen] = useState(true);
+  const location = useLocation();
   const [selectedTab, setSelectedTab] = useState<string | null>(
     location.pathname
-  ); // Set initial selected tab to current path
-  const navigate = useNavigate(); // Use navigate for logout
+  );
+  const navigate = useNavigate();
 
   // State for confirmation modal
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -66,6 +65,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
   const renderSettingsDropdown = () => (
     <>
       <li
+        title="Open Settings"
         className={`flex items-center p-2 mb-1 cursor-pointer justify-between rounded-xl mx-1 ${
           selectedTab?.includes("/settings")
             ? userRole === "Employee"
@@ -99,16 +99,19 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
         )}
       </li>
       <AnimatePresence>
-        {isSettingsOpen && isOpen && (
+        {isSettingsOpen && (
           <motion.div
             initial={{ opacity: 0, y: -10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
-            className="ml-4"
+            className={isOpen ? "ml-4" : "flex flex-col items-center"}
           >
             <li
-              className={`flex items-center p-2 mb-1 cursor-pointer rounded-xl mr-1 
+              title="Profile Settings"
+              className={`flex items-center p-2 mb-1 cursor-pointer rounded-xl ${
+                !isOpen ? "w-full justify-center" : "mr-1"
+              } 
                 ${
                   userRole === "Employee"
                     ? "hover:bg-gradient-to-r from-cyan-200 to-teal-400 hover:text-black"
@@ -126,34 +129,14 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
               }
             >
               <User className="w-5 h-5" />
-              <span className="ml-2">Profile</span>
+              {isOpen && <span className="ml-2">Profile</span>}
             </li>
+
             <li
-              className={`flex items-center p-2 mb-1 cursor-pointer rounded-xl mr-1
-               ${
-                 userRole === "Employee"
-                   ? "hover:bg-gradient-to-r from-cyan-200 to-teal-400 hover:text-black"
-                   : "hover:bg-gradient-to-r from-emerald-200 to-emerald-400 hover:text-black"
-               }
-                ${
-                  selectedTab ===
-                  `/${userRole.toLowerCase()}/settings/notifications`
-                    ? userRole === "Employee"
-                      ? "bg-gradient-to-r from-cyan-200 to-teal-400 text-black"
-                      : "bg-gradient-to-r from-emerald-200 to-emerald-400 text-black"
-                    : ""
-                }`}
-              onClick={() =>
-                handleTabClick(
-                  `/${userRole.toLowerCase()}/settings/notifications`
-                )
+              title="Security Settings"
+              className={`flex items-center p-2 mb-1 cursor-pointer rounded-xl ${
+                !isOpen ? "w-full justify-center" : "mr-1"
               }
-            >
-              <Bell className="w-5 h-5" />
-              <span className="ml-2">Notifications</span>
-            </li>
-            <li
-              className={`flex items-center p-2 mb-1 cursor-pointer rounded-xl mr-1
               ${
                 userRole === "Employee"
                   ? "hover:bg-gradient-to-r from-cyan-200 to-teal-400 hover:text-black"
@@ -171,7 +154,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
               }
             >
               <Shield className="w-5 h-5" />
-              <span className="ml-2">Security</span>
+              {isOpen && <span className="ml-2">Security</span>}
             </li>
           </motion.div>
         )}
@@ -215,6 +198,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
           {userRole === "Employee" ? (
             <>
               <li
+                title="Dashboard"
                 className={`flex items-center p-2 mb-1 rounded-xl mx-1 cursor-pointer  hover:bg-gradient-to-r from-cyan-200 to-teal-400 hover:text-black ${
                   selectedTab === "/employee/dashboard"
                     ? "bg-gradient-to-r from-cyan-200 to-teal-400 text-black"
@@ -228,6 +212,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
                 </span>
               </li>
               <li
+                title="Circles"
                 className={`flex items-center p-2 mb-1 rounded-xl mx-1 cursor-pointer hover:bg-gradient-to-r from-cyan-200 to-teal-400 hover:text-black ${
                   selectedTab === "/employee/circles"
                     ? "bg-gradient-to-r from-cyan-200 to-teal-400 text-black"
@@ -241,6 +226,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
                 </span>
               </li>
               <li
+                title="Challenges"
                 className={`flex items-center p-2 mb-1 rounded-xl mx-1 cursor-pointer hover:bg-gradient-to-r from-cyan-200 to-teal-400 hover:text-black ${
                   selectedTab === "/employee/challenges"
                     ? "bg-gradient-to-r from-cyan-200 to-teal-400 text-black"
@@ -258,6 +244,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
           ) : userRole === "Moderator" ? (
             <>
               <li
+                title="Dashboard"
                 className={`flex items-center p-2 mb-1 rounded-xl mx-1 cursor-pointer ease-in-out hover:bg-gradient-to-r from-emerald-200 to-emerald-400 hover:text-black ${
                   selectedTab === "/moderator/dashboard"
                     ? "bg-gradient-to-r from-emerald-200 to-emerald-400 text-black"
@@ -271,6 +258,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
                 </span>
               </li>
               <li
+                title="Tenants"
                 className={`flex items-center p-2 mb-1 rounded-xl mx-1 cursor-pointer hover:bg-gradient-to-r from-emerald-200 to-emerald-400 hover:text-black ${
                   selectedTab === "/moderator/tenants"
                     ? "bg-gradient-to-r from-emerald-200 to-emerald-400 text-black"
@@ -284,6 +272,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
                 </span>
               </li>
               <li
+                title="Users"
                 className={`flex items-center p-2 mb-1 rounded-xl mx-1 cursor-pointer hover:bg-gradient-to-r from-emerald-200 to-emerald-400 hover:text-black ${
                   selectedTab === "/moderator/users"
                     ? "bg-gradient-to-r from-emerald-200 to-emerald-400 text-black"
@@ -297,6 +286,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
                 </span>
               </li>
               <li
+                title="Circles"
                 className={`flex items-center p-2 mb-1 rounded-xl mx-1 cursor-pointer hover:bg-gradient-to-r from-emerald-200 to-emerald-400 hover:text-black ${
                   selectedTab === "/moderator/circles"
                     ? "bg-gradient-to-r from-emerald-200 to-emerald-400 text-black"
@@ -310,6 +300,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
                 </span>
               </li>
               <li
+                title="Challenges"
                 className={`flex items-center p-2 mb-1 rounded-xl mx-1 cursor-pointer hover:bg-gradient-to-r from-emerald-200 to-emerald-400 hover:text-black ${
                   selectedTab === "/moderator/challenges"
                     ? "bg-gradient-to-r from-emerald-200 to-emerald-400 text-black"

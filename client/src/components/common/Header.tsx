@@ -16,6 +16,7 @@ import {
   CheckCheck,
   X,
   Shield,
+  Settings,
 } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUsers } from "@fortawesome/free-solid-svg-icons";
@@ -73,6 +74,7 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
   const notifications = useAppSelector(selectNotifications);
   const unreadNotificationsCount = useAppSelector(selectUnreadCount);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -397,6 +399,17 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
     }
   };
 
+  const handleSettingsClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsSettingsOpen(!isSettingsOpen);
+  };
+
+  const handleSettingsItemClick = (path: string) => {
+    handleNavigation(path);
+    setIsSettingsOpen(false);
+    setIsProfileOpen(false);
+  };
+
   const renderSearchBar = () => (
     <div className="flex-1 max-w-xl relative" ref={searchRef}>
       <div className="relative">
@@ -405,7 +418,9 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
           placeholder="Search..."
           value={searchQuery}
           onChange={handleSearchInputChange}
-          className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-${
+            userRole === "Moderator" ? "emerald" : "cyan"
+          }-500`}
         />
         <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
       </div>
@@ -641,32 +656,53 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
                       </button>
                       <div className="border-t border-gray-200 my-2">
                         <button
-                          onClick={() =>
-                            handleNavigation("/employee/settings/profile")
-                          }
-                          className="w-full px-4 py-2 text-left flex items-center space-x-2 rounded-xl mx-1 hover:bg-gradient-to-r from-cyan-700 to-teal-900 hover:text-white"
+                          onClick={handleSettingsClick}
+                          className="w-full px-4 py-2 text-left flex items-center justify-between rounded-xl mx-1 hover:bg-gradient-to-r from-cyan-700 to-teal-900 hover:text-white"
                         >
-                          <User className="h-4 w-4" />
-                          <span>Profile</span>
+                          <div className="flex items-center space-x-2">
+                            <Settings className="h-4 w-4" />
+                            <span>Settings</span>
+                          </div>
+                          <ChevronDown
+                            className={`h-4 w-4 transition-transform duration-200 ${
+                              isSettingsOpen ? "rotate-180" : ""
+                            }`}
+                          />
                         </button>
-                        <button
-                          onClick={() =>
-                            handleNavigation("/employee/settings/notifications")
-                          }
-                          className="w-full px-4 py-2 text-left flex items-center space-x-2 rounded-xl mx-1 hover:bg-gradient-to-r from-cyan-700 to-teal-900 hover:text-white"
-                        >
-                          <Bell className="h-4 w-4" />
-                          <span>Notifications</span>
-                        </button>
-                        <button
-                          onClick={() =>
-                            handleNavigation("/employee/settings/security")
-                          }
-                          className="w-full px-4 py-2 text-left flex items-center space-x-2 rounded-xl mx-1 hover:bg-gradient-to-r from-cyan-700 to-teal-900 hover:text-white"
-                        >
-                          <Shield className="h-4 w-4" />
-                          <span>Security</span>
-                        </button>
+                        <AnimatePresence>
+                          {isSettingsOpen && (
+                            <motion.div
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: "auto" }}
+                              exit={{ opacity: 0, height: 0 }}
+                              transition={{ duration: 0.2 }}
+                              className="ml-4"
+                            >
+                              <button
+                                onClick={() =>
+                                  handleSettingsItemClick(
+                                    "/employee/settings/profile"
+                                  )
+                                }
+                                className="w-full px-4 py-2 text-left flex items-center space-x-2 rounded-xl mx-1 hover:bg-gradient-to-r from-cyan-700 to-teal-900 hover:text-white"
+                              >
+                                <User className="h-4 w-4" />
+                                <span>Profile</span>
+                              </button>
+                              <button
+                                onClick={() =>
+                                  handleSettingsItemClick(
+                                    "/employee/settings/security"
+                                  )
+                                }
+                                className="w-full px-4 py-2 text-left flex items-center space-x-2 rounded-xl mx-1 hover:bg-gradient-to-r from-cyan-700 to-teal-900 hover:text-white"
+                              >
+                                <Shield className="h-4 w-4" />
+                                <span>Security</span>
+                              </button>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
                       </div>
                     </>
                   ) : (
@@ -710,34 +746,53 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
                       </button>
                       <div className="border-t border-gray-200 my-2">
                         <button
-                          onClick={() =>
-                            handleNavigation("/moderator/settings/profile")
-                          }
-                          className="w-full px-4 py-2 text-left flex items-center space-x-2 rounded-xl mx-1 hover:bg-gradient-to-r from-emerald-700 to-emerald-900 hover:text-white"
+                          onClick={handleSettingsClick}
+                          className="w-full px-4 py-2 text-left flex items-center justify-between rounded-xl mx-1 hover:bg-gradient-to-r from-emerald-700 to-emerald-900 hover:text-white"
                         >
-                          <User className="h-4 w-4" />
-                          <span>Profile</span>
+                          <div className="flex items-center space-x-2">
+                            <Settings className="h-4 w-4" />
+                            <span>Settings</span>
+                          </div>
+                          <ChevronDown
+                            className={`h-4 w-4 transition-transform duration-200 ${
+                              isSettingsOpen ? "rotate-180" : ""
+                            }`}
+                          />
                         </button>
-                        <button
-                          onClick={() =>
-                            handleNavigation(
-                              "/moderator/settings/notifications"
-                            )
-                          }
-                          className="w-full px-4 py-2 text-left flex items-center space-x-2 rounded-xl mx-1 hover:bg-gradient-to-r from-emerald-700 to-emerald-900 hover:text-white"
-                        >
-                          <Bell className="h-4 w-4" />
-                          <span>Notifications</span>
-                        </button>
-                        <button
-                          onClick={() =>
-                            handleNavigation("/moderator/settings/security")
-                          }
-                          className="w-full px-4 py-2 text-left flex items-center space-x-2 rounded-xl mx-1 hover:bg-gradient-to-r from-emerald-700 to-emerald-900 hover:text-white"
-                        >
-                          <Shield className="h-4 w-4" />
-                          <span>Security</span>
-                        </button>
+                        <AnimatePresence>
+                          {isSettingsOpen && (
+                            <motion.div
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: "auto" }}
+                              exit={{ opacity: 0, height: 0 }}
+                              transition={{ duration: 0.2 }}
+                              className="ml-4"
+                            >
+                              <button
+                                onClick={() =>
+                                  handleSettingsItemClick(
+                                    "/moderator/settings/profile"
+                                  )
+                                }
+                                className="w-full px-4 py-2 text-left flex items-center space-x-2 rounded-xl mx-1 hover:bg-gradient-to-r from-emerald-700 to-emerald-900 hover:text-white"
+                              >
+                                <User className="h-4 w-4" />
+                                <span>Profile</span>
+                              </button>
+                              <button
+                                onClick={() =>
+                                  handleSettingsItemClick(
+                                    "/moderator/settings/security"
+                                  )
+                                }
+                                className="w-full px-4 py-2 text-left flex items-center space-x-2 rounded-xl mx-1 hover:bg-gradient-to-r from-emerald-700 to-emerald-900 hover:text-white"
+                              >
+                                <Shield className="h-4 w-4" />
+                                <span>Security</span>
+                              </button>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
                       </div>
                     </>
                   )}

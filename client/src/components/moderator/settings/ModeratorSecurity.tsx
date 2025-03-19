@@ -112,7 +112,7 @@ const ModeratorSecurity = () => {
                 type={showCurrentPassword ? "text" : "password"}
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
-                className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition-opacity"
+                className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-opacity"
                 required
                 disabled={loading}
                 whileFocus={{ opacity: 0.9 }}
@@ -145,7 +145,7 @@ const ModeratorSecurity = () => {
                 type={showNewPassword ? "text" : "password"}
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition-opacity"
+                className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-opacity"
                 required
                 disabled={loading}
                 whileFocus={{ opacity: 0.9 }}
@@ -178,7 +178,7 @@ const ModeratorSecurity = () => {
                 type={showConfirmPassword ? "text" : "password"}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition-opacity"
+                className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-opacity"
                 required
                 disabled={loading}
                 whileFocus={{ opacity: 0.9 }}

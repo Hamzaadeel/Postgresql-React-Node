@@ -46,12 +46,16 @@ const AddTenantModal: React.FC<AddTenantModalProps> = ({
               damping: 15,
               duration: 0.2,
             }}
-            className="bg-white rounded-lg p-6 w-96 shadow-lg"
+            className="bg-white dark:bg-gray-800 rounded-lg p-6 w-96 shadow-lg"
           >
-            <h2 className="text-xl font-bold mb-4">Add New Tenant</h2>
+            <h2 className="text-xl font-bold mb-4 dark:text-gray-100">
+              Add New Tenant
+            </h2>
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
-                <label className="block text-gray-700 mb-2">Name</label>
+                <label className="block text-gray-700 dark:text-gray-300 mb-2">
+                  Name
+                </label>
                 <input
                   type="text"
                   value={name}
@@ -64,7 +68,7 @@ const AddTenantModal: React.FC<AddTenantModalProps> = ({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2 border rounded hover:bg-gray-100"
+                  className="px-4 py-2 border rounded dark:bg-gray-100 dark:hover:bg-gray-300 hover:bg-gray-100"
                 >
                   Cancel
                 </button>

@@ -43,7 +43,9 @@ const StatCard: React.FC<StatCardProps & { onClick: () => void }> = ({
       <div className={`p-3 rounded-lg ${color}`}>{icon}</div>
     </div>
     <h3 className="text-gray-50 text-sm font-semibold">{title}</h3>
-    <p className="text-2xl font-bold text-gray-800 mt-1">{value}</p>
+    <p className="text-2xl font-bold text-gray-800 dark:text-gray-100 mt-1">
+      {value}
+    </p>
   </div>
 );
 
@@ -139,7 +141,7 @@ const ModeratorDashboard: React.FC = () => {
       value: stats.tenants,
       icon: <Building2 size={24} className="text-white" />,
       color: "bg-blue-500",
-      backgroundColor: "bg-gradient-to-r from-sky-400 to-sky-700",
+      backgroundColor: "bg-gradient-to-r from-sky-400 to-sky-700 ",
       onClick: () => handleStatCardClick("tenants"),
     },
     {
@@ -204,7 +206,7 @@ const ModeratorDashboard: React.FC = () => {
       variants={dashboardVariants}
     >
       <motion.h2
-        className="text-2xl font-bold p-2 ml-3 flex items-center"
+        className="text-2xl font-bold p-2 ml-3 flex items-center text-gray-800 dark:text-gray-100"
         variants={dashboardVariants}
       >
         <Gauge className="w-6 h-6 mr-2" />

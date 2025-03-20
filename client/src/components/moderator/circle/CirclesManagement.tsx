@@ -245,7 +245,7 @@ const CirclesManagement = () => {
         variants={dashboardVariants}
       >
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold flex items-center">
+          <h2 className="text-2xl font-bold flex items-center dark:text-gray-100">
             <FontAwesomeIcon icon={faUsers} className="w-6 h-6 mr-2" />
             Circles Management
           </h2>
@@ -315,7 +315,7 @@ const CirclesManagement = () => {
                     y: isSortDropdownOpen ? 0 : -10,
                   }}
                   transition={{ duration: 0.2 }}
-                  className={`absolute z-10 mt-2 w-48 bg-white rounded-lg shadow-lg border ${
+                  className={`absolute z-10 mt-2 w-48 bg-white dark:bg-gray-800 dark:text-gray-100 rounded-lg shadow-lg border ${
                     isSortDropdownOpen ? "block" : "hidden"
                   }`}
                 >
@@ -325,7 +325,7 @@ const CirclesManagement = () => {
                         setSortBy("name");
                         setIsSortDropdownOpen(false);
                       }}
-                      className="w-full px-4 py-2 text-left hover:bg-gray-100 rounded"
+                      className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:text-gray-800 rounded"
                     >
                       Sort by Name
                     </button>
@@ -334,7 +334,7 @@ const CirclesManagement = () => {
                         setSortBy("createdAt_desc");
                         setIsSortDropdownOpen(false);
                       }}
-                      className="w-full px-4 py-2 text-left hover:bg-gray-100 rounded"
+                      className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:text-gray-800 rounded"
                     >
                       Sort by Date (Newest)
                     </button>
@@ -343,7 +343,7 @@ const CirclesManagement = () => {
                         setSortBy("createdAt_asc");
                         setIsSortDropdownOpen(false);
                       }}
-                      className="w-full px-4 py-2 text-left hover:bg-gray-100 rounded"
+                      className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:text-gray-800 rounded"
                     >
                       Sort by Date (Oldest)
                     </button>
@@ -380,13 +380,13 @@ const CirclesManagement = () => {
                     y: isTenantDropdownOpen ? 0 : -10,
                   }}
                   transition={{ duration: 0.2 }}
-                  className={`absolute z-10 mt-2 w-64 bg-white rounded-lg shadow-lg border max-h-60 overflow-y-auto ${
+                  className={`absolute z-10 mt-2 w-fit min-w-40 bg-white dark:bg-gray-800 dark:text-gray-100 rounded-lg shadow-lg border max-h-60 overflow-y-auto ${
                     isTenantDropdownOpen ? "block" : "hidden"
                   }`}
                 >
                   <div className="p-2">
                     {/* Select All Checkbox for Tenants */}
-                    <label className="flex items-center p-2 hover:bg-gray-50">
+                    <label className="flex items-center p-2 hover:bg-gray-50 dark:hover:text-gray-800 rounded">
                       <input
                         type="checkbox"
                         checked={selectedTenants.length === tenants.length}
@@ -404,7 +404,7 @@ const CirclesManagement = () => {
                     {tenants.map((tenant) => (
                       <label
                         key={tenant.id}
-                        className="flex items-center p-2 hover:bg-gray-50"
+                        className="flex items-center p-2 hover:bg-gray-50 dark:hover:text-gray-800 rounded"
                       >
                         <input
                           type="checkbox"
@@ -526,7 +526,9 @@ const CirclesManagement = () => {
                 </motion.table>
 
                 <div className="flex justify-center items-center mb-4 mt-4">
-                  <span className="text-md">Show results:</span>
+                  <span className="text-md dark:text-gray-100">
+                    Show results:
+                  </span>
                   <select
                     value={resultsPerPage}
                     onChange={handleResultsPerPageChange}
@@ -538,7 +540,7 @@ const CirclesManagement = () => {
                     <option value={50}>50</option>
                     <option value={100}>100</option>
                   </select>
-                  <span>{`Showing ${Math.min(
+                  <span className="dark:text-gray-100">{`Showing ${Math.min(
                     resultsPerPage * currentPage,
                     totalCircles
                   )} of ${totalCircles} Circles`}</span>
@@ -550,8 +552,8 @@ const CirclesManagement = () => {
                       disabled={currentPage === 1}
                       className={`px-2 py-2 rounded-l ${
                         currentPage === 1
-                          ? "bg-gray-300 text-gray-500"
-                          : "bg-slate-800 text-white"
+                          ? "bg-gray-300 text-gray-500 dark:bg-gray-600 dark:text-gray-400"
+                          : "bg-slate-800 text-white dark:bg-slate-100 dark:text-gray-800"
                       }`}
                     >
                       <ChevronLeft size={20} />
@@ -563,8 +565,8 @@ const CirclesManagement = () => {
                       disabled={currentPage === totalPages}
                       className={`px-2 py-2 rounded-r ${
                         currentPage === totalPages
-                          ? "bg-gray-300 text-gray-500"
-                          : "bg-slate-800 text-white"
+                          ? "bg-gray-300 text-gray-500 dark:bg-gray-600 dark:text-gray-400"
+                          : "bg-slate-800 text-white dark:bg-slate-100 dark:text-gray-800"
                       }`}
                     >
                       <ChevronRight size={20} />

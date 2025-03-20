@@ -7,7 +7,7 @@ const ModeratorPage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-gray-100 dark:bg-gray-800">
       <Sidebar userRole="Moderator" onToggle={setIsSidebarOpen} />
       <div className="flex-1 flex flex-col">
         <Header userRole="Moderator" isSidebarOpen={isSidebarOpen} />

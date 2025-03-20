@@ -218,14 +218,15 @@ const TenantManagement = () => {
         variants={dashboardVariants}
       >
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold flex items-center">
+          <h2 className="text-2xl font-bold flex items-center dark:text-gray-100">
             <Building2 className="w-6 h-6 mr-2" />
             Tenant Management
           </h2>
           <button
             title="Add Tenant"
             onClick={() => setIsAddModalOpen(true)}
-            className="flex items-center space-x-2 bg-gradient-to-r from-emerald-600 to-emerald-800 text-white px-4 py-2 rounded hover:bg-gradient-to-l hover:from-emerald-600 hover:to-emerald-800"
+            className="flex items-center space-x-2 bg-gradient-to-r from-emerald-600 to-emerald-800 
+            text-white px-4 py-2 rounded hover:bg-gradient-to-l hover:from-emerald-600 hover:to-emerald-800"
           >
             <Plus className="w-5 h-5" />
             <span>Add Tenant</span>
@@ -273,7 +274,7 @@ const TenantManagement = () => {
                 y: isSortDropdownOpen ? 0 : -10,
               }}
               transition={{ duration: 0.2 }}
-              className={`absolute z-10 mt-2 w-48 bg-white rounded-lg shadow-lg border ${
+              className={`absolute z-10 mt-2 w-48 bg-white dark:bg-gray-800 dark:text-gray-100 rounded-lg shadow-lg border ${
                 isSortDropdownOpen ? "block" : "hidden"
               }`}
             >
@@ -283,7 +284,7 @@ const TenantManagement = () => {
                     setSortBy("name");
                     setIsSortDropdownOpen(false);
                   }}
-                  className="w-full px-4 py-2 text-left hover:bg-gray-100 rounded"
+                  className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:text-gray-800 rounded"
                 >
                   Sort by Name
                 </button>
@@ -292,7 +293,7 @@ const TenantManagement = () => {
                     setSortBy("createdAt_desc");
                     setIsSortDropdownOpen(false);
                   }}
-                  className="w-full px-4 py-2 text-left hover:bg-gray-100 rounded"
+                  className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:text-gray-800 rounded"
                 >
                   Sort by Date (Newest)
                 </button>
@@ -301,7 +302,7 @@ const TenantManagement = () => {
                     setSortBy("createdAt_asc");
                     setIsSortDropdownOpen(false);
                   }}
-                  className="w-full px-4 py-2 text-left hover:bg-gray-100 rounded"
+                  className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:text-gray-800 rounded"
                 >
                   Sort by Date (Oldest)
                 </button>
@@ -310,7 +311,7 @@ const TenantManagement = () => {
                     setSortBy("totalEmployees");
                     setIsSortDropdownOpen(false);
                   }}
-                  className="w-full px-4 py-2 text-left hover:bg-gray-100 rounded"
+                  className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:text-gray-800 rounded"
                 >
                   Sort by Total Employees
                 </button>
@@ -431,7 +432,9 @@ const TenantManagement = () => {
             {/* Pagination Controls */}
             {tenants.length > 0 && (
               <div className="flex justify-center items-center mb-4 mt-4">
-                <span className="text-md">Show results:</span>
+                <span className="text-md dark:text-gray-100">
+                  Show results:
+                </span>
                 <select
                   value={resultsPerPage}
                   onChange={handleResultsPerPageChange}
@@ -443,7 +446,7 @@ const TenantManagement = () => {
                   <option value={50}>50</option>
                   <option value={100}>100</option>
                 </select>
-                <span className="mr-2">{`Showing ${Math.min(
+                <span className="mr-2 dark:text-gray-100">{`Showing ${Math.min(
                   resultsPerPage * currentPage,
                   totalTenants
                 )} of ${totalTenants} Tenants`}</span>
@@ -452,10 +455,11 @@ const TenantManagement = () => {
                     setCurrentPage((prev) => Math.max(prev - 1, 1))
                   }
                   disabled={currentPage === 1}
+                  title="Previous"
                   className={`px-2 py-2 rounded-l ${
                     currentPage === 1
-                      ? "bg-gray-300 text-gray-500"
-                      : "bg-slate-800 text-white"
+                      ? "bg-gray-300 text-gray-500 dark:bg-gray-600 dark:text-gray-400"
+                      : "bg-slate-800 text-white dark:bg-slate-100 dark:text-gray-800"
                   }`}
                 >
                   <ChevronLeft size={20} />
@@ -465,10 +469,11 @@ const TenantManagement = () => {
                     setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                   }
                   disabled={currentPage === totalPages}
+                  title="Next"
                   className={`px-2 py-2 rounded-r ${
                     currentPage === totalPages
-                      ? "bg-gray-300 text-gray-500"
-                      : "bg-slate-800 text-white"
+                      ? "bg-gray-300 text-gray-500 dark:bg-gray-600 dark:text-gray-400"
+                      : "bg-slate-800 text-white dark:bg-slate-100 dark:text-gray-800"
                   }`}
                 >
                   <ChevronRight size={20} />

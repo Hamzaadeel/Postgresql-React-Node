@@ -294,7 +294,7 @@ const ChallengesManagement = () => {
         variants={dashboardVariants}
       >
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold flex items-center">
+          <h2 className="text-2xl font-bold flex items-center dark:text-gray-100">
             <Swords className="w-6 h-6 mr-2" />
             Challenges Management
           </h2>
@@ -366,7 +366,7 @@ const ChallengesManagement = () => {
                 y: isSortDropdownOpen ? 0 : -10,
               }}
               transition={{ duration: 0.2 }}
-              className={`absolute z-10 mt-2 w-48 bg-white rounded-lg shadow-lg border ${
+              className={`absolute z-10 mt-2 w-48 bg-white dark:bg-gray-800  rounded-lg shadow-lg border ${
                 isSortDropdownOpen ? "block" : "hidden"
               }`}
             >
@@ -376,7 +376,7 @@ const ChallengesManagement = () => {
                     setSortBy("name");
                     setIsSortDropdownOpen(false);
                   }}
-                  className="w-full px-4 py-2 text-left hover:bg-gray-100 rounded"
+                  className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:text-gray-100 dark:hover:text-gray-800 rounded"
                 >
                   Sort by Name
                 </button>
@@ -385,7 +385,7 @@ const ChallengesManagement = () => {
                     setSortBy("newest");
                     setIsSortDropdownOpen(false);
                   }}
-                  className="w-full px-4 py-2 text-left hover:bg-gray-100 rounded"
+                  className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:text-gray-100 dark:hover:text-gray-800 rounded"
                 >
                   Sort by Date (Newest)
                 </button>
@@ -394,7 +394,7 @@ const ChallengesManagement = () => {
                     setSortBy("oldest");
                     setIsSortDropdownOpen(false);
                   }}
-                  className="w-full px-4 py-2 text-left hover:bg-gray-100 rounded"
+                  className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:text-gray-100 dark:hover:text-gray-800 rounded"
                 >
                   Sort by Date (Oldest)
                 </button>
@@ -403,7 +403,7 @@ const ChallengesManagement = () => {
                     setSortBy("points_highest");
                     setIsSortDropdownOpen(false);
                   }}
-                  className="w-full px-4 py-2 text-left hover:bg-gray-100 rounded"
+                  className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:text-gray-100 dark:hover:text-gray-800 rounded"
                 >
                   Sort by Points (Highest)
                 </button>
@@ -412,7 +412,7 @@ const ChallengesManagement = () => {
                     setSortBy("points_lowest");
                     setIsSortDropdownOpen(false);
                   }}
-                  className="w-full px-4 py-2 text-left hover:bg-gray-100 rounded"
+                  className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:text-gray-100 dark:hover:text-gray-800 rounded"
                 >
                   Sort by Points (Lowest)
                 </button>
@@ -534,7 +534,9 @@ const ChallengesManagement = () => {
                 </motion.table>
 
                 <div className="flex justify-center items-center mb-4 mt-4">
-                  <span className="text-md">Show results:</span>
+                  <span className="text-md dark:text-gray-100">
+                    Show results:
+                  </span>
                   <select
                     value={resultsPerPage}
                     onChange={handleResultsPerPageChange}
@@ -546,7 +548,7 @@ const ChallengesManagement = () => {
                     <option value={50}>50</option>
                     <option value={100}>100</option>
                   </select>
-                  <span>{`Showing ${Math.min(
+                  <span className="dark:text-gray-100">{`Showing ${Math.min(
                     resultsPerPage * currentPage,
                     totalChallenges
                   )} of ${totalChallenges} Challenges`}</span>
@@ -558,8 +560,8 @@ const ChallengesManagement = () => {
                       disabled={currentPage === 1}
                       className={`px-2 py-2 rounded-l ${
                         currentPage === 1
-                          ? "bg-gray-300 text-gray-500"
-                          : "bg-slate-800 text-white"
+                          ? "bg-gray-300 text-gray-500 dark:bg-gray-600 dark:text-gray-400"
+                          : "bg-slate-800 text-white dark:bg-slate-100 dark:text-gray-800"
                       }`}
                     >
                       <ChevronLeft size={20} />
@@ -571,8 +573,8 @@ const ChallengesManagement = () => {
                       disabled={currentPage === totalPages}
                       className={`px-2 py-2 rounded-r ${
                         currentPage === totalPages
-                          ? "bg-gray-300 text-gray-500"
-                          : "bg-slate-800 text-white"
+                          ? "bg-gray-300 text-gray-500 dark:bg-gray-600 dark:text-gray-400"
+                          : "bg-slate-800 text-white dark:bg-slate-100 dark:text-gray-800"
                       }`}
                     >
                       <ChevronRight size={20} />

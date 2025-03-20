@@ -170,9 +170,9 @@ const EmployeeDashboard = () => {
 
     if (joinedCircles.length === 0) {
       return (
-        <div className="bg-white rounded-lg p-8 text-center">
-          <Users className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-          <p className="text-gray-500 text-lg">
+        <div className="bg-white dark:bg-gray-800 rounded-lg p-8 text-center">
+          <Users className="w-16 h-16 mx-auto mb-4 text-gray-400 dark:text-gray-500" />
+          <p className="text-gray-500 dark:text-gray-400 text-lg">
             Join a circle to view challenges
           </p>
           <button
@@ -187,9 +187,11 @@ const EmployeeDashboard = () => {
 
     if (availableChallenges.length === 0) {
       return (
-        <div className="bg-white rounded-lg p-8 text-center">
-          <Trophy className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-          <p className="text-gray-500 text-lg">No challenges available</p>
+        <div className="bg-white dark:bg-gray-800 rounded-lg p-8 text-center">
+          <Trophy className="w-16 h-16 mx-auto mb-4 text-gray-400 dark:text-gray-500" />
+          <p className="text-gray-500 dark:text-gray-400 text-lg">
+            No challenges available
+          </p>
         </div>
       );
     }
@@ -204,17 +206,19 @@ const EmployeeDashboard = () => {
         {challengesToShow.map((challenge) => (
           <div
             key={challenge.id}
-            className="bg-white rounded-lg p-5 hover:shadow-md hover:scale-105 transition-all duration-300 cursor-pointer bg-gradient-to-b from-sky-400 via-sky-600 to-sky-800 flex flex-col h-full"
+            className="bg-white rounded-lg p-5 hover:shadow-md hover:scale-105 transition-all duration-300 cursor-pointer bg-gradient-to-b from-sky-400 via-sky-600 to-sky-800 flex flex-col h-full dark:from-sky-600 dark:via-sky-700 dark:to-sky-900"
             onClick={() => navigate("/employee/challenges")}
           >
             <div className="flex justify-between items-start mb-3">
-              <h3 className="font-semibold text-black">{challenge.title}</h3>
+              <h3 className="font-semibold text-black dark:text-white">
+                {challenge.title}
+              </h3>
               {challenge.status && (
                 <span
                   className={`px-3 py-1 rounded-full text-xs font-medium ${
                     challenge.status === "Completed"
-                      ? "bg-green-100 text-green-700"
-                      : "bg-yellow-100 text-yellow-700"
+                      ? "bg-green-100 text-green-700 dark:bg-green-700 dark:text-green-100"
+                      : "bg-yellow-100 text-yellow-700 dark:bg-yellow-700 dark:text-yellow-100"
                   }`}
                 >
                   {challenge.status}
@@ -229,7 +233,7 @@ const EmployeeDashboard = () => {
                 <Users size={16} className="mr-1" />
                 <span>{challenge.circle.name}</span>
               </div>
-              <span className="text-blue-700 font-medium bg-blue-100 rounded-full p-2 text-xs">
+              <span className="text-blue-700 font-medium bg-blue-100 rounded-full p-2 text-xs dark:bg-blue-700 dark:text-blue-100">
                 {challenge.points} points
               </span>
               {!challenge.participationId && (
@@ -266,14 +270,14 @@ const EmployeeDashboard = () => {
 
   return (
     <motion.div
-      className="space-y-4 bg-gray-100"
+      className="space-y-4 bg-gray-100 dark:bg-gray-900"
       initial="hidden"
       animate="visible"
       variants={fadeInVariants}
     >
       {/* Heading */}
       <motion.h2
-        className="text-2xl font-bold p-2 pt-6 ml-3 flex items-center"
+        className="text-2xl font-bold p-2 pt-6 ml-3 flex items-center text-gray-800 dark:text-gray-100"
         variants={{
           hidden: { opacity: 0, y: -20 },
           visible: {

@@ -108,12 +108,14 @@ const EditChallengeModal = ({
               damping: 15,
               duration: 0.2,
             }}
-            className="bg-white rounded-lg p-6 w-96 shadow-lg"
+            className="bg-white dark:bg-gray-800 rounded-lg p-6 w-96 shadow-lg"
           >
-            <h2 className="text-xl font-bold mb-4">Edit Challenge</h2>
+            <h2 className="text-xl font-bold mb-4 dark:text-gray-100">
+              Edit Challenge
+            </h2>
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
-                <label className="block text-gray-700 mb-2 text-sm">
+                <label className="block text-gray-700 dark:text-gray-300 mb-2 text-sm">
                   Title
                 </label>
                 <input
@@ -125,7 +127,7 @@ const EditChallengeModal = ({
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-gray-700 mb-2 text-sm">
+                <label className="block text-gray-700 dark:text-gray-300 mb-2 text-sm">
                   Description
                 </label>
                 <textarea
@@ -137,7 +139,7 @@ const EditChallengeModal = ({
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-gray-700 mb-2 text-sm">
+                <label className="block text-gray-700 dark:text-gray-300 mb-2 text-sm">
                   Circles
                 </label>
                 <div className="relative">
@@ -176,7 +178,7 @@ const EditChallengeModal = ({
                 </div>
               </div>
               <div className="mb-4">
-                <label className="block text-gray-700 mb-2 text-sm">
+                <label className="block text-gray-700 dark:text-gray-300 mb-2 text-sm">
                   Points
                 </label>
                 <input
@@ -192,7 +194,7 @@ const EditChallengeModal = ({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2 border rounded hover:bg-gray-100"
+                  className="px-4 py-2 border rounded hover:bg-gray-100 dark:bg-gray-100 dark:hover:bg-gray-300"
                 >
                   Cancel
                 </button>

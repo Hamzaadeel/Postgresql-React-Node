@@ -65,12 +65,16 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
               damping: 15,
               duration: 0.2,
             }}
-            className="bg-white rounded-lg p-6 w-96 shadow-lg"
+            className="bg-white dark:bg-gray-800 rounded-lg p-6 w-96 shadow-lg"
           >
-            <h2 className="text-xl font-bold mb-4">Add New User</h2>
+            <h2 className="text-xl font-bold mb-4 dark:text-gray-100">
+              Add New User
+            </h2>
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
-                <label className="block text-gray-700 mb-2 text-sm">Name</label>
+                <label className="block text-gray-700 mb-2 text-sm dark:text-gray-300">
+                  Name
+                </label>
                 <input
                   type="text"
                   value={formData.name}
@@ -82,7 +86,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-gray-700 mb-2 text-sm">
+                <label className="block text-gray-700 mb-2 text-sm dark:text-gray-300">
                   Email
                 </label>
                 <input
@@ -96,7 +100,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-gray-700 mb-2 text-sm">
+                <label className="block text-gray-700 mb-2 text-sm dark:text-gray-300">
                   Password
                 </label>
                 <input
@@ -110,20 +114,22 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-gray-700 mb-2 text-sm">Role</label>
+                <label className="block text-gray-700 mb-2 text-sm dark:text-gray-300">
+                  Role
+                </label>
                 <select
                   value={formData.role}
                   onChange={(e) =>
                     setFormData({ ...formData, role: e.target.value })
                   }
-                  className="w-full p-2 border rounded text-sm"
+                  className="w-full p-2 border rounded text-sm "
                 >
                   <option value="employee">Employee</option>
                   <option value="moderator">Moderator</option>
                 </select>
               </div>
               <div className="mb-6">
-                <label className="block text-gray-700 mb-2 text-sm">
+                <label className="block text-gray-700 mb-2 text-sm dark:text-gray-300">
                   Tenant
                 </label>
                 <select
@@ -148,7 +154,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2 border rounded hover:bg-gray-100"
+                  className="px-4 py-2 border rounded dark:bg-gray-100 dark:hover:bg-gray-300 hover:bg-gray-100"
                 >
                   Cancel
                 </button>

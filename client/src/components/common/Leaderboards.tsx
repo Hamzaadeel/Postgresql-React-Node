@@ -65,28 +65,28 @@ const Leaderboards = () => {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md mb-4 p-6 ml-4">
+    <div className="bg-white dark:bg-gray-800 dark:border-gray-500 dark:border-2 rounded-lg shadow-md mb-4 p-6 ml-4">
       <div className="flex items-center mb-6">
-        <Trophy className="w-6 h-6 mr-3 text-yellow-500" />
-        <h2 className="text-xl font-bold">Leaderboard</h2>
+        <Trophy className="w-6 h-6 mr-3 text-yellow-300" />
+        <h2 className="text-xl font-bold dark:text-gray-100">Leaderboard</h2>
       </div>
 
       <div className="overflow-x-auto">
         <table className="min-w-full">
           <thead>
-            <tr className="bg-white">
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <tr className="bg-white dark:bg-gray-800">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-50 uppercase tracking-wider">
                 Rank
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-50 uppercase tracking-wider">
                 Name
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-50 uppercase tracking-wider">
                 Points
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200">
             {leaderboard.map((leader, index) => (
               <tr
                 key={leader.id}

@@ -17,6 +17,8 @@ import {
   X,
   Shield,
   Settings,
+  Moon,
+  Sun,
 } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUsers } from "@fortawesome/free-solid-svg-icons";
@@ -38,6 +40,7 @@ import {
   selectUnreadCount,
 } from "../../store/slices/notificationSlice";
 import { debounce } from "lodash";
+import { useDarkMode } from "../../context/DarkModeContext";
 
 interface HeaderProps {
   userRole: "Employee" | "Moderator";
@@ -76,9 +79,11 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [socket, setSocket] = useState<Socket | null>(null);
   const navigate = useNavigate();
+  const { isDarkMode, toggleDarkMode } = useDarkMode();
 
   const profileRef = useRef<HTMLDivElement>(null);
   const notificationsRef = useRef<HTMLDivElement>(null);
@@ -465,23 +470,36 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
   );
 
   return (
-    <header className="bg-white shadow-lg transition-all duration-300">
+    <header className="bg-white dark:bg-gray-800 shadow-lg transition-all duration-300">
       <div className="px-4 py-3 flex items-center justify-between">
         {/* Search Bar */}
         {renderSearchBar()}
 
         {/* Right Section */}
         <div className="flex items-center space-x-4">
+          {/* Dark Mode Toggle */}
+          <button
+            onClick={toggleDarkMode}
+            title={isDarkMode ? "Light Mode" : "Dark Mode"}
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+          >
+            {isDarkMode ? (
+              <Sun className="h-5 w-5 text-gray-200" />
+            ) : (
+              <Moon className="h-5 w-5 text-gray-600" />
+            )}
+          </button>
+
           <div className="relative">
             <div className="flex items-center space-x-2">
-              <p className="text-sm font-semibold text-gray-800">
+              <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">
                 Welcome Back,{" "}
                 {JSON.parse(localStorage.getItem("user") || "{}").name}!😎
               </p>
               {userRole === "Employee" && (
-                <div className="flex items-center bg-amber-100 px-3 py-1 rounded-full">
-                  <CircleDollarSign className="w-4 h-4 text-amber-600 mr-1" />
-                  <span className="text-sm font-semibold text-amber-600">
+                <div className="flex items-center bg-amber-100 dark:bg-amber-900 px-3 py-1 rounded-full">
+                  <CircleDollarSign className="w-4 h-4 text-amber-600 dark:text-amber-300 mr-1" />
+                  <span className="text-sm font-semibold text-amber-600 dark:text-amber-300">
                     {userPoints} Points
                   </span>
                 </div>
@@ -492,9 +510,10 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
           <div className="relative" ref={notificationsRef}>
             <button
               onClick={handleNotificationsToggle}
-              className="p-2 hover:bg-gray-100 rounded-full relative"
+              title="Notifications"
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full relative"
             >
-              <Bell className="h-6 w-6" />
+              <Bell className="h-6 w-6 text-gray-600 dark:text-gray-200" />
               {unreadNotificationsCount > 0 && (
                 <span className="absolute top-0 right-0 h-4 w-4 bg-red-500 rounded-full text-xs text-white flex items-center justify-center">
                   {unreadNotificationsCount}
@@ -512,14 +531,14 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
                   transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
                   className={`absolute right-0 mt-2 w-96 cursor-pointer ${
                     userRole === "Employee"
-                      ? "bg-gradient-to-b from-blue-100 to-blue-300"
-                      : "bg-gradient-to-b from-emerald-100 to-emerald-300"
+                      ? "bg-gradient-to-b from-blue-100 to-blue-300 dark:from-blue-900 dark:to-blue-700"
+                      : "bg-gradient-to-b from-emerald-100 to-emerald-300 dark:from-emerald-900 dark:to-emerald-700"
                   } rounded-lg shadow-lg py-2 z-50`}
                 >
                   {/* Header */}
                   <div className="px-4 py-2 border-b border-gray-700">
                     <div className="flex items-center justify-between">
-                      <h3 className="font-semibold text-gray-800">
+                      <h3 className="font-semibold text-gray-800 dark:text-gray-100">
                         Notifications ({notifications.length})
                       </h3>
                       <div className="flex space-x-2">
@@ -528,21 +547,21 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
                           className="p-1 hover:bg-blue-200 rounded-full transition-colors"
                           title="Mark all as read"
                         >
-                          <CheckCheck className="h-4 w-4 text-gray-600" />
+                          <CheckCheck className="h-4 w-4 text-gray-600 dark:text-gray-100 dark:hover:text-gray-600" />
                         </button>
                         <button
                           onClick={handleClearAll}
                           className="p-1 hover:bg-red-200 rounded-full transition-colors"
                           title="Clear all notifications"
                         >
-                          <Trash2 className="h-4 w-4 text-gray-600" />
+                          <Trash2 className="h-4 w-4 dark:text-gray-100 dark:hover:text-gray-600 " />
                         </button>
                       </div>
                     </div>
                   </div>
 
                   {notifications.length === 0 ? (
-                    <div className="px-4 py-3 text-gray-500 text-center">
+                    <div className="px-4 py-3 text-gray-500 dark:text-gray-100 text-center">
                       No notifications
                     </div>
                   ) : (
@@ -551,19 +570,27 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
                         <div
                           key={notification.id}
                           onClick={() => handleNotificationClick(notification)}
-                          className={`px-4 py-3 hover:bg-gray-50 border-b last:border-b-0 cursor-pointer ${
-                            !notification.isRead ? "bg-blue-50" : ""
+                          className={`px-4 py-3 hover:bg-gray-50 ${
+                            userRole === "Employee"
+                              ? "dark:hover:bg-blue-600"
+                              : "dark:hover:bg-emerald-600"
+                          } border-b last:border-b-0 cursor-pointer ${
+                            !notification.isRead
+                              ? userRole === "Employee"
+                                ? "bg-blue-50 dark:bg-blue-800"
+                                : "bg-emerald-50 dark:bg-emerald-800"
+                              : ""
                           }`}
                         >
                           <div className="flex justify-between items-start">
                             <div className="flex-1">
-                              <p className="font-semibold text-sm">
+                              <p className="font-semibold dark:text-gray-100 text-sm">
                                 {notification.title}
                               </p>
-                              <p className="text-sm text-gray-600">
+                              <p className="text-sm text-gray-600 dark:text-gray-100">
                                 {notification.message}
                               </p>
-                              <p className="text-xs text-gray-500 mt-1">
+                              <p className="text-xs text-gray-500 dark:text-gray-100 mt-1">
                                 {new Date(
                                   notification.createdAt
                                 ).toLocaleString()}
@@ -581,7 +608,7 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
                                   className="p-1 hover:bg-blue-200 rounded-full transition-colors"
                                   title="Mark as read"
                                 >
-                                  <Check className="h-4 w-4 text-gray-600" />
+                                  <Check className="h-4 w-4 text-gray-600 dark:text-gray-100 dark:hover:text-gray-600" />
                                 </button>
                               )}
                               <button
@@ -592,7 +619,7 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
                                 className="p-1 hover:bg-red-200 rounded-full transition-colors"
                                 title="Delete notification"
                               >
-                                <X className="h-4 w-4 text-gray-600" />
+                                <X className="h-4 w-4 text-gray-600 dark:text-gray-100 dark:hover:text-gray-600" />
                               </button>
                             </div>
                           </div>
@@ -608,56 +635,56 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
           <div className="relative" ref={profileRef}>
             <button
               onClick={handleProfileToggle}
-              className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg"
+              title="User Menu"
+              className="flex items-center space-x-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
             >
-              <User className="h-6 w-6" />
-              <span className="text-sm text-gray-800">
+              <User className="h-6 w-6 text-gray-600 dark:text-gray-200" />
+              <span className="text-sm text-gray-800 dark:text-gray-200">
                 {JSON.parse(localStorage.getItem("user") || "{}").name}
               </span>
               <ChevronDown
-                className="h-4 w-4 transition-transform duration-200"
-                style={{
-                  transform: isProfileOpen ? "rotate(180deg)" : "rotate(0deg)",
-                }}
+                className={`h-4 w-4 transition-transform duration-200 text-gray-600 dark:text-gray-200 ${
+                  isProfileOpen || isHovering ? "rotate-180" : ""
+                }`}
               />
             </button>
 
             <AnimatePresence>
-              {isProfileOpen && (
+              {(isProfileOpen || isHovering) && (
                 <motion.div
                   initial={{ opacity: 0, y: -10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -10, scale: 0.95 }}
                   transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
-                  className="absolute right-0 mt-2 w-48 px-2 bg-white rounded-lg shadow-lg border py-2 z-50"
+                  className="absolute right-0 mt-2 w-48 px-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg border dark:border-gray-700 py-2 z-50"
                 >
                   {userRole === "Employee" ? (
                     <>
                       <button
                         onClick={() => handleNavigation("/employee/dashboard")}
-                        className="w-full px-4 py-2 text-left flex items-center space-x-2 rounded-xl mx-1 hover:bg-gradient-to-r from-cyan-700 to-teal-900 hover:text-white"
+                        className="w-full px-4 py-2 text-left flex items-center space-x-2 rounded-xl mx-1 hover:bg-gradient-to-r from-cyan-700 to-teal-900 hover:text-white dark:text-gray-200 dark:hover:text-white"
                       >
                         <Home className="h-4 w-4" />
                         <span>Dashboard</span>
                       </button>
                       <button
                         onClick={() => handleNavigation("/employee/circles")}
-                        className="w-full px-4 py-2 text-left flex items-center space-x-2 rounded-xl mx-1 hover:bg-gradient-to-r from-cyan-700 to-teal-900 hover:text-white"
+                        className="w-full px-4 py-2 text-left flex items-center space-x-2 rounded-xl mx-1 hover:bg-gradient-to-r from-cyan-700 to-teal-900 hover:text-white dark:text-gray-200 dark:hover:text-white"
                       >
                         <FontAwesomeIcon icon={faUsers} className="h-4 w-4" />
                         <span>Circles</span>
                       </button>
                       <button
                         onClick={() => handleNavigation("/employee/challenges")}
-                        className="w-full px-4 py-2 text-left flex items-center space-x-2 rounded-xl mx-1 hover:bg-gradient-to-r from-cyan-700 to-teal-900 hover:text-white"
+                        className="w-full px-4 py-2 text-left flex items-center space-x-2 rounded-xl mx-1 hover:bg-gradient-to-r from-cyan-700 to-teal-900 hover:text-white dark:text-gray-200 dark:hover:text-white"
                       >
                         <Swords className="h-4 w-4" />
                         <span>Challenges</span>
                       </button>
-                      <div className="border-t border-gray-200 my-2">
+                      <div className="border-t border-gray-200 dark:border-gray-700 my-2">
                         <button
                           onClick={handleSettingsClick}
-                          className="w-full px-4 py-2 text-left flex items-center justify-between rounded-xl mx-1 hover:bg-gradient-to-r from-cyan-700 to-teal-900 hover:text-white"
+                          className="w-full px-4 py-2 text-left flex items-center justify-between rounded-xl mx-1 hover:bg-gradient-to-r from-cyan-700 to-teal-900 hover:text-white dark:text-gray-200 dark:hover:text-white"
                         >
                           <div className="flex items-center space-x-2">
                             <Settings className="h-4 w-4" />
@@ -684,7 +711,7 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
                                     "/employee/settings/profile"
                                   )
                                 }
-                                className="w-full px-4 py-2 text-left flex items-center space-x-2 rounded-xl mx-1 hover:bg-gradient-to-r from-cyan-700 to-teal-900 hover:text-white"
+                                className="w-full px-4 py-2 text-left flex items-center space-x-2 rounded-xl mx-1 hover:bg-gradient-to-r from-cyan-700 to-teal-900 hover:text-white dark:text-gray-200 dark:hover:text-white"
                               >
                                 <User className="h-4 w-4" />
                                 <span>Profile</span>
@@ -695,7 +722,7 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
                                     "/employee/settings/security"
                                   )
                                 }
-                                className="w-full px-4 py-2 text-left flex items-center space-x-2 rounded-xl mx-1 hover:bg-gradient-to-r from-cyan-700 to-teal-900 hover:text-white"
+                                className="w-full px-4 py-2 text-left flex items-center space-x-2 rounded-xl mx-1 hover:bg-gradient-to-r from-cyan-700 to-teal-900 hover:text-white dark:text-gray-200 dark:hover:text-white"
                               >
                                 <Shield className="h-4 w-4" />
                                 <span>Security</span>
@@ -709,28 +736,28 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
                     <>
                       <button
                         onClick={() => handleNavigation("/moderator/dashboard")}
-                        className="w-full px-4 py-2 text-left flex items-center space-x-2 rounded-xl mx-1 hover:bg-gradient-to-r from-emerald-700 to-emerald-900 hover:text-white"
+                        className="w-full px-4 py-2 text-left flex items-center space-x-2 rounded-xl mx-1 hover:bg-gradient-to-r from-emerald-700 to-emerald-900 hover:text-white dark:text-gray-200 dark:hover:text-white"
                       >
                         <Home className="h-4 w-4" />
                         <span>Dashboard</span>
                       </button>
                       <button
                         onClick={() => handleNavigation("/moderator/tenants")}
-                        className="w-full px-4 py-2 text-left flex items-center space-x-2 rounded-xl mx-1 hover:bg-gradient-to-r from-emerald-700 to-emerald-900 hover:text-white"
+                        className="w-full px-4 py-2 text-left flex items-center space-x-2 rounded-xl mx-1 hover:bg-gradient-to-r from-emerald-700 to-emerald-900 hover:text-white dark:text-gray-200 dark:hover:text-white"
                       >
                         <Building2 className="h-4 w-4" />
                         <span>Tenants</span>
                       </button>
                       <button
                         onClick={() => handleNavigation("/moderator/users")}
-                        className="w-full px-4 py-2 text-left flex items-center space-x-2 rounded-xl mx-1 hover:bg-gradient-to-r from-emerald-700 to-emerald-900 hover:text-white"
+                        className="w-full px-4 py-2 text-left flex items-center space-x-2 rounded-xl mx-1 hover:bg-gradient-to-r from-emerald-700 to-emerald-900 hover:text-white dark:text-gray-200 dark:hover:text-white"
                       >
                         <Users className="h-4 w-4" />
                         <span>Users</span>
                       </button>
                       <button
                         onClick={() => handleNavigation("/moderator/circles")}
-                        className="w-full px-4 py-2 text-left flex items-center space-x-2 rounded-xl mx-1 hover:bg-gradient-to-r from-emerald-700 to-emerald-900 hover:text-white"
+                        className="w-full px-4 py-2 text-left flex items-center space-x-2 rounded-xl mx-1 hover:bg-gradient-to-r from-emerald-700 to-emerald-900 hover:text-white dark:text-gray-200 dark:hover:text-white"
                       >
                         <FontAwesomeIcon icon={faUsers} className="h-4 w-4" />
                         <span>Circles</span>
@@ -739,15 +766,15 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
                         onClick={() =>
                           handleNavigation("/moderator/challenges")
                         }
-                        className="w-full px-4 py-2 text-left flex items-center space-x-2 rounded-xl mx-1 hover:bg-gradient-to-r from-emerald-700 to-emerald-900 hover:text-white"
+                        className="w-full px-4 py-2 text-left flex items-center space-x-2 rounded-xl mx-1 hover:bg-gradient-to-r from-emerald-700 to-emerald-900 hover:text-white dark:text-gray-200 dark:hover:text-white"
                       >
                         <Swords className="h-4 w-4" />
                         <span>Challenges</span>
                       </button>
-                      <div className="border-t border-gray-200 my-2">
+                      <div className="border-t border-gray-200 dark:border-gray-700 my-2">
                         <button
                           onClick={handleSettingsClick}
-                          className="w-full px-4 py-2 text-left flex items-center justify-between rounded-xl mx-1 hover:bg-gradient-to-r from-emerald-700 to-emerald-900 hover:text-white"
+                          className="w-full px-4 py-2 text-left flex items-center justify-between rounded-xl mx-1 hover:bg-gradient-to-r from-emerald-700 to-emerald-900 hover:text-white dark:text-gray-200 dark:hover:text-white"
                         >
                           <div className="flex items-center space-x-2">
                             <Settings className="h-4 w-4" />
@@ -774,7 +801,7 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
                                     "/moderator/settings/profile"
                                   )
                                 }
-                                className="w-full px-4 py-2 text-left flex items-center space-x-2 rounded-xl mx-1 hover:bg-gradient-to-r from-emerald-700 to-emerald-900 hover:text-white"
+                                className="w-full px-4 py-2 text-left flex items-center space-x-2 rounded-xl mx-1 hover:bg-gradient-to-r from-emerald-700 to-emerald-900 hover:text-white dark:text-gray-200 dark:hover:text-white"
                               >
                                 <User className="h-4 w-4" />
                                 <span>Profile</span>
@@ -785,7 +812,7 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
                                     "/moderator/settings/security"
                                   )
                                 }
-                                className="w-full px-4 py-2 text-left flex items-center space-x-2 rounded-xl mx-1 hover:bg-gradient-to-r from-emerald-700 to-emerald-900 hover:text-white"
+                                className="w-full px-4 py-2 text-left flex items-center space-x-2 rounded-xl mx-1 hover:bg-gradient-to-r from-emerald-700 to-emerald-900 hover:text-white dark:text-gray-200 dark:hover:text-white"
                               >
                                 <Shield className="h-4 w-4" />
                                 <span>Security</span>
@@ -796,10 +823,10 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
                       </div>
                     </>
                   )}
-                  <hr className="my-2" />
+                  <hr className="my-2 dark:border-gray-700" />
                   <button
                     onClick={handleLogout}
-                    className="w-full px-4 py-2 text-left flex items-center space-x-2 rounded-xl mx-1 hover:bg-gradient-to-r from-red-600 to-red-900 hover:text-white"
+                    className="w-full px-4 py-2 text-left flex items-center space-x-2 rounded-xl mx-1 hover:bg-gradient-to-r from-red-600 to-red-900 hover:text-white dark:text-gray-200 dark:hover:text-white"
                   >
                     <LogOut className="h-4 w-4" />
                     <span>Logout</span>

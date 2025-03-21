@@ -38,14 +38,16 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
               damping: 15,
               duration: 0.2,
             }}
-            className="bg-white rounded-lg p-6 w-96 shadow-lg"
+            className="bg-white dark:bg-gray-800 rounded-lg p-6 w-96 shadow-lg"
           >
-            <h2 className="text-xl font-bold text-gray-800 mb-4">{title}</h2>
-            <p className="text-gray-600 mb-6">{message}</p>
+            <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">
+              {title}
+            </h2>
+            <p className="text-gray-600 mb-6 dark:text-gray-300">{message}</p>
             <div className="flex justify-end space-x-3">
               <button
                 onClick={onClose}
-                className="px-4 py-2 border rounded hover:bg-gray-300 text-gray-700"
+                className="px-4 py-2 border rounded hover:bg-gray-300 text-gray-700 dark:bg-gray-100 dark:hover:bg-gray-300 "
               >
                 Cancel
               </button>

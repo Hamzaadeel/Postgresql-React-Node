@@ -68,38 +68,29 @@ const ChallengeDetailsEmp = ({
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }} // Fade out on exit
+          exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
         >
           <motion.div
-            ref={modalRef}
             initial={{ opacity: 0, scale: 0.5 }}
             animate={{ opacity: 1, scale: 1.05 }}
-            exit={{ opacity: 0, scale: 0.5 }} // Shrink & fade out
+            exit={{ opacity: 0, scale: 0.5 }}
             transition={{
               type: "spring",
               stiffness: 200,
               damping: 15,
               duration: 0.2,
             }}
-            className="bg-white rounded-lg p-6 w-[600px] max-h-[80vh] overflow-y-auto"
+            className="bg-white dark:bg-gray-800 rounded-lg max-h-[512px] overflow-y-auto p-6 w-1/2 shadow-lg"
           >
-            <div className="flex justify-between items-start mb-6">
-              <div className="flex items-center">
-                <Swords className="w-8 h-8 mr-3 text-blue-600" />
-                <motion.h2
-                  initial={{ y: -20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  exit={{ y: -20, opacity: 0 }} // Slide up on exit
-                  transition={{ duration: 0.2, ease: "easeOut" }}
-                  className="text-2xl font-bold"
-                >
-                  Challenge Details
-                </motion.h2>
-              </div>
+            <div className="flex items-center justify-between mb-3">
+              <Swords className="w-8 h-8 mr-3 text-blue-600 dark:text-blue-400" />
+              <h2 className="text-2xl font-bold dark:text-gray-100">
+                Challenge Details
+              </h2>
               <button
                 onClick={onClose}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-100 dark:hover:text-gray-300 top-0 right-0"
               >
                 <X className="w-6 h-6" />
               </button>
@@ -107,123 +98,76 @@ const ChallengeDetailsEmp = ({
 
             <div className="space-y-6">
               {/* Title Section */}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }} // Fade & drop out
-                transition={{ duration: 0.2, ease: "easeOut" }}
-              >
-                <h3 className="text-xl font-semibold mb-2">
+              <div className="flex justify-between items-center mb-2">
+                <h3 className="text-xl font-semibold mb-2 dark:text-gray-100">
                   {challenge.title}
                 </h3>
-                <div className="flex justify-between">
-                  <div className="inline-block  bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
-                    {challenge.points} Points
-                  </div>
-                  {challenge.status && (
-                    <div
-                      className={`inline-block ml-2 px-3 py-1 rounded-full text-sm ${
-                        challenge.status === "Pending"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : challenge.status === "Completed"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-white text-gray-800"
-                      }`}
-                    >
-                      Status: {challenge.status}
-                    </div>
-                  )}
+                <div className="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                  {challenge.points} Points
                 </div>
-              </motion.div>
+              </div>
 
               {/* Description Section */}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                transition={{ duration: 0.2, ease: "easeOut" }}
-              >
-                <h4 className="text-sm font-semibold text-gray-500 uppercase mb-2">
+              <div>
+                <h4 className="text-sm font-semibold text-gray-500 dark:text-gray-100 uppercase mb-2">
                   Description
                 </h4>
-                <p className="text-gray-700 whitespace-pre-wrap text-sm">
+                <p className="text-gray-700 whitespace-pre-wrap dark:text-gray-300 text-sm">
                   {challenge.description}
                 </p>
-              </motion.div>
+              </div>
 
               {/* Circle Information */}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                transition={{ duration: 0.2, ease: "easeOut" }}
-                className="flex items-center"
-              >
+              <div className="flex items-center ">
                 <FontAwesomeIcon
                   icon={faUsers}
-                  className="w-5 h-5 mr-2 text-gray-500"
+                  className="w-5 h-5 mr-2 text-gray-500 dark:text-gray-100"
                 />
                 <div>
-                  <h4 className="text-sm font-semibold text-gray-500">
+                  <h4 className="text-sm font-semibold text-gray-500 dark:text-gray-100">
                     Circle
                   </h4>
-                  <p className="text-gray-700 text-sm">
+                  <p className="text-gray-700 text-sm dark:text-gray-300">
                     {challenge.circle.name}
                   </p>
                 </div>
-              </motion.div>
+              </div>
 
               {/* Creator Information */}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                transition={{ duration: 0.2, ease: "easeOut" }}
-                className="flex items-center"
-              >
-                <User className="w-5 h-5 mr-2 text-gray-500" />
+              <div className="flex items-center">
+                <User className="w-5 h-5 mr-2 text-gray-500 dark:text-gray-100" />
                 <div>
-                  <h4 className="text-sm font-semibold text-gray-500">
+                  <h4 className="text-sm font-semibold text-gray-500 dark:text-gray-100">
                     Created By
                   </h4>
-                  <p className="text-gray-700 text-sm">
+                  <p className="text-gray-700 text-sm dark:text-gray-300">
                     {challenge.creator.name}
                   </p>
                 </div>
-              </motion.div>
+              </div>
 
               {/* Creation Date */}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                transition={{ duration: 0.2, ease: "easeOut" }}
-                className="flex items-center"
-              >
-                <Calendar className="w-5 h-5 mr-2 text-gray-500" />
+              <div className="flex items-center">
+                <Calendar className="w-5 h-5 mr-2 text-gray-500 dark:text-gray-100" />
                 <div>
-                  <h4 className="text-sm font-semibold text-gray-500">
+                  <h4 className="text-sm font-semibold text-gray-500 dark:text-gray-100">
                     Created On
                   </h4>
-                  <p className="text-gray-700 text-sm">
+                  <p className="text-gray-700 text-sm dark:text-gray-300">
                     {new Date(challenge.createdAt).toLocaleDateString()} at{" "}
                     {new Date(challenge.createdAt).toLocaleTimeString()}
                   </p>
                 </div>
-              </motion.div>
+              </div>
             </div>
 
             <div className="mt-8 flex justify-end">
-              <motion.button
+              <button
                 onClick={onClose}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }} // Fade out on exit
-                transition={{ duration: 0.2 }}
                 className="px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
               >
                 Close
-              </motion.button>
+              </button>
             </div>
           </motion.div>
         </motion.div>

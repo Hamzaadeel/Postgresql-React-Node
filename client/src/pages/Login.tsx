@@ -59,7 +59,7 @@ const Login = () => {
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen dark:bg-white">
       <div
         className="w-1/2 flex items-center shadow-lg justify-center bg-cover p-2 bg-center relative"
         style={{
@@ -68,7 +68,7 @@ const Login = () => {
           backgroundRepeat: "no-repeat",
         }}
       >
-        <h1 className="absolute top-8 text-center text-gray-900 text-3xl font-bold font-serif">
+        <h1 className="absolute top-8 text-center text-gray-900  text-3xl font-bold font-serif">
           *Project/Company Name here*
         </h1>
         <p className="absolute top-20 text-center text-gray-700 text-sm font-bold font-serif">

@@ -17,8 +17,6 @@ import {
   X,
   Shield,
   Settings,
-  Moon,
-  Sun,
 } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUsers } from "@fortawesome/free-solid-svg-icons";
@@ -41,6 +39,7 @@ import {
 } from "../../store/slices/notificationSlice";
 import { debounce } from "lodash";
 import { useDarkMode } from "../../context/DarkModeContext";
+import DarkModeToggle from "./DarkModeToggle";
 
 interface HeaderProps {
   userRole: "Employee" | "Moderator";
@@ -416,7 +415,7 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
   };
 
   const renderSearchBar = () => (
-    <div className="flex-1 max-w-xl relative" ref={searchRef}>
+    <div className="flex-1 max-w-md relative" ref={searchRef}>
       <div className="relative">
         <input
           type="text"
@@ -470,7 +469,7 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
   );
 
   return (
-    <header className="bg-white dark:bg-gray-800 shadow-lg transition-all duration-300">
+    <header className="bg-white dark:bg-gray-800 shadow-lg dark:shadow-lg transition-all duration-300">
       <div className="px-4 py-3 flex items-center justify-between">
         {/* Search Bar */}
         {renderSearchBar()}
@@ -478,17 +477,10 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
         {/* Right Section */}
         <div className="flex items-center space-x-4">
           {/* Dark Mode Toggle */}
-          <button
-            onClick={toggleDarkMode}
-            title={isDarkMode ? "Light Mode" : "Dark Mode"}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
-          >
-            {isDarkMode ? (
-              <Sun className="h-5 w-5 text-gray-200" />
-            ) : (
-              <Moon className="h-5 w-5 text-gray-600" />
-            )}
-          </button>
+          <DarkModeToggle
+            isDarkMode={isDarkMode}
+            toggleDarkMode={toggleDarkMode}
+          />
 
           <div className="relative">
             <div className="flex items-center space-x-2">
@@ -577,8 +569,8 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
                           } border-b last:border-b-0 cursor-pointer ${
                             !notification.isRead
                               ? userRole === "Employee"
-                                ? "bg-blue-50 dark:bg-blue-800"
-                                : "bg-emerald-50 dark:bg-emerald-800"
+                                ? "bg-blue-50 dark:bg-gradient-to-br from-blue-500 to-blue-600"
+                                : "bg-emerald-50 dark:bg-gradient-to-br from-emerald-500 to-emerald-600"
                               : ""
                           }`}
                         >

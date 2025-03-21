@@ -268,16 +268,25 @@ const EmployeeDashboard = () => {
     }),
   };
 
+  const leaderboardVariants = {
+    hidden: { opacity: 0, y: 20, scale: 0.95 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: { duration: 0.5, ease: "easeOut" },
+    },
+  };
+
   return (
     <motion.div
-      className="space-y-4 bg-gray-100 dark:bg-gray-900"
+      className="space-y-8"
       initial="hidden"
       animate="visible"
       variants={fadeInVariants}
     >
-      {/* Heading */}
       <motion.h2
-        className="text-2xl font-bold p-2 pt-6 ml-3 flex items-center text-gray-800 dark:text-gray-100"
+        className="text-2xl font-bold p-2 ml-3 flex items-center text-gray-800 dark:text-gray-100"
         variants={{
           hidden: { opacity: 0, y: -20 },
           visible: {
@@ -287,17 +296,20 @@ const EmployeeDashboard = () => {
           },
         }}
       >
-        <Gauge className="w-6 h-6 mr-2 text-blue-500" />
-        Employee Dashboard
+        <Gauge className="w-6 h-6 mr-2 mt-6 text-blue-500" />
+        <span className="mt-6">Employee Dashboard</span>
       </motion.h2>
 
-      {/* Available Challenges */}
       <motion.div className="rounded-xl p-4" variants={cardVariants}>
         {renderChallengesSection()}
       </motion.div>
 
-      {/* Leaderboard */}
-      <motion.div className="mr-2 mb-2" variants={cardVariants}>
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={leaderboardVariants}
+        className="mr-2 mb-2"
+      >
         <Leaderboards />
       </motion.div>
     </motion.div>

@@ -72,16 +72,18 @@ const SubmitChallenge: React.FC<SubmitChallengeProps> = ({
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
         transition={{ duration: 0.2 }}
-        className="bg-white rounded-lg p-6 w-full max-w-md"
+        className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md"
       >
-        <h2 className="text-2xl font-bold mb-4 flex items-center">
+        <h2 className="text-2xl font-bold mb-4 flex items-center dark:text-gray-100">
           <Upload className="w-6 h-6 mr-2 text-blue-500" />
           Submit Challenge
         </h2>
 
         <div className="mb-4">
-          <h3 className="font-semibold text-lg">{challenge.title}</h3>
-          <p className="text-gray-600 text-sm mt-1">
+          <h3 className="font-semibold text-lg dark:text-gray-100">
+            {challenge.title}
+          </h3>
+          <p className="text-gray-600 text-sm mt-1 dark:text-gray-300">
             Points: {challenge.points}
           </p>
         </div>
@@ -123,7 +125,7 @@ const SubmitChallenge: React.FC<SubmitChallengeProps> = ({
         <div className="flex justify-end space-x-3 mt-6">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+            className="px-4 py-2 text-gray-600 hover:text-gray-800 dark:bg-gray-100 dark:hover:bg-gray-300 rounded transition-colors"
             disabled={loading}
           >
             Cancel

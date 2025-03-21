@@ -71,7 +71,7 @@ const ModeratorSecurity = () => {
       initial="hidden"
       animate="visible"
       variants={dashboardVariants}
-      className="p-8 bg-gray-100 h-screen flex justify-start"
+      className="p-8 bg-gray-100 dark:bg-gray-800 h-screen flex justify-start"
     >
       <motion.div
         initial={{ scale: 0.95, opacity: 0 }}
@@ -84,7 +84,7 @@ const ModeratorSecurity = () => {
           initial={{ y: -30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.3, ease: "easeOut" }}
-          className="text-2xl font-bold flex items-center mb-6"
+          className="text-2xl font-bold flex items-center mb-6 dark:text-gray-100"
         >
           <Shield className="w-6 h-6 mr-2" />
           Security Settings

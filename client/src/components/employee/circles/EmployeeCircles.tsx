@@ -292,7 +292,7 @@ const EmployeeCircles = () => {
 
   return (
     <motion.div
-      className="p-8 bg-gray-100 min-h-screen"
+      className="p-8 bg-gray-100 dark:bg-gray-800 min-h-screen"
       initial="hidden"
       animate="visible"
       variants={fadeInVariants}
@@ -309,16 +309,18 @@ const EmployeeCircles = () => {
           <div className="flex items-center">
             <FontAwesomeIcon
               icon={faUsers}
-              className="w-6 h-6 mr-3 text-blue-600"
+              className="w-6 h-6 mr-3 text-blue-600 dark:text-blue-300"
             />
-            <h2 className="text-2xl font-bold">Your Circles</h2>
+            <h2 className="text-2xl font-bold dark:text-gray-100">
+              Your Circles
+            </h2>
           </div>
         </div>
 
         {joinedCircles.length === 0 ? (
           <div className="bg-white rounded-lg shadow-md p-8 text-center">
             <Users className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-            <p className="text-gray-500 text-lg">
+            <p className="text-gray-500  text-lg">
               You haven't joined any circles yet.
             </p>
             <p className="text-gray-400 mt-2">
@@ -372,7 +374,9 @@ const EmployeeCircles = () => {
 
             <div className="flex justify-center items-center mt-6 space-x-4">
               <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-500">Show:</span>
+                <span className="text-sm text-gray-500 dark:text-gray-300">
+                  Show Results:
+                </span>
                 <select
                   value={resultsPerPage}
                   onChange={handleResultsPerPageChange}
@@ -386,7 +390,7 @@ const EmployeeCircles = () => {
                 </select>
               </div>
               <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-500">
+                <span className="text-sm text-gray-500 dark:text-gray-300">
                   Showing {currentJoinedCircles.length} of{" "}
                   {joinedCircles.length} circles
                 </span>
@@ -400,13 +404,13 @@ const EmployeeCircles = () => {
                   title="Previous"
                   className={`p-2 rounded ${
                     joinedCurrentPage === 1
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "bg-slate-700 text-white hover:bg-slate-800"
+                      ? "bg-gray-300 text-gray-500 dark:bg-gray-600 dark:text-gray-400"
+                      : "bg-slate-800 text-white dark:bg-slate-100 dark:text-gray-800"
                   }`}
                 >
                   <ChevronLeft size={20} />
                 </button>
-                <span className="text-sm text-gray-500">
+                <span className="text-sm text-gray-500 dark:text-gray-300">
                   Page {joinedCurrentPage} of {totalJoinedPages}
                 </span>
                 <button
@@ -419,8 +423,8 @@ const EmployeeCircles = () => {
                   title="Next"
                   className={`p-2 rounded ${
                     joinedCurrentPage === totalJoinedPages
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "bg-slate-700 text-white hover:bg-slate-800"
+                      ? "bg-gray-300 text-gray-500 dark:bg-gray-600 dark:text-gray-400"
+                      : "bg-slate-800 text-white dark:bg-slate-100 dark:text-gray-800"
                   }`}
                 >
                   <ChevronRight size={20} />
@@ -437,9 +441,11 @@ const EmployeeCircles = () => {
           <div className="flex items-center">
             <FontAwesomeIcon
               icon={faUsers}
-              className="w-6 h-6 mr-3 text-blue-600"
+              className="w-6 h-6 mr-3 text-blue-600 dark:text-blue-300"
             />
-            <h2 className="text-2xl font-bold">Available Circles</h2>
+            <h2 className="text-2xl font-bold dark:text-gray-100">
+              Available Circles
+            </h2>
           </div>
         </div>
 
@@ -501,7 +507,9 @@ const EmployeeCircles = () => {
 
             <div className="flex justify-center items-center mt-6 space-x-4">
               <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-500">Show:</span>
+                <span className="text-sm text-gray-500 dark:text-gray-300">
+                  Show Results:
+                </span>
                 <select
                   value={resultsPerPage}
                   onChange={handleResultsPerPageChange}
@@ -515,7 +523,7 @@ const EmployeeCircles = () => {
                 </select>
               </div>
               <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-500">
+                <span className="text-sm text-gray-500 dark:text-gray-300">
                   Showing {currentAvailableCircles.length} of{" "}
                   {availableCircles.length} circles
                 </span>
@@ -529,13 +537,13 @@ const EmployeeCircles = () => {
                   title="Previous"
                   className={`p-2 rounded ${
                     availableCurrentPage === 1
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "bg-slate-700 text-white hover:bg-slate-800"
+                      ? "bg-gray-300 text-gray-500 dark:bg-gray-600 dark:text-gray-400"
+                      : "bg-slate-800 text-white dark:bg-slate-100 dark:text-gray-800"
                   }`}
                 >
                   <ChevronLeft size={20} />
                 </button>
-                <span className="text-sm text-gray-500">
+                <span className="text-sm text-gray-500 dark:text-gray-300">
                   Page {availableCurrentPage} of {totalAvailablePages}
                 </span>
                 <button
@@ -548,8 +556,8 @@ const EmployeeCircles = () => {
                   disabled={availableCurrentPage === totalAvailablePages}
                   className={`p-2 rounded ${
                     availableCurrentPage === totalAvailablePages
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "bg-slate-700 text-white hover:bg-slate-800"
+                      ? "bg-gray-300 text-gray-500 dark:bg-gray-600 dark:text-gray-400"
+                      : "bg-slate-800 text-white dark:bg-slate-100 dark:text-gray-800"
                   }`}
                 >
                   <ChevronRight size={20} />

@@ -5,6 +5,7 @@ import { useAppDispatch } from "../../../store/hooks";
 import { updateUser } from "../../../store/slices/authSlice";
 import { updateUser as updateUserApi } from "../../../services/api";
 import { motion } from "framer-motion";
+import { toast } from "react-toastify";
 
 const EmployeeProfile = () => {
   const dispatch = useAppDispatch();
@@ -44,7 +45,8 @@ const EmployeeProfile = () => {
       const updatedUser = await updateUserApi(user.id, { name, email });
       dispatch(updateUser(updatedUser));
 
-      setSuccessMessage("Profile updated successfully!");
+      toast.success("Profile updated successfully!");
+
       setTimeout(() => setSuccessMessage(null), 5000);
     } catch (err: any) {
       setError(err.message || "Failed to update profile. Please try again.");
@@ -74,14 +76,14 @@ const EmployeeProfile = () => {
 
   return (
     <motion.div
-      className="space-y-4 bg-gray-100 h-full"
+      className="space-y-4 bg-gray-100 dark:bg-gray-800 h-full"
       initial="hidden"
       animate="visible"
       variants={fadeInVariants}
     >
       {/* Heading */}
       <motion.h2
-        className="text-2xl font-bold p-2 pt-6 ml-3 flex items-center"
+        className="text-2xl font-bold p-2 pt-6 ml-3 flex items-center dark:text-gray-100"
         variants={fadeInVariants}
       >
         <User className="w-6 h-6 mr-2 ml-2 text-blue-500" />
@@ -102,7 +104,7 @@ const EmployeeProfile = () => {
             initial={{ y: -10, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
-            className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4"
+            className="bg-red-100 border w-fit border-red-400 ml-8 text-red-700 px-4 py-3 rounded mb-4"
           >
             {error}
           </motion.div>
@@ -113,7 +115,7 @@ const EmployeeProfile = () => {
             initial={{ y: -10, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
-            className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4"
+            className="bg-green-100 border border-green-400 w-fit ml-8 text-green-700 px-4 py-3 rounded mb-4"
           >
             {successMessage}
           </motion.div>

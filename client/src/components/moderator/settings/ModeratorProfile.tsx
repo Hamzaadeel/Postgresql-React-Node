@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import { updateUser } from "../../../store/slices/authSlice";
 import { updateUser as updateUserApi } from "../../../services/api";
 import { motion } from "framer-motion";
-
+import { toast } from "react-toastify";
 const ModeratorProfile = () => {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
@@ -42,7 +42,7 @@ const ModeratorProfile = () => {
       // Update Redux store
       dispatch(updateUser(updatedUser));
 
-      setSuccessMessage("Profile updated successfully!");
+      toast.success("Profile updated successfully!");
       setTimeout(() => setSuccessMessage(null), 5000);
     } catch (err: any) {
       if (err.response?.status === 401) {
@@ -69,7 +69,7 @@ const ModeratorProfile = () => {
       initial="hidden"
       animate="visible"
       variants={dashboardVariants}
-      className="p-8 bg-gray-100 h-screen flex justify-start"
+      className="p-8 bg-gray-100 dark:bg-gray-800 h-screen flex justify-start"
     >
       <motion.div
         initial={{ scale: 0.95, opacity: 0 }}
@@ -82,7 +82,7 @@ const ModeratorProfile = () => {
           initial={{ y: -30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.3, ease: "easeOut" }}
-          className="text-2xl font-bold flex items-center mb-6"
+          className="text-2xl font-bold flex items-center mb-6 dark:text-gray-100"
         >
           <User className="w-6 h-6 mr-2" />
           My Profile

@@ -65,7 +65,7 @@ const Leaderboards = () => {
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 dark:border-gray-500 dark:border-2 rounded-lg shadow-md mb-4 p-6 ml-4">
+    <div className="bg-white dark:bg-gray-800 dark:border-gray-500 dark:shadow-gray-950 rounded-lg shadow-md mb-4 p-6 ml-4">
       <div className="flex items-center mb-6">
         <Trophy className="w-6 h-6 mr-3 text-yellow-300" />
         <h2 className="text-xl font-bold dark:text-gray-100">Leaderboard</h2>

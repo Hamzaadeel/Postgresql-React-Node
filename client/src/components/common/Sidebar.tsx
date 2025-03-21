@@ -69,13 +69,13 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
         className={`flex items-center p-2 mb-1 cursor-pointer justify-between rounded-xl mx-1 ${
           selectedTab?.includes("/settings")
             ? userRole === "Employee"
-              ? "bg-gradient-to-r from-cyan-200 to-teal-400 text-black"
-              : "bg-gradient-to-r from-emerald-200 to-emerald-400 text-black"
+              ? "bg-gradient-to-r from-cyan-200 to-teal-400 text-black dark:bg-gradient-to-r dark:from-cyan-700 dark:to-teal-600 dark:text-white"
+              : "bg-gradient-to-r from-emerald-200 to-emerald-400 text-black dark:bg-gradient-to-r dark:from-emerald-700 dark:to-emerald-600 dark:text-white"
             : ""
         } ${
           userRole === "Employee"
-            ? "hover:bg-gradient-to-r from-cyan-200 to-teal-400 hover:text-black"
-            : "hover:bg-gradient-to-r from-emerald-200 to-emerald-400 hover:text-black"
+            ? "hover:bg-gradient-to-r from-cyan-200 to-teal-400 hover:text-black dark:hover:bg-gradient-to-r dark:hover:from-cyan-700 dark:hover:to-teal-600 dark:hover:text-white"
+            : "hover:bg-gradient-to-r from-emerald-200 to-emerald-400 hover:text-black dark:hover:bg-gradient-to-r dark:hover:from-emerald-700 dark:hover:to-emerald-600 dark:hover:text-white"
         }`}
         onClick={() => {
           setIsSettingsOpen(!isSettingsOpen);
@@ -114,14 +114,14 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
               } 
                 ${
                   userRole === "Employee"
-                    ? "hover:bg-gradient-to-r from-cyan-200 to-teal-400 hover:text-black"
-                    : "hover:bg-gradient-to-r from-emerald-200 to-emerald-400 hover:text-black"
+                    ? "hover:bg-gradient-to-r from-cyan-200 to-teal-400 hover:text-black dark:hover:bg-gradient-to-r dark:hover:from-cyan-700 dark:hover:to-teal-600 dark:hover:text-white"
+                    : "hover:bg-gradient-to-r from-emerald-200 to-emerald-400 hover:text-black dark:hover:bg-gradient-to-r dark:hover:from-emerald-700 dark:hover:to-emerald-600 dark:hover:text-white"
                 }
                 ${
                   selectedTab === `/${userRole.toLowerCase()}/settings/profile`
                     ? userRole === "Employee"
-                      ? "bg-gradient-to-r from-cyan-200 to-teal-400 text-black"
-                      : "bg-gradient-to-r from-emerald-200 to-emerald-400 text-black"
+                      ? "bg-gradient-to-r from-cyan-200 to-teal-400 text-black dark:bg-gradient-to-r dark:from-cyan-700 dark:to-teal-600 dark:text-white"
+                      : "bg-gradient-to-r from-emerald-200 to-emerald-400 text-black dark:bg-gradient-to-r dark:from-emerald-700 dark:to-emerald-600 dark:text-white"
                     : ""
                 }`}
               onClick={() =>
@@ -139,14 +139,14 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
               }
               ${
                 userRole === "Employee"
-                  ? "hover:bg-gradient-to-r from-cyan-200 to-teal-400 hover:text-black"
-                  : "hover:bg-gradient-to-r from-emerald-200 to-emerald-400 hover:text-black"
+                  ? "hover:bg-gradient-to-r from-cyan-200 to-teal-400 hover:text-black dark:hover:bg-gradient-to-r dark:hover:from-cyan-700 dark:hover:to-teal-600 dark:hover:text-white"
+                  : "hover:bg-gradient-to-r from-emerald-200 to-emerald-400 hover:text-black dark:hover:bg-gradient-to-r dark:hover:from-emerald-700 dark:hover:to-emerald-600 dark:hover:text-white"
               }
                 ${
                   selectedTab === `/${userRole.toLowerCase()}/settings/security`
                     ? userRole === "Employee"
-                      ? "bg-gradient-to-r from-cyan-200 to-teal-400 text-black"
-                      : "bg-gradient-to-r from-emerald-200 to-emerald-400 text-black"
+                      ? "bg-gradient-to-r from-cyan-200 to-teal-400 text-black dark:bg-gradient-to-r dark:from-cyan-700 dark:to-teal-600 dark:text-white"
+                      : "bg-gradient-to-r from-emerald-200 to-emerald-400 text-black dark:bg-gradient-to-r dark:from-emerald-700 dark:to-emerald-600 dark:text-white"
                     : ""
                 }`}
               onClick={() =>

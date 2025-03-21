@@ -341,7 +341,7 @@ const EmployeeChallenges = () => {
 
   return (
     <motion.div
-      className="p-8 bg-gray-100 min-h-screen"
+      className="p-8 bg-gray-100 dark:bg-gray-800 min-h-screen"
       initial="hidden"
       animate="visible"
       variants={fadeInVariants}
@@ -357,8 +357,10 @@ const EmployeeChallenges = () => {
         <div className="mb-12">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center">
-              <Swords className="w-6 h-6 mr-3 text-blue-600" />
-              <h2 className="text-2xl font-bold">Your Challenges</h2>
+              <Swords className="w-6 h-6 mr-3 text-blue-600 dark:text-blue-300" />
+              <h2 className="text-2xl font-bold dark:text-gray-100">
+                Your Challenges
+              </h2>
             </div>
           </div>
 
@@ -442,7 +444,9 @@ const EmployeeChallenges = () => {
 
               <div className="flex justify-center items-center mt-6 space-x-4">
                 <div className="flex items-center space-x-2">
-                  <span className="text-sm text-gray-500">Show:</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-300">
+                    Show Results:
+                  </span>
                   <select
                     value={resultsPerPage}
                     onChange={handleResultsPerPageChange}
@@ -456,7 +460,7 @@ const EmployeeChallenges = () => {
                   </select>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <span className="text-sm text-gray-500">
+                  <span className="text-sm text-gray-500 dark:text-gray-300">
                     Showing {currentJoinedChallenges.length} of{" "}
                     {joinedChallenges.length} challenges
                   </span>
@@ -469,13 +473,13 @@ const EmployeeChallenges = () => {
                     disabled={joinedCurrentPage === 1}
                     className={`p-2 rounded ${
                       joinedCurrentPage === 1
-                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                        : "bg-slate-700 text-white hover:bg-slate-800"
+                        ? "bg-gray-300 text-gray-500 dark:bg-gray-600 dark:text-gray-400"
+                        : "bg-slate-800 text-white dark:bg-slate-100 dark:text-gray-800"
                     }`}
                   >
                     <ChevronLeft size={20} />
                   </button>
-                  <span className="text-sm text-gray-500">
+                  <span className="text-sm text-gray-500 dark:text-gray-300">
                     Page {joinedCurrentPage} of {totalJoinedPages}
                   </span>
                   <button
@@ -487,8 +491,8 @@ const EmployeeChallenges = () => {
                     disabled={joinedCurrentPage === totalJoinedPages}
                     className={`p-2 rounded ${
                       joinedCurrentPage === totalJoinedPages
-                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                        : "bg-slate-700 text-white hover:bg-slate-800"
+                        ? "bg-gray-300 text-gray-500 dark:bg-gray-600 dark:text-gray-400"
+                        : "bg-slate-800 text-white dark:bg-slate-100 dark:text-gray-800"
                     }`}
                   >
                     <ChevronRight size={20} />
@@ -505,8 +509,10 @@ const EmployeeChallenges = () => {
         <div>
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center">
-              <Swords className="w-8 h-8 mr-3 text-blue-600" />
-              <h2 className="text-2xl font-bold">Available Challenges</h2>
+              <Swords className="w-8 h-8 mr-3 text-blue-600 dark:text-blue-300" />
+              <h2 className="text-2xl font-bold dark:text-gray-100">
+                Available Challenges
+              </h2>
             </div>
           </div>
 
@@ -576,7 +582,9 @@ const EmployeeChallenges = () => {
 
               <div className="flex justify-center items-center mt-6 space-x-4">
                 <div className="flex items-center space-x-2">
-                  <span className="text-sm text-gray-500">Show:</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-300">
+                    Show Results:
+                  </span>
                   <select
                     value={resultsPerPage}
                     onChange={handleResultsPerPageChange}
@@ -590,7 +598,7 @@ const EmployeeChallenges = () => {
                   </select>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <span className="text-sm text-gray-500">
+                  <span className="text-sm text-gray-500 dark:text-gray-300">
                     Showing {currentAvailableChallenges.length} of{" "}
                     {availableChallenges.length} challenges
                   </span>
@@ -603,13 +611,13 @@ const EmployeeChallenges = () => {
                     disabled={availableCurrentPage === 1}
                     className={`p-2 rounded ${
                       availableCurrentPage === 1
-                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                        : "bg-slate-700 text-white hover:bg-slate-800"
+                        ? "bg-gray-300 text-gray-500 dark:bg-gray-600 dark:text-gray-400"
+                        : "bg-slate-800 text-white dark:bg-slate-100 dark:text-gray-800"
                     }`}
                   >
                     <ChevronLeft size={20} />
                   </button>
-                  <span className="text-sm text-gray-500">
+                  <span className="text-sm text-gray-500 dark:text-gray-300">
                     Page {availableCurrentPage} of {totalAvailablePages}
                   </span>
                   <button
@@ -621,8 +629,8 @@ const EmployeeChallenges = () => {
                     disabled={availableCurrentPage === totalAvailablePages}
                     className={`p-2 rounded ${
                       availableCurrentPage === totalAvailablePages
-                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                        : "bg-slate-700 text-white hover:bg-slate-800"
+                        ? "bg-gray-300 text-gray-500 dark:bg-gray-600 dark:text-gray-400"
+                        : "bg-slate-800 text-white dark:bg-slate-100 dark:text-gray-800"
                     }`}
                   >
                     <ChevronRight size={20} />

@@ -192,7 +192,7 @@ const EmployeeCircleView = () => {
 
   return (
     <motion.div
-      className="p-8 bg-gray-100 min-h-screen"
+      className="p-8 bg-gray-100 dark:bg-gray-800 min-h-screen"
       initial="hidden"
       animate="visible"
       variants={fadeInVariants}
@@ -207,7 +207,7 @@ const EmployeeCircleView = () => {
       {/* Back Button */}
       <motion.button
         onClick={() => navigate("/employee/circles")}
-        className="flex items-center text-gray-600 hover:text-gray-900 mb-6"
+        className="flex items-center text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-500 mb-6"
         variants={fadeInVariants}
       >
         <ArrowLeft className="w-5 h-5 mr-2" />
@@ -263,7 +263,9 @@ const EmployeeCircleView = () => {
       <motion.div variants={fadeInVariants}>
         <div className="flex items-center mb-6">
           <Swords className="w-6 h-6 mr-2 text-blue-500" />
-          <h2 className="text-xl font-bold">Circle Challenges</h2>
+          <h2 className="text-xl font-bold dark:text-gray-100">
+            Circle Challenges
+          </h2>
         </div>
 
         {!isParticipant ? (

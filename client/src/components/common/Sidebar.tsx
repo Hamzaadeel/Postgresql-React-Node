@@ -168,7 +168,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
         userRole === "Employee"
           ? "bg-gradient-to-b from-sky-950 via-sky-800 to-sky-600 dark:from-sky-950 dark:via-sky-900 dark:to-sky-800"
           : "bg-gradient-to-b from-emerald-950 via-emerald-800 to-emerald-600 dark:from-emerald-950 dark:via-emerald-900 dark:to-emerald-800"
-      } text-white ${isOpen ? "w-56" : "w-11"} transition-width duration-300`}
+      } text-white ${isOpen ? "w-48" : "w-11"} transition-width duration-300`}
     >
       <button
         onClick={toggleSidebar}
@@ -249,7 +249,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
                 title="Dashboard"
                 className={`flex items-center p-2 mb-1 rounded-xl mx-1 cursor-pointer ease-in-out hover:bg-gradient-to-r from-emerald-200 to-emerald-400 hover:text-black dark:hover:from-emerald-700 dark:hover:to-emerald-600 dark:hover:text-white ${
                   selectedTab === "/moderator/dashboard"
-                    ? "bg-gradient-to-r from-emerald-200 to-emerald-400 text-black dark:from-emerald-700 dark:to-emerald-600 dark:text-white"
+                    ? "bg-gradient-to-r from-emerald-200 to-emerald-400 text-black dark:from-emerald-700 dark:to-emerald-600 dark:text-white "
                     : ""
                 }`}
                 onClick={() => handleTabClick("/moderator/dashboard")}

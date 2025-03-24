@@ -79,6 +79,9 @@ export class ChallengeController {
         case "name":
           queryOptions.order.title = "ASC";
           break;
+        case "participants":
+          // We will sort after fetching the data
+          break;
         default:
           queryOptions.order.createdAt = "DESC"; // Default sort
       }
@@ -95,8 +98,34 @@ export class ChallengeController {
         queryOptions
       );
 
+      // Add participant count to each challenge
+      const challengesWithCount = await Promise.all(
+        challenges.map(async (challenge) => {
+          const participantCount = await AppDataSource.getRepository(
+            "ChallengeParticipants"
+          )
+            .createQueryBuilder("cp")
+            .where("cp.challengeId = :challengeId", {
+              challengeId: challenge.id,
+            })
+            .getCount();
+
+          return {
+            ...challenge,
+            participantCount,
+          };
+        })
+      );
+
+      // Sort by participant count if requested
+      if (sortBy === "participants") {
+        challengesWithCount.sort(
+          (a, b) => (b.participantCount || 0) - (a.participantCount || 0)
+        );
+      }
+
       res.json({
-        challenges,
+        challenges: challengesWithCount,
         total,
         page: page ? parseInt(page as string) : 1,
         limit: limit ? parseInt(limit as string) : total,

@@ -4,6 +4,7 @@ import { Circle } from "../entities/Circle";
 import { User } from "../entities/User";
 import { NotificationController } from "./NotificationController";
 import { ILike, In } from "typeorm";
+import { CircleParticipants } from "../entities/CircleParticipants";
 
 // Extend Request type to include user property
 interface AuthenticatedRequest extends Request {
@@ -66,12 +67,36 @@ export class CircleController {
         queryOptions.order.createdAt = "DESC";
       } else if (sortBy === "createdAt_asc") {
         queryOptions.order.createdAt = "ASC";
+      } else if (sortBy === "employees") {
+        // We will sort after fetching the data and counting employees
       } else {
         queryOptions.order.name = "ASC"; // Default sort by name
       }
 
       const circles = await circleRepository.find(queryOptions);
-      res.json(circles);
+
+      // Add employee count to each circle
+      const circlesWithCount = await Promise.all(
+        circles.map(async (circle) => {
+          const participantCount = await AppDataSource.getRepository(
+            CircleParticipants
+          ).count({ where: { circle: { id: circle.id } } });
+
+          return {
+            ...circle,
+            employeeCount: participantCount,
+          };
+        })
+      );
+
+      // Sort by employee count if requested
+      if (sortBy === "employees") {
+        circlesWithCount.sort(
+          (a, b) => (b.employeeCount || 0) - (a.employeeCount || 0)
+        );
+      }
+
+      res.json(circlesWithCount);
     } catch (error) {
       console.error("Error fetching circles:", error);
       res.status(500).json({ message: "Error fetching circles" });

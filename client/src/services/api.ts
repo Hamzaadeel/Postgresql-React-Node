@@ -1,7 +1,6 @@
 import axios from "axios";
-import { User } from "../types/User"; // Import the User type
-import { Challenge } from "../store/slices/challengeSlice"; // Import the Challenge type
-
+import { User } from "../types/User";
+import { Challenge } from "../store/slices/challengeSlice";
 // Define the user type
 export interface UserData {
   name: string;
@@ -33,6 +32,7 @@ export interface Circle {
     id: number;
     name: string;
   };
+  employeeCount?: number;
 }
 
 // Define the response type for the login function
@@ -224,7 +224,7 @@ export const getCircles = async (
   page: number,
   limit: number,
   search?: string,
-  sortBy?: "name" | "createdAt_asc" | "createdAt_desc",
+  sortBy?: "name" | "createdAt_asc" | "createdAt_desc" | "employees",
   tenants?: number[]
 ): Promise<Circle[]> => {
   try {
@@ -296,7 +296,13 @@ export const getChallenges = async (
   page?: number,
   limit?: number,
   search?: string,
-  sortBy?: "newest" | "oldest" | "points_highest" | "points_lowest" | "name",
+  sortBy?:
+    | "newest"
+    | "oldest"
+    | "points_highest"
+    | "points_lowest"
+    | "name"
+    | "participants",
   circleIds?: number[]
 ): Promise<{
   challenges: Challenge[];

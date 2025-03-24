@@ -206,7 +206,7 @@ const EmployeeDashboard = () => {
         {challengesToShow.map((challenge) => (
           <div
             key={challenge.id}
-            className="bg-white rounded-lg p-5 hover:shadow-md hover:scale-105 transition-all duration-300 cursor-pointer bg-gradient-to-b from-sky-400 via-sky-600 to-sky-800 flex flex-col h-full dark:from-sky-600 dark:via-sky-700 dark:to-sky-900"
+            className="bg-white rounded-lg p-5 hover:shadow-md hover:scale-105 transition-all duration-300 cursor-pointer bg-gradient-to-b from-sky-500 via-sky-600 to-sky-800 flex flex-col h-full dark:from-sky-600 dark:via-sky-700 dark:to-sky-900"
             onClick={() => navigate("/employee/challenges")}
           >
             <div className="flex justify-between items-start mb-3">

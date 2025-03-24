@@ -92,11 +92,11 @@ const Leaderboards = () => {
                 key={leader.id}
                 className={
                   index === 0
-                    ? "bg-yellow-50"
+                    ? "bg-yellow-100"
                     : index === 1
-                    ? "bg-slate-50"
+                    ? "bg-slate-100"
                     : index === 2
-                    ? "bg-amber-50"
+                    ? "bg-red-100"
                     : "bg-white"
                 }
               >

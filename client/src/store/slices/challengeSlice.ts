@@ -18,6 +18,7 @@ export interface Challenge {
   };
   participationId?: number;
   status?: "Pending" | "Completed";
+  participantCount?: number;
 }
 
 interface ChallengeState {

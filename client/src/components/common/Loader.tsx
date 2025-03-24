@@ -4,7 +4,7 @@ const Loader = () => {
   return (
     <StyledWrapper>
       <div className="loader" />
-      <p className="loading-text pt-4 text-center">Loading...</p>
+      <p className="loading-text pt-4 text-center text-cyan-500">Loading...</p>
     </StyledWrapper>
   );
 };
@@ -21,7 +21,7 @@ const StyledWrapper = styled.div`
     content: "";
     width: 48px;
     height: 5px;
-    background: #24263d;
+    background: linear-gradient(to right, #3b82f6, #10b981);
     position: absolute;
     top: 60px;
     left: 0;
@@ -33,7 +33,7 @@ const StyledWrapper = styled.div`
     content: "";
     width: 100%;
     height: 100%;
-    background: #24263d;
+    background: linear-gradient(to right, #3b82f6, #10b981);
     position: absolute;
     top: 0;
     left: 0;

@@ -469,7 +469,7 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
   );
 
   return (
-    <header className="bg-white dark:bg-gray-800 shadow-lg dark:shadow-lg transition-all duration-300">
+    <header className="bg-white dark:bg-gray-800 shadow-lg dark:shadow-lg transition-all duration-300 z-10">
       <div className="px-4 py-3 flex items-center justify-between">
         {/* Search Bar */}
         {renderSearchBar()}

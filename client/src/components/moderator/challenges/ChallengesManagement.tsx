@@ -48,7 +48,12 @@ const ChallengesManagement = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<
-    "newest" | "oldest" | "points_highest" | "points_lowest" | "name"
+    | "newest"
+    | "oldest"
+    | "points_highest"
+    | "points_lowest"
+    | "name"
+    | "participants"
   >("newest");
   const [selectedCircles, setSelectedCircles] = useState<number[]>([]);
   const [isCircleDropdownOpen, setIsCircleDropdownOpen] = useState(false);
@@ -348,7 +353,11 @@ const ChallengesManagement = () => {
                   ? "Sort by Date (Oldest)"
                   : sortBy === "points_highest"
                   ? "Sort by Points (Highest)"
-                  : "Sort by Points (Lowest)"}
+                  : sortBy === "points_lowest"
+                  ? "Sort by Points (Lowest)"
+                  : sortBy === "participants"
+                  ? "Sort by Total Participants"
+                  : "Sort by Date (Newest)"}
               </span>
               <ChevronDown
                 className="h-4 w-4 transition-transform duration-200"
@@ -416,6 +425,15 @@ const ChallengesManagement = () => {
                 >
                   Sort by Points (Lowest)
                 </button>
+                <button
+                  onClick={() => {
+                    setSortBy("participants");
+                    setIsSortDropdownOpen(false);
+                  }}
+                  className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:text-gray-100 dark:hover:text-gray-800 rounded"
+                >
+                  Sort by Total Participants
+                </button>
               </div>
             </motion.div>
           </div>
@@ -460,6 +478,9 @@ const ChallengesManagement = () => {
                         Created At
                       </th>
                       <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                        Total Participants
+                      </th>
+                      <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
                         Actions
                       </th>
                     </tr>
@@ -487,11 +508,15 @@ const ChallengesManagement = () => {
                           <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
                             {challenge.points}
                           </td>
+
                           <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
                             {challenge.creator.name}
                           </td>
                           <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
                             {new Date(challenge.createdAt).toLocaleDateString()}
+                          </td>
+                          <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                            {challenge.participantCount || 0}
                           </td>
                           <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
                             <div className="flex space-x-3">

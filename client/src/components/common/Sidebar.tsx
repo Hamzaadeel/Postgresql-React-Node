@@ -12,12 +12,14 @@ import {
   ChevronDown,
   User,
   Shield,
+  Clock as ClockIcon,
 } from "lucide-react";
 import logo from "../../assets/logos/dpl-logo.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUsers } from "@fortawesome/free-solid-svg-icons";
 import ConfirmationModal from "./ConfirmationModal";
 import { AnimatePresence, motion } from "framer-motion";
+import Clock from "./Clock";
 
 interface SidebarProps {
   userRole: "Employee" | "Moderator";
@@ -32,12 +34,11 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
   );
   const navigate = useNavigate();
 
-  // State for confirmation modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   useEffect(() => {
-    setSelectedTab(location.pathname); // Update selected tab when location changes
+    setSelectedTab(location.pathname);
   }, [location.pathname]);
 
   const toggleSidebar = () => {
@@ -50,11 +51,11 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
     if (!tab.includes("/settings")) {
       setIsSettingsOpen(false);
     }
-    navigate(tab); // Navigate to the selected tab
+    navigate(tab);
   };
 
   const handleLogout = () => {
-    setIsModalOpen(true); // Open confirmation modal
+    setIsModalOpen(true);
   };
 
   const confirmLogout = () => {
@@ -319,6 +320,25 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, onToggle }) => {
             </>
           ) : null}
         </ul>
+      </div>
+
+      {/* Clock Section */}
+      <div className="mt-auto mb-2">
+        {isOpen ? (
+          <Clock userRole={userRole} />
+        ) : (
+          <div className="relative group">
+            <button
+              className="flex items-center justify-center p-2 w-full hover:bg-gray-700/30 rounded-lg"
+              title="Clock"
+            >
+              <ClockIcon className="w-5 h-5" />
+            </button>
+            <div className="hidden group-hover:block absolute w-48 bottom-0 left-full ml-2">
+              <Clock userRole={userRole} />
+            </div>
+          </div>
+        )}
       </div>
 
       <li

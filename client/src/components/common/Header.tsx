@@ -354,6 +354,10 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
   };
 
   const confirmLogout = () => {
+    const user = JSON.parse(localStorage.getItem("user") || "null");
+    if (user) {
+      localStorage.removeItem(`clockPreferences_user_${user.id}`);
+    }
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     navigate("/login");

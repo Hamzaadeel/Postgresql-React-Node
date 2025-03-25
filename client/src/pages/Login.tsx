@@ -6,6 +6,7 @@ import { useAppDispatch } from "../store/hooks";
 import { setCredentials } from "../store/slices/authSlice";
 import { User } from "../types/User";
 import bgImage from "../assets/images/login.jpg";
+
 interface LoginResponse {
   user: User;
   token: string;

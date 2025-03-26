@@ -35,6 +35,7 @@ import ChallengeDetailsView from "./ChallengeDetailsView";
 import ConfirmationModal from "../../common/ConfirmationModal";
 import Loader from "../../common/Loader";
 import { motion } from "framer-motion";
+import { toast } from "react-toastify";
 
 const ChallengesManagement = () => {
   const dispatch = useAppDispatch();
@@ -167,13 +168,6 @@ const ChallengesManagement = () => {
     navigate("/login");
   };
 
-  const showSuccessMessage = (message: string) => {
-    setSuccessMessage(message);
-    setTimeout(() => {
-      setSuccessMessage("");
-    }, 5000);
-  };
-
   const closeSuccessMessage = () => {
     setSuccessMessage("");
   };
@@ -205,7 +199,7 @@ const ChallengesManagement = () => {
       const newChallenge = await createChallenge(newChallengeData);
       dispatch(addChallenge(newChallenge as Challenge));
       setIsAddModalOpen(false);
-      showSuccessMessage("Challenge added successfully!");
+      toast.success("Challenge added successfully!");
     } catch (error: any) {
       if (error.response) {
         console.error("Error adding challenge:", error.response.data);
@@ -234,7 +228,7 @@ const ChallengesManagement = () => {
       );
       dispatch(updateChallenge(updatedChallenge as Challenge));
       setIsEditModalOpen(false);
-      showSuccessMessage("Challenge updated successfully!");
+      toast.success("Challenge updated successfully!");
     } catch (error: any) {
       if (error.response?.status === 401) {
         handleAuthError();
@@ -252,7 +246,7 @@ const ChallengesManagement = () => {
       await deleteChallengeApi(selectedChallenge.id);
       dispatch(deleteChallenge(selectedChallenge.id));
       setIsDeleteModalOpen(false);
-      showSuccessMessage("Challenge deleted successfully!");
+      toast.success("Challenge deleted successfully!");
     } catch (error: any) {
       if (error.response?.status === 401) {
         handleAuthError();

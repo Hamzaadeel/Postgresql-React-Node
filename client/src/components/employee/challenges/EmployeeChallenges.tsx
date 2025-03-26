@@ -27,6 +27,7 @@ import {
 } from "../../../store/slices/challengeSlice";
 import { motion } from "framer-motion";
 import SubmitChallenge from "./SubmitChallenge";
+import { toast } from "react-toastify";
 
 interface ChallengeWithParticipation extends Challenge {
   participationId?: number;
@@ -220,7 +221,7 @@ const EmployeeChallenges = () => {
       dispatch(
         joinChallenge({ challengeId, participationId: response.data.id })
       );
-      setSuccessMessage("Successfully joined the challenge!");
+      toast.success("Successfully joined the challenge!");
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err: any) {
       dispatch(
@@ -258,7 +259,7 @@ const EmployeeChallenges = () => {
       );
 
       dispatch(submitChallenge({ challengeId: selectedChallenge.id }));
-      setSuccessMessage("Challenge completed successfully!");
+      toast.success("Challenge completed successfully!");
       setTimeout(() => setSuccessMessage(null), 3000);
       setIsSubmitModalOpen(false);
       setSelectedChallenge(null);

@@ -34,6 +34,7 @@ import {
 import { setTenants } from "../../../store/slices/tenantSlice";
 import { RootState } from "../../../store/store";
 import { motion } from "framer-motion";
+import { toast } from "react-toastify";
 
 const CirclesManagement = () => {
   const dispatch = useAppDispatch();
@@ -139,13 +140,6 @@ const CirclesManagement = () => {
     navigate("/login");
   };
 
-  const showSuccessMessage = (message: string) => {
-    setSuccessMessage(message);
-    setTimeout(() => {
-      setSuccessMessage("");
-    }, 5000);
-  };
-
   const closeSuccessMessage = () => {
     setSuccessMessage("");
   };
@@ -158,7 +152,7 @@ const CirclesManagement = () => {
       const newCircle = await createCircle(circleData);
       dispatch(addCircle(newCircle));
       setIsAddModalOpen(false);
-      showSuccessMessage("Circle added successfully!");
+      toast.success("Circle added successfully!");
     } catch (error: any) {
       if (error.response?.status === 401) {
         handleAuthError();
@@ -178,7 +172,7 @@ const CirclesManagement = () => {
       const updatedCircle = await updateCircleApi(circleId, circleData);
       dispatch(updateCircle(updatedCircle));
       setIsEditModalOpen(false);
-      showSuccessMessage("Circle updated successfully!");
+      toast.success("Circle updated successfully!");
     } catch (error: any) {
       if (error.response?.status === 401) {
         handleAuthError();
@@ -196,7 +190,7 @@ const CirclesManagement = () => {
       await deleteCircleApi(selectedCircle.id);
       dispatch(deleteCircle(selectedCircle.id));
       setIsDeleteModalOpen(false);
-      showSuccessMessage("Circle deleted successfully!");
+      toast.success("Circle deleted successfully!");
     } catch (error: any) {
       if (error.response?.status === 401) {
         handleAuthError();

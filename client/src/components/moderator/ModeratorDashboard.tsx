@@ -74,7 +74,6 @@ const ModeratorDashboard: React.FC = () => {
           Authorization: `Bearer ${token}`,
         };
 
-        // Fetch all required data in parallel
         const [tenantsRes, circlesRes, challengesRes, usersRes] =
           await Promise.all([
             axios.get<Tenant[]>("http://localhost:5000/api/tenants", {
@@ -92,7 +91,6 @@ const ModeratorDashboard: React.FC = () => {
             axios.get<User[]>("http://localhost:5000/api/users", { headers }),
           ]);
 
-        // Update Redux store with users
         dispatch(setUsers(usersRes.data));
 
         setStats({
@@ -114,9 +112,8 @@ const ModeratorDashboard: React.FC = () => {
   }, [dispatch]);
 
   const handleStatCardClick = (statType: string) => {
-    // Logic to navigate to the corresponding tab
     navigate(`/moderator/${statType}`);
-    console.log(`Navigating to ${statType} tab`); // Replace with actual navigation logic
+    console.log(`Navigating to ${statType} tab`);
   };
 
   if (loading || usersLoading) {

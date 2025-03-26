@@ -32,6 +32,7 @@ import {
 } from "../../../store/slices/tenantSlice";
 import { setUsers } from "../../../store/slices/userSlice";
 import { motion } from "framer-motion";
+import { toast } from "react-toastify";
 
 const TenantManagement = () => {
   const dispatch = useAppDispatch();
@@ -113,13 +114,6 @@ const TenantManagement = () => {
     navigate("/login");
   };
 
-  const showSuccessMessage = (message: string) => {
-    setSuccessMessage(message);
-    setTimeout(() => {
-      setSuccessMessage("");
-    }, 5000);
-  };
-
   const closeSuccessMessage = () => {
     setSuccessMessage("");
   };
@@ -129,7 +123,7 @@ const TenantManagement = () => {
       const newTenant = await createTenant(tenantData);
       dispatch(addTenantAction(newTenant));
       setIsAddModalOpen(false);
-      showSuccessMessage("Tenant added successfully!");
+      toast.success("Tenant added successfully!");
     } catch (error: any) {
       if (error.response?.status === 401) {
         handleAuthError();
@@ -149,7 +143,7 @@ const TenantManagement = () => {
       const updatedTenant = await updateTenantApi(tenantId, tenantData);
       dispatch(updateTenantAction(updatedTenant));
       setIsEditModalOpen(false);
-      showSuccessMessage("Tenant updated successfully!");
+      toast.success("Tenant updated successfully!");
     } catch (error: any) {
       if (error.response?.status === 401) {
         handleAuthError();
@@ -167,7 +161,7 @@ const TenantManagement = () => {
       await deleteTenantApi(selectedTenant.id);
       dispatch(deleteTenantAction(selectedTenant.id));
       setIsDeleteModalOpen(false);
-      showSuccessMessage("Tenant deleted successfully!");
+      toast.success("Tenant deleted successfully!");
     } catch (error: any) {
       if (error.response?.status === 401) {
         handleAuthError();

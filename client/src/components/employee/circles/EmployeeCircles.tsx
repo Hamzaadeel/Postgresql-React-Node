@@ -27,11 +27,11 @@ import {
   setCircles,
   setLoading,
   setError,
-  setSuccessMessage,
   joinCircle,
   leaveCircle,
 } from "../../../store/slices/circleSlice";
 import { motion } from "framer-motion";
+import { toast } from "react-toastify";
 
 interface CircleParticipation {
   id: number;
@@ -191,8 +191,7 @@ const EmployeeCircles = () => {
       );
 
       dispatch(joinCircle({ circleId, participationId: response.data.id }));
-      dispatch(setSuccessMessage("Successfully joined the circle!"));
-      setTimeout(() => dispatch(setSuccessMessage(null)), 3000);
+      toast.success("Successfully joined Circle!");
     } catch (err: any) {
       dispatch(
         setError(err.response?.data?.message || "Failed to join circle.")
@@ -219,10 +218,8 @@ const EmployeeCircles = () => {
           },
         }
       );
-
       dispatch(leaveCircle(selectedCircle.id));
-      dispatch(setSuccessMessage("Successfully left the circle!"));
-      setTimeout(() => dispatch(setSuccessMessage(null)), 3000);
+      toast.success("Successfully left the circle!");
       setIsLeaveModalOpen(false);
       setSelectedCircle(null);
     } catch (err: any) {

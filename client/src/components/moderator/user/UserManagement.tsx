@@ -301,7 +301,7 @@ const UserManagement = () => {
                     <label className="flex items-center p-2 dark:hover:text-gray-800 rounded hover:bg-gray-50">
                       <input
                         type="checkbox"
-                        checked={selectedRoles.length === 2} // Assuming there are 2 roles: employee and moderator
+                        checked={selectedRoles.length === 2}
                         onChange={(e) => {
                           if (e.target.checked) {
                             setSelectedRoles(["employee", "moderator"]);

@@ -3,6 +3,7 @@ import { AppDataSource } from "../data-source";
 import { Submissions } from "../entities/Submissions";
 import { Challenge } from "../entities/Challenge";
 import { User } from "../entities/User";
+import { NotificationController } from "./NotificationController";
 
 // Extend Request type to include user
 interface AuthenticatedRequest extends Request {
@@ -33,6 +34,7 @@ class SubmissionsController {
       // Get challenge and user
       const challenge = await challengeRepository.findOne({
         where: { id: challengeId },
+        relations: ["creator"],
       });
       const user = await userRepository.findOne({
         where: { id: userId },
@@ -55,6 +57,14 @@ class SubmissionsController {
         existingSubmission.fileUrl = fileUrl;
         existingSubmission.status = "Pending";
         await submissionsRepository.save(existingSubmission);
+
+        // Send notification to challenge creator
+        await NotificationController.createNotification(
+          challenge.creator.id,
+          "New Challenge Submission 📝",
+          `${user.name} has updated their submission for challenge "${challenge.title}"`
+        );
+
         return res.json(existingSubmission);
       }
 
@@ -67,6 +77,13 @@ class SubmissionsController {
       });
 
       await submissionsRepository.save(submission);
+
+      // Send notification to challenge creator
+      await NotificationController.createNotification(
+        challenge.creator.id,
+        "New Challenge Submission 📝",
+        `${user.name} has submitted proof for challenge "${challenge.title}"`
+      );
 
       res.status(201).json(submission);
     } catch (error) {

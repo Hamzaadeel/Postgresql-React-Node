@@ -81,6 +81,7 @@ const ChallengesManagement = () => {
     "challenges"
   );
   const [viewMode, setViewMode] = useState<"table" | "card">("table");
+  const sortDropdownRef = useRef<HTMLDivElement>(null);
 
   const dashboardVariants = {
     hidden: { opacity: 0, y: -20 },
@@ -116,6 +117,12 @@ const ChallengesManagement = () => {
         !circleDropdownRef.current.contains(event.target as Node)
       ) {
         setIsCircleDropdownOpen(false);
+      }
+      if (
+        sortDropdownRef.current &&
+        !sortDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsSortDropdownOpen(false);
       }
     };
 
@@ -320,21 +327,7 @@ const ChallengesManagement = () => {
 
   const totalPages = Math.ceil(totalChallenges / resultsPerPage);
 
-  // Remove client-side pagination - we're using server-side pagination
-  // The currentChallenges should just be the challenges from the server
   const currentChallenges = challenges;
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
-      if (!target.closest(".sort-dropdown")) {
-        setIsSortDropdownOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
   const handleViewChallenge = (challenge: Challenge) => {
     setSelectedChallenge(challenge);
@@ -355,7 +348,7 @@ const ChallengesManagement = () => {
   const renderFilters = () => (
     <div className="flex items-center space-x-4 mb-4">
       {/* Search Input */}
-      <div className="flex-1">
+      <div className="flex-1 max-w-md">
         <input
           type="text"
           placeholder="Search challenges..."
@@ -363,76 +356,6 @@ const ChallengesManagement = () => {
           onChange={(e) => setSearchQuery(e.target.value)}
           className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
         />
-      </div>
-
-      {/* Circle Filter Dropdown */}
-      <div className="relative" ref={circleDropdownRef}>
-        <button
-          onClick={() => setIsCircleDropdownOpen(!isCircleDropdownOpen)}
-          className="px-4 py-2 border rounded-lg flex items-center space-x-2 hover:bg-gray-50"
-        >
-          <span>
-            {selectedCircles.length
-              ? `${selectedCircles.length} Circles`
-              : "Filter by Circle"}
-          </span>
-          <ChevronDown
-            className={`w-4 h-4 transition-transform ${
-              isCircleDropdownOpen ? "rotate-180" : ""
-            }`}
-          />
-        </button>
-
-        {isCircleDropdownOpen && (
-          <div className="absolute z-10 mt-2 w-64 bg-white border rounded-lg shadow-lg">
-            <div className="p-2">
-              {circles.map((circle) => (
-                <label
-                  key={circle.id}
-                  className="flex items-center p-2 hover:bg-gray-50 cursor-pointer"
-                >
-                  <input
-                    type="checkbox"
-                    checked={selectedCircles.includes(circle.id)}
-                    onChange={() => {
-                      setSelectedCircles((prev) =>
-                        prev.includes(circle.id)
-                          ? prev.filter((id) => id !== circle.id)
-                          : [...prev, circle.id]
-                      );
-                    }}
-                    className="mr-2"
-                  />
-                  <span>{circle.name}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* View Mode Toggle */}
-      <div className="flex items-center space-x-2 border rounded-lg p-1">
-        <button
-          onClick={() => setViewMode("table")}
-          className={`p-2 rounded ${
-            viewMode === "table"
-              ? "bg-emerald-100 text-emerald-600"
-              : "text-gray-600 hover:bg-gray-100"
-          }`}
-        >
-          <TableIcon className="w-5 h-5" />
-        </button>
-        <button
-          onClick={() => setViewMode("card")}
-          className={`p-2 rounded ${
-            viewMode === "card"
-              ? "bg-emerald-100 text-emerald-600"
-              : "text-gray-600 hover:bg-gray-100"
-          }`}
-        >
-          <LayoutGrid className="w-5 h-5" />
-        </button>
       </div>
     </div>
   );
@@ -479,160 +402,227 @@ const ChallengesManagement = () => {
         {/* Search and Sort Controls */}
         <div className="mb-6 flex justify-between items-center">
           {renderFilters()}
+          <div className="ml-4 flex items-center space-x-4">
+            <div className="relative sort-dropdown">
+              {/* Circle Filter Dropdown */}
+              <div className="relative" ref={circleDropdownRef}>
+                <button
+                  onClick={() => setIsCircleDropdownOpen(!isCircleDropdownOpen)}
+                  className="px-4 py-2 border rounded-lg flex items-center space-x-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                >
+                  <span>
+                    {selectedCircles.length
+                      ? `${selectedCircles.length} Circles`
+                      : "Filter by Circle"}
+                  </span>
+                  <ChevronDown
+                    className={`w-4 h-4 transition-transform ${
+                      isCircleDropdownOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
 
-          <div className="ml-4 relative sort-dropdown">
-            <button
-              onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
-              className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white flex items-center justify-between min-w-[180px]"
-            >
-              <span>
-                {sortBy === "name"
-                  ? "Sort by Name"
-                  : sortBy === "newest"
-                  ? "Sort by Date (Newest)"
-                  : sortBy === "oldest"
-                  ? "Sort by Date (Oldest)"
-                  : sortBy === "points_highest"
-                  ? "Sort by Points (Highest)"
-                  : sortBy === "points_lowest"
-                  ? "Sort by Points (Lowest)"
-                  : sortBy === "participants"
-                  ? "Sort by Total Participants"
-                  : sortBy === "challenge_name"
-                  ? "Sort by Challenge Name"
-                  : sortBy === "circle_name"
-                  ? "Sort by Circle Name"
-                  : "Sort by Employee Name"}
-              </span>
-              <ChevronDown
-                className="h-4 w-4 transition-transform duration-200"
-                style={{
-                  transform: isSortDropdownOpen
-                    ? "rotate(180deg)"
-                    : "rotate(0deg)",
-                }}
-              />
-            </button>
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{
-                opacity: isSortDropdownOpen ? 1 : 0,
-                y: isSortDropdownOpen ? 0 : -10,
-              }}
-              transition={{ duration: 0.2 }}
-              className={`absolute z-10 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border ${
-                isSortDropdownOpen ? "block" : "hidden"
-              }`}
-            >
-              <div className="p-2">
-                {activeTab === "challenges" ? (
-                  <>
-                    <button
-                      onClick={() => {
-                        setSortBy("name");
-                        setIsSortDropdownOpen(false);
-                      }}
-                      className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:text-gray-100 dark:hover:text-gray-800 rounded"
-                    >
-                      Sort by Name
-                    </button>
-                    <button
-                      onClick={() => {
-                        setSortBy("newest");
-                        setIsSortDropdownOpen(false);
-                      }}
-                      className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:text-gray-100 dark:hover:text-gray-800 rounded"
-                    >
-                      Sort by Date (Newest)
-                    </button>
-                    <button
-                      onClick={() => {
-                        setSortBy("oldest");
-                        setIsSortDropdownOpen(false);
-                      }}
-                      className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:text-gray-100 dark:hover:text-gray-800 rounded"
-                    >
-                      Sort by Date (Oldest)
-                    </button>
-                    <button
-                      onClick={() => {
-                        setSortBy("points_highest");
-                        setIsSortDropdownOpen(false);
-                      }}
-                      className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:text-gray-100 dark:hover:text-gray-800 rounded"
-                    >
-                      Sort by Points (Highest)
-                    </button>
-                    <button
-                      onClick={() => {
-                        setSortBy("points_lowest");
-                        setIsSortDropdownOpen(false);
-                      }}
-                      className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:text-gray-100 dark:hover:text-gray-800 rounded"
-                    >
-                      Sort by Points (Lowest)
-                    </button>
-                    <button
-                      onClick={() => {
-                        setSortBy("participants");
-                        setIsSortDropdownOpen(false);
-                      }}
-                      className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:text-gray-100 dark:hover:text-gray-800 rounded"
-                    >
-                      Sort by Total Participants
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <button
-                      onClick={() => {
-                        setSortBy("newest");
-                        setIsSortDropdownOpen(false);
-                      }}
-                      className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:text-gray-100 dark:hover:text-gray-800 rounded"
-                    >
-                      Sort by Date (Newest)
-                    </button>
-                    <button
-                      onClick={() => {
-                        setSortBy("oldest");
-                        setIsSortDropdownOpen(false);
-                      }}
-                      className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:text-gray-100 dark:hover:text-gray-800 rounded"
-                    >
-                      Sort by Date (Oldest)
-                    </button>
-                    <button
-                      onClick={() => {
-                        setSortBy("challenge_name");
-                        setIsSortDropdownOpen(false);
-                      }}
-                      className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:text-gray-100 dark:hover:text-gray-800 rounded"
-                    >
-                      Sort by Challenge Name
-                    </button>
-                    <button
-                      onClick={() => {
-                        setSortBy("circle_name");
-                        setIsSortDropdownOpen(false);
-                      }}
-                      className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:text-gray-100 dark:hover:text-gray-800 rounded"
-                    >
-                      Sort by Circle Name
-                    </button>
-                    <button
-                      onClick={() => {
-                        setSortBy("employee_name");
-                        setIsSortDropdownOpen(false);
-                      }}
-                      className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:text-gray-100 dark:hover:text-gray-800 rounded"
-                    >
-                      Sort by Employee Name
-                    </button>
-                  </>
+                {isCircleDropdownOpen && (
+                  <div className="absolute right-0 z-10 mt-2 w-64 bg-white border rounded-lg shadow-lg">
+                    <div className="p-2">
+                      {/* Select All Button */}
+                      <label className="flex items-center p-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={selectedCircles.length === circles.length}
+                          onChange={() => {
+                            if (selectedCircles.length === circles.length) {
+                              setSelectedCircles([]);
+                            } else {
+                              setSelectedCircles(
+                                circles.map((circle) => circle.id)
+                              );
+                            }
+                          }}
+                          className="mr-2"
+                        />
+                        <span className="text-emerald-600 font-medium">
+                          {selectedCircles.length === circles.length
+                            ? "Deselect All"
+                            : "Select All"}
+                        </span>
+                      </label>
+                      {circles.map((circle) => (
+                        <label
+                          key={circle.id}
+                          className="flex items-center p-2 hover:bg-gray-100 cursor-pointer"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={selectedCircles.includes(circle.id)}
+                            onChange={() => {
+                              setSelectedCircles((prev) =>
+                                prev.includes(circle.id)
+                                  ? prev.filter((id) => id !== circle.id)
+                                  : [...prev, circle.id]
+                              );
+                            }}
+                            className="mr-2"
+                          />
+                          <span>{circle.name}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
                 )}
               </div>
-            </motion.div>
+            </div>
+            <div className="relative" ref={sortDropdownRef}>
+              <button
+                onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
+                className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white flex items-center justify-between min-w-[180px]"
+              >
+                <span>
+                  {sortBy === "name"
+                    ? "Sort by Name"
+                    : sortBy === "newest"
+                    ? "Sort by Date (Newest)"
+                    : sortBy === "oldest"
+                    ? "Sort by Date (Oldest)"
+                    : sortBy === "points_highest"
+                    ? "Sort by Points (Highest)"
+                    : sortBy === "points_lowest"
+                    ? "Sort by Points (Lowest)"
+                    : sortBy === "participants"
+                    ? "Sort by Total Participants"
+                    : sortBy === "challenge_name"
+                    ? "Sort by Challenge Name"
+                    : sortBy === "circle_name"
+                    ? "Sort by Circle Name"
+                    : "Sort by Employee Name"}
+                </span>
+                <ChevronDown
+                  className={`h-4 w-4 transition-transform duration-200 ${
+                    isSortDropdownOpen ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{
+                  opacity: isSortDropdownOpen ? 1 : 0,
+                  y: isSortDropdownOpen ? 0 : -10,
+                }}
+                transition={{ duration: 0.2 }}
+                className={`absolute right-0 z-10 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border ${
+                  isSortDropdownOpen ? "block" : "hidden"
+                }`}
+              >
+                <div className="p-2">
+                  {activeTab === "challenges" ? (
+                    <>
+                      <button
+                        onClick={() => {
+                          setSortBy("name");
+                          setIsSortDropdownOpen(false);
+                        }}
+                        className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:text-gray-100 dark:hover:text-gray-800 rounded"
+                      >
+                        Sort by Name
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSortBy("newest");
+                          setIsSortDropdownOpen(false);
+                        }}
+                        className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:text-gray-100 dark:hover:text-gray-800 rounded"
+                      >
+                        Sort by Date (Newest)
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSortBy("oldest");
+                          setIsSortDropdownOpen(false);
+                        }}
+                        className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:text-gray-100 dark:hover:text-gray-800 rounded"
+                      >
+                        Sort by Date (Oldest)
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSortBy("points_highest");
+                          setIsSortDropdownOpen(false);
+                        }}
+                        className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:text-gray-100 dark:hover:text-gray-800 rounded"
+                      >
+                        Sort by Points (Highest)
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSortBy("points_lowest");
+                          setIsSortDropdownOpen(false);
+                        }}
+                        className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:text-gray-100 dark:hover:text-gray-800 rounded"
+                      >
+                        Sort by Points (Lowest)
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSortBy("participants");
+                          setIsSortDropdownOpen(false);
+                        }}
+                        className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:text-gray-100 dark:hover:text-gray-800 rounded"
+                      >
+                        Sort by Total Participants
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => {
+                          setSortBy("newest");
+                          setIsSortDropdownOpen(false);
+                        }}
+                        className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:text-gray-100 dark:hover:text-gray-800 rounded"
+                      >
+                        Sort by Date (Newest)
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSortBy("oldest");
+                          setIsSortDropdownOpen(false);
+                        }}
+                        className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:text-gray-100 dark:hover:text-gray-800 rounded"
+                      >
+                        Sort by Date (Oldest)
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSortBy("challenge_name");
+                          setIsSortDropdownOpen(false);
+                        }}
+                        className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:text-gray-100 dark:hover:text-gray-800 rounded"
+                      >
+                        Sort by Challenge Name
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSortBy("circle_name");
+                          setIsSortDropdownOpen(false);
+                        }}
+                        className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:text-gray-100 dark:hover:text-gray-800 rounded"
+                      >
+                        Sort by Circle Name
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSortBy("employee_name");
+                          setIsSortDropdownOpen(false);
+                        }}
+                        className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:text-gray-100 dark:hover:text-gray-800 rounded"
+                      >
+                        Sort by Employee Name
+                      </button>
+                    </>
+                  )}
+                </div>
+              </motion.div>
+            </div>
           </div>
         </div>
 

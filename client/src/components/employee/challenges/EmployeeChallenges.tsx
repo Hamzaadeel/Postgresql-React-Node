@@ -75,7 +75,7 @@ const EmployeeChallenges = () => {
 
       // First, get the user's circle participations
       const participationsResponse = await axios.get<CircleParticipation[]>(
-        `http://localhost:5000/api/circle-participants/user/${user.id}`,
+        `http://13.218.202.231:5000/api/circle-participants/user/${user.id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -96,7 +96,7 @@ const EmployeeChallenges = () => {
       // Fetch challenges with images included
       console.log("Fetching challenges with includeImages=true");
       const challengesResponse = await axios.get<Challenge[]>(
-        `http://localhost:5000/api/challenges/circles?ids=${circleIds.join(
+        `http://13.218.202.231:5000/api/challenges/circles?ids=${circleIds.join(
           ","
         )}&includeImages=true`,
         {
@@ -117,7 +117,7 @@ const EmployeeChallenges = () => {
           status: "Pending" | "Completed";
         }[]
       >(
-        `http://localhost:5000/api/challenge-participants/user/${user.id}/status`,
+        `http://13.218.202.231:5000/api/challenge-participants/user/${user.id}/status`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -131,11 +131,14 @@ const EmployeeChallenges = () => {
           try {
             const imagesResponse = await axios.get<
               { id: number; image_path: string }[]
-            >(`http://localhost:5000/api/challenges/${challenge.id}/images`, {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            });
+            >(
+              `http://13.218.202.231:5000/api/challenges/${challenge.id}/images`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
             return {
               ...challenge,
               images: imagesResponse.data,
@@ -203,7 +206,7 @@ const EmployeeChallenges = () => {
 
     try {
       const response = await axios.post<ChallengeParticipationResponse>(
-        "http://localhost:5000/api/challenge-participants",
+        "http://13.218.202.231:5000/api/challenge-participants",
         {
           userId: user.id,
           challengeId,
@@ -246,7 +249,7 @@ const EmployeeChallenges = () => {
 
   //     // Upload file and update status
   //     await axios.put(
-  //       `http://localhost:5000/api/challenge-participants/${selectedChallenge.participationId}`,
+  //       `http://13.218.202.231:5000/api/challenge-participants/${selectedChallenge.participationId}`,
   //       formData,
   //       {
   //         headers: {

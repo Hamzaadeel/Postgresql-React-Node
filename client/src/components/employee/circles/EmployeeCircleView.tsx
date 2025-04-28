@@ -182,7 +182,7 @@ const EmployeeCircleView = () => {
 
         // Fetch circle details
         const circleResponse = await axios.get<Circle[]>(
-          `http://localhost:5000/api/circles`,
+          `http://13.218.202.231:5000/api/circles`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -205,11 +205,14 @@ const EmployeeCircleView = () => {
         // Check if user is a participant
         const circleParticipationsResponse = await axios.get<
           CircleParticipation[]
-        >(`http://localhost:5000/api/circle-participants/user/${user.id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        >(
+          `http://13.218.202.231:5000/api/circle-participants/user/${user.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         const isUserParticipant = circleParticipationsResponse.data.some(
           (p) => p.circle.id === parseInt(circleId!)
@@ -219,7 +222,7 @@ const EmployeeCircleView = () => {
         // Only fetch challenges if user is a participant
         if (isUserParticipant) {
           const challengesResponse = await axios.get<Challenge[]>(
-            `http://localhost:5000/api/challenges/circle/${circleId}`,
+            `http://13.218.202.231:5000/api/challenges/circle/${circleId}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -231,7 +234,7 @@ const EmployeeCircleView = () => {
           const challengeParticipationsResponse = await axios.get<
             ChallengeParticipation[]
           >(
-            `http://localhost:5000/api/challenge-participants/user/${user.id}/status`,
+            `http://13.218.202.231:5000/api/challenge-participants/user/${user.id}/status`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -243,7 +246,7 @@ const EmployeeCircleView = () => {
           const challengesWithImages = await Promise.all(
             challengesResponse.data.map(async (challenge) => {
               const imagesResponse = await axios.get<ChallengeImage[]>(
-                `http://localhost:5000/api/challenges/${challenge.id}/images`,
+                `http://13.218.202.231:5000/api/challenges/${challenge.id}/images`,
                 {
                   headers: {
                     Authorization: `Bearer ${token}`,
@@ -292,7 +295,7 @@ const EmployeeCircleView = () => {
       const user = JSON.parse(userString);
 
       await axios.post(
-        "http://localhost:5000/api/circle-participants",
+        "http://13.218.202.231:5000/api/circle-participants",
         {
           userId: user.id,
           circleId: parseInt(circleId!),
@@ -309,7 +312,7 @@ const EmployeeCircleView = () => {
 
       // Fetch challenges after joining
       const challengesResponse = await axios.get<Challenge[]>(
-        `http://localhost:5000/api/challenges/circle/${circleId}`,
+        `http://13.218.202.231:5000/api/challenges/circle/${circleId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

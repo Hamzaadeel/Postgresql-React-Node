@@ -157,7 +157,7 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
   }, [user?.profilePicture, user?.profile_picture_path]);
 
   const initializeSocket = () => {
-    const newSocket = io("http://localhost:5000", {
+    const newSocket = io("http://13.218.202.231:5000", {
       withCredentials: true,
     });
 
@@ -183,7 +183,7 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get<Notification[]>(
-        "http://localhost:5000/api/notifications",
+        "http://13.218.202.231:5000/api/notifications",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -200,7 +200,7 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `http://localhost:5000/api/notifications/${notificationId}/read`,
+        `http://13.218.202.231:5000/api/notifications/${notificationId}/read`,
         {},
         {
           headers: {
@@ -219,7 +219,7 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
     try {
       const token = localStorage.getItem("token");
       await axios.delete(
-        `http://localhost:5000/api/notifications/${notificationId}`,
+        `http://13.218.202.231:5000/api/notifications/${notificationId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -237,7 +237,7 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        "http://localhost:5000/api/notifications/mark-all-read",
+        "http://13.218.202.231:5000/api/notifications/mark-all-read",
         {},
         {
           headers: {
@@ -255,11 +255,14 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
   const handleClearAll = async () => {
     try {
       const token = localStorage.getItem("token");
-      await axios.delete("http://localhost:5000/api/notifications/clear-all", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await axios.delete(
+        "http://13.218.202.231:5000/api/notifications/clear-all",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       dispatch(clearNotifications());
     } catch (error) {
       console.error("Error clearing notifications:", error);
@@ -272,7 +275,7 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
       if (!user) return;
       const token = localStorage.getItem("token");
       const response = await axios.get<{ totalPoints: number }>(
-        `http://localhost:5000/api/points/${user.id}`,
+        `http://13.218.202.231:5000/api/points/${user.id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -339,7 +342,9 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get<SearchResults>(
-        `http://localhost:5000/api/search?query=${encodeURIComponent(query)}`,
+        `http://13.218.202.231:5000/api/search?query=${encodeURIComponent(
+          query
+        )}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

@@ -75,7 +75,7 @@ interface ProfilePictureResponse {
 }
 
 const api = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL: "http://13.218.202.231:5000/api",
 });
 
 // Add token to requests if it exists

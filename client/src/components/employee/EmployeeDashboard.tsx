@@ -64,7 +64,7 @@ const EmployeeDashboard = () => {
 
       // Fetch circles first
       const circlesResponse = await axios.get<any>(
-        "http://localhost:5000/api/circles",
+        "http://13.218.202.231:5000/api/circles",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -73,7 +73,7 @@ const EmployeeDashboard = () => {
       );
 
       const participationsResponse = await axios.get<CircleParticipation[]>(
-        `http://localhost:5000/api/circle-participants/user/${user.id}`,
+        `http://13.218.202.231:5000/api/circle-participants/user/${user.id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -105,7 +105,7 @@ const EmployeeDashboard = () => {
         const circleIds = joinedCircles.map((circle: any) => circle.id);
 
         const challengesResponse = await axios.get<Challenge[]>(
-          `http://localhost:5000/api/challenges/circles?ids=${circleIds.join(
+          `http://13.218.202.231:5000/api/challenges/circles?ids=${circleIds.join(
             ","
           )}`,
           {
@@ -118,7 +118,7 @@ const EmployeeDashboard = () => {
         const userChallengesResponse = await axios.get<
           ChallengeParticipation[]
         >(
-          `http://localhost:5000/api/challenge-participants/user/${user.id}/status`,
+          `http://13.218.202.231:5000/api/challenge-participants/user/${user.id}/status`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -130,7 +130,7 @@ const EmployeeDashboard = () => {
         const challengesWithImages = await Promise.all(
           challengesResponse.data.map(async (challenge) => {
             const imagesResponse = await axios.get<ChallengeImage[]>(
-              `http://localhost:5000/api/challenges/${challenge.id}/images`,
+              `http://13.218.202.231:5000/api/challenges/${challenge.id}/images`,
               {
                 headers: {
                   Authorization: `Bearer ${token}`,

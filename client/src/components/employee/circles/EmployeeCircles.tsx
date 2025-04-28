@@ -78,7 +78,7 @@ const EmployeeCircles = () => {
       dispatch(setLoading(true));
 
       const circlesResponse = await axios.get<Circle[]>(
-        "http://localhost:5000/api/circles",
+        "http://13.218.202.231:5000/api/circles",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -87,7 +87,7 @@ const EmployeeCircles = () => {
       );
 
       const participationsResponse = await axios.get<CircleParticipation[]>(
-        `http://localhost:5000/api/circle-participants/user/${user.id}`,
+        `http://13.218.202.231:5000/api/circle-participants/user/${user.id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -132,7 +132,7 @@ const EmployeeCircles = () => {
 
     try {
       const response = await axios.post<{ id: number }>(
-        "http://localhost:5000/api/circle-participants",
+        "http://13.218.202.231:5000/api/circle-participants",
         {
           userId: user.id,
           circleId,
@@ -165,7 +165,7 @@ const EmployeeCircles = () => {
 
     try {
       await axios.delete(
-        `http://localhost:5000/api/circle-participants/${selectedCircle.participationId}`,
+        `http://13.218.202.231:5000/api/circle-participants/${selectedCircle.participationId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

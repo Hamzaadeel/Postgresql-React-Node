@@ -76,19 +76,21 @@ const ModeratorDashboard: React.FC = () => {
 
         const [tenantsRes, circlesRes, challengesRes, usersRes] =
           await Promise.all([
-            axios.get<Tenant[]>("http://localhost:5000/api/tenants", {
+            axios.get<Tenant[]>("http://13.218.202.231:5000/api/tenants", {
               headers,
             }),
-            axios.get<Circle[]>("http://localhost:5000/api/circles", {
+            axios.get<Circle[]>("http://13.218.202.231:5000/api/circles", {
               headers,
             }),
             axios.get<{ challenges: Challenge[]; total: number }>(
-              "http://localhost:5000/api/challenges",
+              "http://13.218.202.231:5000/api/challenges",
               {
                 headers,
               }
             ),
-            axios.get<User[]>("http://localhost:5000/api/users", { headers }),
+            axios.get<User[]>("http://13.218.202.231:5000/api/users", {
+              headers,
+            }),
           ]);
 
         dispatch(setUsers(usersRes.data));

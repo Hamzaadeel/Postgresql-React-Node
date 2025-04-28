@@ -25,7 +25,7 @@ const Leaderboards = () => {
         const user = userString ? JSON.parse(userString) : null;
 
         const response = await axios.get<LeaderboardEntry[]>(
-          "http://localhost:5000/api/points/leaderboard/top",
+          "http://13.218.202.231:5000/api/points/leaderboard/top",
           {
             headers: {
               Authorization: `Bearer ${token}`,

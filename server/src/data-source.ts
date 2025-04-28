@@ -3,7 +3,7 @@ import { DataSource } from "typeorm";
 import dotenv from "dotenv";
 
 dotenv.config();
-
+// Changes to be made here
 export const AppDataSource = new DataSource({
   type: "postgres",
   host: process.env.DB_HOST,

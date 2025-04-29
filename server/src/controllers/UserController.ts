@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { ILike, In } from "typeorm";
 import S3Controller from "./S3Controller";
+import { Tenant } from "../entities/Tenant";
 
 export class UserController {
   static async getUsers(req: Request, res: Response) {
@@ -65,16 +66,26 @@ export class UserController {
 
   static async createUser(req: Request, res: Response) {
     try {
-      const { name, email, password, role, tenantId } = req.body;
+      const { name, email, password, role } = req.body;
 
-      if (!name || !email || !password || !tenantId) {
+      if (!name || !email || !password) {
         return res.status(400).json({
-          message: "Name, email, password, and tenant ID are required",
+          message: "Name, email, and password are required",
         });
+      }
+
+      const tenantRepository = AppDataSource.getRepository(Tenant);
+      const defaultTenant = await tenantRepository.findOne({
+        where: { id: 1 },
+      });
+
+      if (!defaultTenant) {
+        return res.status(500).json({ message: "Default tenant not found" });
       }
 
       const userRepository = AppDataSource.getRepository(User);
       const existingUser = await userRepository.findOne({ where: { email } });
+
       if (existingUser) {
         return res.status(400).json({ message: "User already exists" });
       }
@@ -85,8 +96,9 @@ export class UserController {
         email,
         password: hashedPassword,
         role,
-        tenantId,
+        tenant: defaultTenant, // 👈 use the tenant entity directly
       });
+
       await userRepository.save(newUser);
       res.status(201).json({ message: "User created successfully" });
     } catch (error) {

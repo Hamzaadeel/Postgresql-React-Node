@@ -27,7 +27,7 @@ const SignUp = () => {
     try {
       const response = (await signUp(formData)) as { name: string };
       setSuccess(
-        `User ${response.name} created successfully! Please check your email for verification.`
+        `User ${response.name} created successfully! Go to login page to log into your account.`
       );
       setError("");
       setTimeout(() => {

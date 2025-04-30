@@ -25,9 +25,9 @@ const SignUp = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = (await signUp(formData)) as { name: string };
+      await signUp(formData);
       setSuccess(
-        `User ${response.name} created successfully! Go to login page to log into your account.`
+        `User created successfully! Go to login page to log into your account.`
       );
       setError("");
       setTimeout(() => {
